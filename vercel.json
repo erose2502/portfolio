@@ -1,0 +1,28 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/projects/kazi", "destination": "/projects/kazi.html" },
+    { "source": "/projects/relay", "destination": "/projects/relay.html" },
+    { "source": "/projects/rhema", "destination": "/projects/rhema.html" },
+    { "source": "/projects/everon", "destination": "/projects/everon.html" },
+    { "source": "/projects/kazi-coder", "destination": "/projects/kazi-coder.html" },
+    { "source": "/resources", "destination": "/resources.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><title>Relay — Elijah Rose</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#080b0f;--bg-1:#0d1117;--bg-2:#161b24;--border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.14);--text:#f0ede8;--text-2:rgba(240,237,232,0.5);--text-3:rgba(240,237,232,0.28);--accent:#22d3ee;--font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;}
+    html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    ::selection{background:var(--accent);color:#080b0f}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}.reveal.visible{opacity:1;transform:none}
+    @keyframes glow-pulse{0%,100%{opacity:.2}50%{opacity:.45}}.glow-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:glow-pulse 4s ease-in-out infinite}
+    @media(max-width:768px){.d-hero{padding:100px 20px 60px !important}.d-grid{grid-template-columns:1fr !important;gap:16px !important}.px-s{padding-left:20px !important;padding-right:20px !important}}
+  </style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useRef}=React;
+function useReveal(t=0.12){const ref=useRef(null);useEffect(()=>{const el=ref.current;if(!el)return;const io=new IntersectionObserver(([e])=>{if(e.isIntersecting){el.classList.add('visible');io.disconnect();}},{threshold:t});io.observe(el);return()=>io.disconnect();},[]);return ref;}
+function Nav(){const[s,setS]=useState(false);useEffect(()=>{const h=()=>setS(window.scrollY>40);window.addEventListener('scroll',h);return()=>window.removeEventListener('scroll',h);},[]);return(<nav style={{position:'fixed',top:0,left:0,right:0,zIndex:999,padding:'0 28px',height:64,background:s?'rgba(8,11,15,0.95)':'transparent',backdropFilter:s?'blur(20px)':'none',borderBottom:s?'1px solid var(--border)':'1px solid transparent',transition:'all .4s',display:'flex',alignItems:'center',justifyContent:'space-between'}}><a href="../index.html" style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,color:'var(--text)',textDecoration:'none'}}>Elijah Rose<span style={{color:'#e8c547'}}>.</span></a><a href="../index.html#work" style={{fontSize:13,color:'var(--text-2)',textDecoration:'none',fontWeight:500,padding:'8px 16px',border:'1px solid var(--border)',borderRadius:100}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)';e.currentTarget.style.color='var(--text)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--text-2)'}}>← All projects</a></nav>);}
+
+function App(){
+  const[v,setV]=useState(false);useEffect(()=>{setTimeout(()=>setV(true),80);},[]);
+  const sp=d=>({opacity:v?1:0,transform:v?'none':'translateY(28px)',transition:`opacity .8s cubic-bezier(.22,1,.36,1) ${d}s,transform .8s cubic-bezier(.22,1,.36,1) ${d}s`});
+  const A='#22d3ee',AD='rgba(34,211,238,0.1)';
+
+  const working=[
+    {title:'Live inbound & outbound calls',desc:'Real PSTN numbers via LiveKit telephony. Agents answer instantly. Outbound campaigns dispatch to lead lists with configurable concurrency and calling-hour windows.'},
+    {title:'Ultra-low latency pipeline',desc:'Silero VAD → OpenAI Whisper STT → GPT-4o-mini → OpenAI TTS. Tuned for natural conversation with minimal perceptible delay.'},
+    {title:'Post-call structured extraction',desc:'After every call, GPT-4o-mini parses the transcript into structured JSON: status, blocker, next_date, action_required, key_facts.'},
+    {title:'RAG knowledge base',desc:'Per-tenant ChromaDB vector store. Agents answer questions grounded in your documents during the call — no hallucinated facts.'},
+    {title:'Transaction coordination',desc:'Dispatch coordination calls to all parties simultaneously. What takes 3 days of phone tag takes minutes. Per-party results surface blockers, key facts, and required actions automatically.'},
+    {title:'Agent builder',desc:'Custom voice agents with system prompts, voice selection, model choice, and temperature. 8 pre-built templates ready to deploy — cold call, appointment setting, RE lender status, and more.'},
+    {title:'Intent classification',desc:'GPT-4o at low temperature routes calls to the right disposition path. Automatic fallback to Twilio TwiML Gather if LiveKit is unavailable.'},
+    {title:'Multi-tenant isolation',desc:'Per-tenant vector stores, agent configs, and call history. Complete data isolation between accounts with scoped API access.'},
+  ];
+
+  const insight = "Professionals in real estate, insurance, healthcare, legal, and logistics spend hours every week making sequential phone calls to different organizations to coordinate a single transaction. Relay dispatches all those calls in parallel, extracts what was said into structured outcomes, and surfaces the results in a unified dashboard.";
+
+  const ref1=useReveal(),ref2=useReveal();
+  return(<>
+    <Nav/>
+    <section className="d-hero" style={{padding:'120px 32px 72px',maxWidth:1100,margin:'0 auto',position:'relative'}}>
+      <div className="glow-orb" style={{width:500,height:500,background:`radial-gradient(circle,${A}18,transparent)`,top:'-80px',right:'-60px'}}/>
+      <div style={sp(0.1)}>
+        <span style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,background:AD,padding:'5px 13px',borderRadius:100,border:`1px solid ${A}44`}}>In Development · Voice AI Coordination Platform</span>
+      </div>
+      <h1 style={{...sp(0.2),fontFamily:'var(--font-display)',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,letterSpacing:'-3px',lineHeight:.92,margin:'22px 0 18px'}}>Relay<span style={{color:A}}>.</span></h1>
+      <p style={{...sp(0.25),fontFamily:'var(--font-display)',fontSize:'clamp(17px,2.5vw,26px)',fontWeight:600,color:'var(--text-2)',letterSpacing:'-0.5px',marginBottom:20}}>The coordination layer for voice AI agents across industries.</p>
+      <p style={{...sp(0.3),fontSize:'clamp(14px,1.8vw,17px)',color:'var(--text-2)',maxWidth:580,lineHeight:1.75,marginBottom:36}}>Not just a conversational AI — a system that turns phone calls into parallel, structured actions. Multi-tenant B2B platform dispatching parallel voice AI agents to coordinate complex transactions. Replaces sequential manual calls with parallel dispatch — extracting structured JSON into a unified dashboard.</p>
+      <div style={{...sp(0.4),display:'flex',gap:10,flexWrap:'wrap',marginBottom:36}}>
+        {['LiveKit','FastAPI','React/TypeScript','ChromaDB','OpenAI Whisper','GPT-4o','Silero VAD','Twilio'].map(s=><span key={s} style={{fontSize:11,fontWeight:600,padding:'5px 13px',borderRadius:100,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.12)',color:'var(--text-2)'}}>{s}</span>)}
+      </div>
+      <div style={sp(0.45)}>
+        <span style={{display:'inline-flex',alignItems:'center',gap:8,padding:'12px 24px',borderRadius:100,background:AD,color:A,fontWeight:600,fontSize:14,border:`1px solid ${A}44`}}>
+          <span style={{width:7,height:7,borderRadius:'50%',background:A,boxShadow:`0 0 8px ${A}`,display:'inline-block'}}></span>
+          In active development
+        </span>
+      </div>
+    </section>
+
+    {/* CORE INSIGHT */}
+    <section className="px-s" style={{padding:'0 32px 72px',maxWidth:1100,margin:'0 auto'}}>
+      <div ref={ref1} className="reveal" style={{background:'var(--bg-1)',border:`1px solid ${A}33`,borderLeft:`3px solid ${A}`,borderRadius:14,padding:'32px 36px'}}>
+        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:14}}>The core insight</div>
+        <p style={{fontSize:'clamp(15px,2vw,19px)',color:'var(--text)',lineHeight:1.75,fontStyle:'italic'}}>{insight}</p>
+      </div>
+    </section>
+
+    {/* WHAT'S WORKING */}
+    <section className="px-s" style={{padding:'0 32px 80px',maxWidth:1100,margin:'0 auto'}}>
+      <div ref={ref2} className="reveal" style={{marginBottom:32}}>
+        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:10}}>What's working right now</div>
+        <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,letterSpacing:'-1.5px'}}>Production-grade voice AI,<br/>built for coordination at scale.</h2>
+      </div>
+      <div className="d-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        {working.map((w,i)=>{const r=useReveal();return(
+          <div key={w.title} ref={r} className="reveal" style={{padding:'24px 26px',background:'var(--bg-1)',border:'1px solid var(--border)',borderRadius:14,borderTop:`2px solid ${A}44`,transitionDelay:`${i*0.06}s`}}>
+            <h3 style={{fontFamily:'var(--font-display)',fontSize:15,fontWeight:700,marginBottom:8,color:A}}>{w.title}</h3>
+            <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.75}}>{w.desc}</p>
+          </div>
+        );})}
+      </div>
+    </section>
+
+    <section style={{padding:'60px 32px',background:'var(--bg-1)',borderTop:'1px solid var(--border)',textAlign:'center'}}>
+      <div style={{marginBottom:14,fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text-3)'}}>Next project</div>
+      <a href="rhema.html" style={{fontFamily:'var(--font-display)',fontSize:'clamp(28px,4vw,48px)',fontWeight:700,color:'var(--text)',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:14,transition:'gap .2s'}} onMouseEnter={e=>e.currentTarget.style.gap='22px'} onMouseLeave={e=>e.currentTarget.style.gap='14px'}>Rhema <span style={{color:'#6366f1'}}>→</span></a>
+    </section>
+  </>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

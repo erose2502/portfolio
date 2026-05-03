@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><title>Rhema — Elijah Rose</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#080b0f;--bg-1:#0d1117;--bg-2:#161b24;--border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.14);--text:#f0ede8;--text-2:rgba(240,237,232,0.5);--text-3:rgba(240,237,232,0.28);--accent:#6366f1;--font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;}
+    html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}.reveal.visible{opacity:1;transform:none}
+    @keyframes glow-pulse{0%,100%{opacity:.2}50%{opacity:.45}}.glow-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:glow-pulse 4s ease-in-out infinite}
+    @media(max-width:768px){.d-hero{padding:100px 20px 60px !important}.d-grid{grid-template-columns:1fr !important;gap:16px !important}.px-s{padding-left:20px !important;padding-right:20px !important}}
+  </style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useRef}=React;
+function useReveal(t=0.12){const ref=useRef(null);useEffect(()=>{const el=ref.current;if(!el)return;const io=new IntersectionObserver(([e])=>{if(e.isIntersecting){el.classList.add('visible');io.disconnect();}},{threshold:t});io.observe(el);return()=>io.disconnect();},[]);return ref;}
+function Nav(){const[s,setS]=useState(false);useEffect(()=>{const h=()=>setS(window.scrollY>40);window.addEventListener('scroll',h);return()=>window.removeEventListener('scroll',h);},[]);return(<nav style={{position:'fixed',top:0,left:0,right:0,zIndex:999,padding:'0 28px',height:64,background:s?'rgba(8,11,15,0.95)':'transparent',backdropFilter:s?'blur(20px)':'none',borderBottom:s?'1px solid var(--border)':'1px solid transparent',transition:'all .4s',display:'flex',alignItems:'center',justifyContent:'space-between'}}><a href="../index.html" style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,color:'var(--text)',textDecoration:'none'}}>Elijah Rose<span style={{color:'#e8c547'}}>.</span></a><a href="../index.html#work" style={{fontSize:13,color:'var(--text-2)',textDecoration:'none',fontWeight:500,padding:'8px 16px',border:'1px solid var(--border)',borderRadius:100}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)';e.currentTarget.style.color='var(--text)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--text-2)'}}>← All projects</a></nav>);}
+
+function App(){
+  const[v,setV]=useState(false);useEffect(()=>{setTimeout(()=>setV(true),80);},[]);
+  const sp=d=>({opacity:v?1:0,transform:v?'none':'translateY(28px)',transition:`opacity .8s cubic-bezier(.22,1,.36,1) ${d}s,transform .8s cubic-bezier(.22,1,.36,1) ${d}s`});
+  const A='#6366f1',AD='rgba(99,102,241,0.1)';
+  const features=[
+    {title:'Biblical character AI',desc:'Users engage in dialogue with AI representations of biblical figures. Each character has a carefully engineered persona — distinct voice, knowledge scope, and theological grounding.'},
+    {title:'Prayer journal',desc:'Daily prayer tracking with reflection prompts. Supabase Realtime keeps entries synced across devices instantly.'},
+    {title:'Scripture reading plans',desc:'Structured Bible reading plans with progress tracking, devotionals, and AI-guided reflection questions tied to each passage.'},
+    {title:'Multiplayer games & leaderboards',desc:'Faith-building interactive games with real-time multiplayer via Supabase Realtime channels. Scripture trivia, memory challenges, and community competitions.'},
+    {title:'Community & messaging',desc:'Social hub with direct messaging, community posts, and invitation system. Presence indicators via Supabase Realtime channels.'},
+    {title:'Live voice & video calls',desc:'Audio/video calling UI powered by LiveKit for community prayer sessions and group discipleship calls.'},
+  ];
+  const stack=[
+    {layer:'Presentation',items:'React 18, TypeScript, Vite, Tailwind CSS v4, Radix UI, shadcn/ui'},
+    {layer:'AI & Voice',items:'OpenAI (character AI), LiveKit (calls), Deepgram (speech)'},
+    {layer:'Backend',items:'Supabase Auth, Postgres, Realtime, Storage; Edge Functions (Hono)'},
+    {layer:'Experience',items:'Glassmorphic UI system, PWA with service worker, mobile-first navigation'},
+  ];
+  const ref1=useReveal(),ref2=useReveal();
+  return(<>
+    <Nav/>
+    <section className="d-hero" style={{padding:'120px 32px 72px',maxWidth:1100,margin:'0 auto',position:'relative'}}>
+      <div className="glow-orb" style={{width:450,height:450,background:`radial-gradient(circle,${A}18,transparent)`,top:'-60px',left:'-60px'}}/>
+      <div style={sp(0.1)}><span style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,background:AD,padding:'5px 13px',borderRadius:100,border:`1px solid ${A}44`}}>Live · AI Faith Technology Platform</span></div>
+      <h1 style={{...sp(0.2),fontFamily:'var(--font-display)',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,letterSpacing:'-3px',lineHeight:.92,margin:'22px 0 18px'}}>Rhema<span style={{color:A}}>.</span></h1>
+      <p style={{...sp(0.25),fontFamily:'var(--font-display)',fontSize:'clamp(17px,2.5vw,26px)',fontWeight:600,color:'var(--text-2)',letterSpacing:'-0.5px',marginBottom:20}}>A mobile-first spiritual companion built on production AI architecture.</p>
+      <p style={{...sp(0.3),fontSize:'clamp(14px,1.8vw,17px)',color:'var(--text-2)',maxWidth:580,lineHeight:1.75,marginBottom:36}}>Rhema pairs users with biblical characters, devotionals, and community features to support daily discipleship. The platform blends AI-guided conversations with Scripture study, prayer journaling, games, and real-time community interactions in a glassmorphic, app-like experience.</p>
+      <div style={{...sp(0.4),display:'flex',gap:10,flexWrap:'wrap',marginBottom:36}}>
+        {['React 18','TypeScript','Supabase','OpenAI','LiveKit','Deepgram','Hono Edge Functions','PWA'].map(s=><span key={s} style={{fontSize:11,fontWeight:600,padding:'5px 13px',borderRadius:100,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.12)',color:'var(--text-2)'}}>{s}</span>)}
+      </div>
+      <div style={{...sp(0.45),display:'flex',gap:12,flexWrap:'wrap'}}>
+        <a href="https://rhema-advanced.vercel.app/" target="_blank" style={{display:'inline-flex',alignItems:'center',gap:8,padding:'13px 28px',borderRadius:100,background:A,color:'#fff',fontWeight:600,fontSize:14,textDecoration:'none',transition:'opacity .2s'}} onMouseEnter={e=>e.currentTarget.style.opacity='.82'} onMouseLeave={e=>e.currentTarget.style.opacity='1'}>View live project →</a>
+      </div>
+    </section>
+
+    <section className="px-s" style={{padding:'0 32px 72px',maxWidth:1100,margin:'0 auto'}}>
+      <div style={{borderRadius:20,overflow:'hidden',border:'1px solid var(--border-hi)',background:'var(--bg-1)',display:'flex',alignItems:'center',justifyContent:'center',minHeight:280,boxShadow:`0 0 60px ${A}18`}}>
+        <img src="../images/rhema-logo.png" alt="Rhema" style={{maxWidth:300,maxHeight:280,objectFit:'contain',padding:48,opacity:.9}}/>
+      </div>
+    </section>
+
+    <section className="px-s" style={{padding:'0 32px 80px',maxWidth:1100,margin:'0 auto'}}>
+      <div ref={ref1} className="reveal" style={{marginBottom:32}}>
+        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:10}}>Platform Features</div>
+        <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,letterSpacing:'-1.5px'}}>Full-stack discipleship,<br/>AI at every layer.</h2>
+      </div>
+      <div className="d-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        {features.map((f,i)=>{const r=useReveal();return(<div key={f.title} ref={r} className="reveal" style={{padding:'24px 26px',background:'var(--bg-1)',border:'1px solid var(--border)',borderRadius:14,borderTop:`2px solid ${A}44`,transitionDelay:`${i*0.06}s`}}><h3 style={{fontFamily:'var(--font-display)',fontSize:15,fontWeight:700,marginBottom:8,color:A}}>{f.title}</h3><p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.75}}>{f.desc}</p></div>);})}
+      </div>
+    </section>
+
+    <section className="px-s" style={{padding:'0 32px 80px',maxWidth:1100,margin:'0 auto'}}>
+      <div ref={ref2} className="reveal" style={{marginBottom:28}}>
+        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:10}}>Architecture Stack</div>
+        <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(22px,3vw,32px)',fontWeight:700,letterSpacing:'-1px'}}>Four distinct layers,<br/>each purpose-built.</h2>
+      </div>
+      {stack.map((s,i)=>{const r=useReveal();return(<div key={s.layer} ref={r} className="reveal" style={{display:'grid',gridTemplateColumns:'140px 1fr',gap:24,padding:'20px 0',borderTop:'1px solid var(--border)',transitionDelay:`${i*0.07}s`,alignItems:'start'}}><div style={{fontSize:12,fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase',color:A,paddingTop:2}}>{s.layer}</div><div style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7}}>{s.items}</div></div>);})}
+    </section>
+
+    <section style={{padding:'60px 32px',background:'var(--bg-1)',borderTop:'1px solid var(--border)',textAlign:'center'}}>
+      <div style={{marginBottom:14,fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text-3)'}}>Next project</div>
+      <a href="everon.html" style={{fontFamily:'var(--font-display)',fontSize:'clamp(28px,4vw,48px)',fontWeight:700,color:'var(--text)',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:14,transition:'gap .2s'}} onMouseEnter={e=>e.currentTarget.style.gap='22px'} onMouseLeave={e=>e.currentTarget.style.gap='14px'}>Everon <span style={{color:'#a78bfa'}}>→</span></a>
+    </section>
+  </>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

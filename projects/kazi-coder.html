@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><title>Kazi Coder (Cody) — Elijah Rose</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#080b0f;--bg-1:#0d1117;--bg-2:#161b24;--border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.14);--text:#f0ede8;--text-2:rgba(240,237,232,0.5);--text-3:rgba(240,237,232,0.28);--accent:#e8c547;--green:#4ade80;--font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;}
+    html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    ::selection{background:var(--accent);color:#080b0f}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}.reveal.visible{opacity:1;transform:none}
+    @keyframes glow-pulse{0%,100%{opacity:.2}50%{opacity:.45}}.glow-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:glow-pulse 4s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    @media(max-width:768px){.d-hero{padding:100px 20px 60px !important}.d-grid{grid-template-columns:1fr !important;gap:16px !important}.px-s{padding-left:20px !important;padding-right:20px !important}.cmd-grid{grid-template-columns:1fr !important}}
+  </style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useRef}=React;
+function useReveal(t=0.12){const ref=useRef(null);useEffect(()=>{const el=ref.current;if(!el)return;const io=new IntersectionObserver(([e])=>{if(e.isIntersecting){el.classList.add('visible');io.disconnect();}},{threshold:t});io.observe(el);return()=>io.disconnect();},[]);return ref;}
+function Nav(){const[s,setS]=useState(false);useEffect(()=>{const h=()=>setS(window.scrollY>40);window.addEventListener('scroll',h);return()=>window.removeEventListener('scroll',h);},[]);return(<nav style={{position:'fixed',top:0,left:0,right:0,zIndex:999,padding:'0 28px',height:64,background:s?'rgba(8,11,15,0.95)':'transparent',backdropFilter:s?'blur(20px)':'none',borderBottom:s?'1px solid var(--border)':'1px solid transparent',transition:'all .4s',display:'flex',alignItems:'center',justifyContent:'space-between'}}><a href="../index.html" style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,color:'var(--text)',textDecoration:'none'}}>Elijah Rose<span style={{color:'#e8c547'}}>.</span></a><a href="../index.html#work" style={{fontSize:13,color:'var(--text-2)',textDecoration:'none',fontWeight:500,padding:'8px 16px',border:'1px solid var(--border)',borderRadius:100,transition:'all .2s'}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)';e.currentTarget.style.color='var(--text)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--text-2)'}}>← All projects</a></nav>);}
+
+function App(){
+  const[v,setV]=useState(false);useEffect(()=>{setTimeout(()=>setV(true),80);},[]);
+  const sp=d=>({opacity:v?1:0,transform:v?'none':'translateY(28px)',transition:`opacity .8s cubic-bezier(.22,1,.36,1) ${d}s,transform .8s cubic-bezier(.22,1,.36,1) ${d}s`});
+  const A='#e8c547', AD='rgba(232,197,71,0.1)';
+
+  const models=[
+    {provider:'Anthropic Claude',models:['Claude Opus 4.6 — most capable','Claude Sonnet 4.6 — balanced','Claude Haiku 4.5 — fast & lightweight'],color:'var(--accent)'},
+    {provider:'OpenAI',models:['GPT-5.4 — most capable','GPT-5.4 Mini — faster','GPT-5.4 Nano — lightweight'],color:'#74aa9c'},
+  ];
+
+  const features=[
+    {title:'VS Code sidebar integration',desc:'Installs directly into VS Code as a sidebar chat assistant. Accessible via the Kazi icon in the activity bar or Cmd+Shift+K.'},
+    {title:'Multi-model support',desc:'Choose between Anthropic Claude (Opus, Sonnet, Haiku) or OpenAI GPT models. Switch providers and models on the fly without losing context.'},
+    {title:'Local conversation memory',desc:'Conversation history persisted locally in .cody_memory.md per workspace. Your data stays on your machine — never sent to Kazi servers.'},
+    {title:'Bring your own API key',desc:'You provide your own Anthropic or OpenAI API key. Keys are stored via VS Code\'s encrypted SecretStorage, backed by your OS keychain — never logged or seen by Kazi.'},
+    {title:'Autonomous code execution',desc:'Cody handles feature builds, bug fixes, and technical tasks end-to-end. Turns specs into working software with deep memory persistence and self-correction.'},
+    {title:'Context-aware orchestration',desc:'Deployed via AWS Bedrock. Maintains deep context awareness across files, functions, and prior conversations within the workspace.'},
+  ];
+
+  const commands=[
+    {cmd:'Kazi: Configure',desc:'Reset API key and re-open setup UI'},
+    {cmd:'Kazi: New Session',desc:'Start a fresh conversation thread'},
+    {cmd:'Kazi: Open Chat',desc:'Focus the chat sidebar (Cmd+Shift+K)'},
+  ];
+
+  const ref1=useReveal(),ref2=useReveal(),ref3=useReveal();
+
+  return(<>
+    <Nav/>
+    {/* HERO */}
+    <section className="d-hero" style={{padding:'120px 32px 72px',maxWidth:1100,margin:'0 auto',position:'relative'}}>
+      <div className="glow-orb" style={{width:500,height:500,background:`radial-gradient(circle,${A}18,transparent)`,top:'-80px',left:'-80px'}}/>
+      <div style={sp(0.1)}>
+        <span style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,background:AD,padding:'5px 13px',borderRadius:100,border:`1px solid ${A}44`}}>VS Code Extension · AI Coding Agent</span>
+      </div>
+      <h1 style={{...sp(0.2),fontFamily:'var(--font-display)',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,letterSpacing:'-3px',lineHeight:.92,margin:'22px 0 4px'}}>Kazi Coder</h1>
+      <div style={{...sp(0.25),fontFamily:'var(--font-display)',fontSize:'clamp(22px,4vw,48px)',fontWeight:700,letterSpacing:'-2px',color:A,marginBottom:20}}>(Cody)<span style={{color:'var(--text)',fontSize:'0.6em'}}>.</span></div>
+      <p style={{...sp(0.3),fontSize:'clamp(14px,1.8vw,17px)',color:'var(--text-2)',maxWidth:580,lineHeight:1.75,marginBottom:36}}>A VS Code sidebar chat assistant powered by Anthropic Claude or OpenAI GPT models. Writes, reviews, and ships code across the stack — turning specs into working software with deep memory persistence, self-correction, and context-aware tool orchestration. Deployed via AWS Bedrock.</p>
+      <div style={{...sp(0.4),display:'flex',gap:10,flexWrap:'wrap',marginBottom:36}}>
+        {['VS Code Extension','AWS Bedrock','Anthropic Claude','OpenAI GPT','TypeScript','SecretStorage API'].map(s=><span key={s} style={{fontSize:11,fontWeight:600,padding:'5px 13px',borderRadius:100,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.12)',color:'var(--text-2)'}}>{s}</span>)}
+      </div>
+      {/* Terminal preview */}
+      <div style={{...sp(0.45),background:'var(--bg-1)',border:'1px solid var(--border-hi)',borderRadius:14,padding:'20px 24px',maxWidth:520,fontFamily:'monospace',fontSize:13}}>
+        <div style={{display:'flex',gap:6,marginBottom:16}}>
+          {['#ff5f57','#febc2e','#28c840'].map(c=><div key={c} style={{width:12,height:12,borderRadius:'50%',background:c}}/>)}
+        </div>
+        <div style={{color:'var(--green)',marginBottom:4}}>$ <span style={{color:'var(--text-2)'}}>Kazi: Open Chat</span></div>
+        <div style={{color:'var(--text-3)',marginBottom:4}}>▸ Connected to Claude Sonnet 4.6</div>
+        <div style={{color:'var(--text-3)',marginBottom:4}}>▸ Memory loaded from .cody_memory.md</div>
+        <div style={{color:A,marginBottom:4}}>Cody: Ready. What are we building?<span style={{animation:'blink 1s step-end infinite',display:'inline-block',marginLeft:2}}>|</span></div>
+      </div>
+    </section>
+
+    {/* SCREENSHOT */}
+    <section className="px-s" style={{padding:'0 32px 72px',maxWidth:1100,margin:'0 auto'}}>
+      <div style={{borderRadius:20,overflow:'hidden',border:'1px solid var(--border-hi)',boxShadow:`0 0 80px ${A}18`}}>
+        <img src="../images/kazi-coder-screenshot.png" alt="Kazi Coder" style={{width:'100%',display:'block'}}/>
+      </div>
+    </section>
+
+    {/* MODEL SUPPORT */}
+    <section className="px-s" style={{padding:'0 32px 72px',maxWidth:1100,margin:'0 auto'}}>
+      <div ref={ref1} className="reveal" style={{marginBottom:32}}>
+        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:10}}>Supported Models</div>
+        <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,letterSpacing:'-1.5px'}}>Claude or GPT —<br/>your key, your choice.</h2>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}} className="d-grid">
+        {models.map((m,i)=>{const r=useReveal();return(
+          <div key={m.provider} ref={r} className="reveal" style={{padding:'28px',background:'var(--bg-1)',border:'1px solid var(--border)',borderRadius:14,borderTop:`2px solid ${m.color}55`,transitionDelay:`${i*0.1}s`}}>
+            <div style={{fontSize:12,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',color:m.color,marginBottom:16}}>{m.provider}</div>
+            {m.models.map(mo=>(
+              <div key={mo} style={{display:'flex',gap:10,alignItems:'flex-start',marginBottom:10}}>
+                <span style={{color:m.color,fontSize:14,flexShrink:0,marginTop:1}}>◆</span>
+                <span style={{fontSize:13,color:'var(--text-2)',lineHeight:1.6}}>{mo}</span>
+              </div>
+            ))}
+          </div>
+        );})}
+      </div>
+    </section>
+
+    {/* FEATURES */}
+    <section className="px-s" style={{padding:'0 32px 72px',maxWidth:1100,margin:'0 auto'}}>
+      <div ref={ref2} className="reveal" style={{marginBottom:32}}>
+        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:10}}>Capabilities</div>
+        <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,letterSpacing:'-1.5px'}}>Built for engineers<br/>who ship.</h2>
+      </div>
+      <div className="d-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        {features.map((f,i)=>{const r=useReveal();return(<div key={f.title} ref={r} className="reveal" style={{padding:'24px 26px',background:'var(--bg-1)',border:'1px solid var(--border)',borderRadius:14,borderTop:`2px solid ${A}44`,transitionDelay:`${i*0.06}s`}}><h3 style={{fontFamily:'var(--font-display)',fontSize:15,fontWeight:700,marginBottom:8,color:A}}>{f.title}</h3><p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.75}}>{f.desc}</p></div>);})}
+      </div>
+    </section>
+
+    {/* COMMANDS */}
+    <section className="px-s" style={{padding:'0 32px 72px',maxWidth:1100,margin:'0 auto'}}>
+      <div ref={ref3} className="reveal" style={{marginBottom:28}}>
+        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:10}}>Commands</div>
+        <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(22px,3vw,32px)',fontWeight:700,letterSpacing:'-1px'}}>Three commands.<br/>Everything you need.</h2>
+      </div>
+      <div className="cmd-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
+        {commands.map((cmd,i)=>{const r=useReveal();return(
+          <div key={cmd.cmd} ref={r} className="reveal" style={{padding:'22px 24px',background:'var(--bg-1)',border:'1px solid var(--border)',borderRadius:14,transitionDelay:`${i*0.08}s`}}>
+            <div style={{fontFamily:'monospace',fontSize:12,fontWeight:700,color:A,marginBottom:8,background:'rgba(232,197,71,0.08)',padding:'5px 10px',borderRadius:6,display:'inline-block'}}>{cmd.cmd}</div>
+            <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.7,marginTop:10}}>{cmd.desc}</p>
+          </div>
+        );})}
+      </div>
+    </section>
+
+    {/* SECURITY */}
+    <section className="px-s" style={{padding:'0 32px 80px',maxWidth:1100,margin:'0 auto'}}>
+      <div style={{background:'var(--bg-1)',border:`1px solid ${A}33`,borderLeft:`3px solid ${A}`,borderRadius:14,padding:'32px 36px'}}>
+        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:16}}>Security & Privacy</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}} className="d-grid">
+          {[
+            {title:'Keys stay private',desc:'API keys stored via VS Code\'s encrypted SecretStorage, backed by your OS keychain. Keys never leave your machine and are never seen or logged by Kazi.'},
+            {title:'Local memory',desc:'Conversation history saved locally in .cody_memory.md per workspace. Your data stays on your computer. Clear the file to reset context at any time.'},
+          ].map(s=>(
+            <div key={s.title}>
+              <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:8}}>
+                <span style={{color:A,fontSize:16}}>✓</span>
+                <h3 style={{fontFamily:'var(--font-display)',fontSize:15,fontWeight:700,color:A}}>{s.title}</h3>
+              </div>
+              <p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.75,paddingLeft:24}}>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* NEXT */}
+    <section style={{padding:'60px 32px',background:'var(--bg-1)',borderTop:'1px solid var(--border)',textAlign:'center'}}>
+      <div style={{marginBottom:14,fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text-3)'}}>Next project</div>
+      <a href="kazi.html" style={{fontFamily:'var(--font-display)',fontSize:'clamp(28px,4vw,48px)',fontWeight:700,color:'var(--text)',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:14,transition:'gap .2s'}} onMouseEnter={e=>e.currentTarget.style.gap='22px'} onMouseLeave={e=>e.currentTarget.style.gap='14px'}>Kazi Orchestrate <span style={{color:'#7c3aed'}}>→</span></a>
+    </section>
+  </>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

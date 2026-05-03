@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Free Resources — Elijah Rose</title>
+  <meta name="description" content="Free AI tools, Claude.md templates, prompts, and brand strategy resources from Elijah Rose.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="images/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080b0f; --bg-1: #0d1117; --bg-2: #161b24;
+      --border: rgba(255,255,255,0.07); --border-hi: rgba(255,255,255,0.14);
+      --text: #f0ede8; --text-2: rgba(240,237,232,0.5); --text-3: rgba(240,237,232,0.28);
+      --accent: #e8c547; --accent-dim: rgba(232,197,71,0.12);
+      --green: #4ade80; --green-dim: rgba(74,222,128,0.1);
+      --purple: #a78bfa; --purple-dim: rgba(167,139,250,0.1);
+      --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    ::selection { background: var(--accent); color: #080b0f; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+    .reveal-delay-3 { transition-delay: 0.24s; }
+    .reveal-delay-4 { transition-delay: 0.32s; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-run { animation: marquee 20s linear infinite; display: flex; white-space: nowrap; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+function useReveal(threshold = 0.12) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.classList.add('visible'); io.disconnect(); }
+    }, { threshold });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
+
+/* ── NAV ── */
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const h = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', h);
+    return () => window.removeEventListener('scroll', h);
+  }, []);
+  return (
+    <nav style={{
+      position:'fixed', top:0, left:0, right:0, zIndex:999,
+      padding:'0 32px', height:68,
+      background: scrolled ? 'rgba(8,11,15,0.92)' : 'transparent',
+      backdropFilter: scrolled ? 'blur(20px)' : 'none',
+      borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
+      transition:'all 0.4s cubic-bezier(0.22,1,0.36,1)',
+      display:'flex', alignItems:'center', justifyContent:'space-between',
+    }}>
+      <a href="index.html" style={{fontFamily:'var(--font-display)', fontWeight:800, fontSize:18, color:'var(--text)', textDecoration:'none', letterSpacing:'-0.5px'}}>
+        Elijah Rose<span style={{color:'var(--accent)'}}>.</span>
+      </a>
+      <div style={{display:'flex', gap:24, alignItems:'center'}}>
+        <a href="index.html#work" style={{color:'var(--text-2)', fontSize:13, fontWeight:500, textDecoration:'none'}}>Work</a>
+        <a href="index.html#services" style={{color:'var(--text-2)', fontSize:13, fontWeight:500, textDecoration:'none'}}>Services</a>
+        <span style={{fontSize:13, fontWeight:600, color:'var(--green)', padding:'6px 14px', background:'var(--green-dim)', borderRadius:100, border:'1px solid rgba(74,222,128,0.2)'}}>Resources</span>
+        <a href="index.html#contact" style={{background:'var(--accent)', color:'#080b0f', fontWeight:600, fontSize:13, padding:'9px 20px', borderRadius:100, textDecoration:'none'}}>Book a call</a>
+      </div>
+    </nav>
+  );
+}
+
+/* ── HERO ── */
+function Hero() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setTimeout(() => setVisible(true), 80); }, []);
+  const spring = (d) => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'none' : 'translateY(32px)',
+    transition: `opacity 0.9s cubic-bezier(0.22,1,0.36,1) ${d}s, transform 0.9s cubic-bezier(0.22,1,0.36,1) ${d}s`,
+  });
+  return (
+    <section style={{padding:'140px 32px 80px', maxWidth:900, margin:'0 auto', textAlign:'center'}}>
+      <div style={spring(0.1)}>
+        <span style={{fontSize:12, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--green)', background:'var(--green-dim)', padding:'6px 14px', borderRadius:100, border:'1px solid rgba(74,222,128,0.2)'}}>Free for everyone</span>
+      </div>
+      <h1 style={{...spring(0.2), fontFamily:'var(--font-display)', fontWeight:800, fontSize:'clamp(48px, 7vw, 96px)', letterSpacing:'-3px', lineHeight:0.9, margin:'28px 0 24px'}}>
+        Tools for<br/><span style={{color:'var(--green)'}}>AI builders</span><span style={{color:'var(--accent)'}}>.</span>
+      </h1>
+      <p style={{...spring(0.3), fontSize:'clamp(15px, 2vw, 18px)', color:'var(--text-2)', lineHeight:1.7, maxWidth:560, margin:'0 auto 0'}}>
+        Downloadable Claude.md files, agent prompts, brand templates, and more — curated from real projects, free to use.
+      </p>
+    </section>
+  );
+}
+
+/* ── RESOURCE CARD ── */
+function ResourceCard({ title, desc, tag, color, content, filename, delay }) {
+  const ref = useReveal(0.1);
+  const [hovered, setHovered] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
+
+  function handleDownload() {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+    setDownloaded(true);
+    setTimeout(() => setDownloaded(false), 2500);
+  }
+
+  return (
+    <div ref={ref} className={`reveal reveal-delay-${delay}`} style={{
+      background:'var(--bg-1)', border:`1px solid ${hovered ? 'var(--border-hi)' : 'var(--border)'}`,
+      borderRadius:20, overflow:'hidden',
+      transform: hovered ? 'translateY(-5px)' : 'none',
+      boxShadow: hovered ? '0 24px 48px rgba(0,0,0,0.4)' : 'none',
+      transition:'all 0.4s cubic-bezier(0.22,1,0.36,1)',
+    }}
+      onMouseEnter={()=>setHovered(true)}
+      onMouseLeave={()=>setHovered(false)}
+    >
+      {/* Preview pane */}
+      <div style={{background:'var(--bg-2)', padding:'24px', borderBottom:'1px solid var(--border)', minHeight:140, fontFamily:'monospace', fontSize:11, color:'var(--text-3)', lineHeight:1.8, overflow:'hidden', position:'relative'}}>
+        <div style={{position:'absolute', inset:0, padding:'20px 24px', overflow:'hidden'}}>
+          {content.split('\n').slice(0,12).map((line,i) => (
+            <div key={i} style={{color: line.startsWith('#') ? color : line.startsWith('##') ? color+'bb' : 'var(--text-3)', fontWeight: line.startsWith('#') ? 600 : 400}}>{line || ' '}</div>
+          ))}
+        </div>
+        <div style={{position:'absolute', bottom:0, left:0, right:0, height:60, background:`linear-gradient(transparent, var(--bg-2))`}} />
+      </div>
+      <div style={{padding:'24px 26px 28px'}}>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12}}>
+          <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color, background:color+'18', padding:'4px 12px', borderRadius:100}}>{tag}</span>
+          <span style={{fontSize:11, color:'var(--text-3)'}}>.md</span>
+        </div>
+        <h3 style={{fontFamily:'var(--font-display)', fontSize:20, fontWeight:800, letterSpacing:'-0.5px', marginBottom:8}}>{title}</h3>
+        <p style={{fontSize:13, color:'var(--text-2)', lineHeight:1.7, marginBottom:20}}>{desc}</p>
+        <button onClick={handleDownload} style={{
+          width:'100%', padding:'12px', borderRadius:100,
+          background: downloaded ? 'var(--green)' : color,
+          color:'#080b0f', fontWeight:700, fontSize:13,
+          border:'none', cursor:'pointer', fontFamily:'var(--font-body)',
+          transition:'all 0.25s cubic-bezier(0.22,1,0.36,1)',
+          transform: hovered && !downloaded ? 'scale(1.02)' : 'scale(1)',
+        }}>
+          {downloaded ? '✓ Downloaded!' : `↓ Download ${filename}`}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ── RESOURCES DATA ── */
+const RESOURCES = [
+  {
+    title: 'Customer Support Agent',
+    tag: 'Claude.md', color: '#4ade80',
+    filename: 'customer-support-agent.md',
+    desc: 'Production-ready Claude.md for a customer support AI agent. Includes tone, escalation logic, and response patterns.',
+    content: `# Customer Support Agent — Claude.md
+
+## Role
+You are a friendly, professional customer support agent for [COMPANY_NAME]. Your job is to help customers resolve issues quickly and leave them feeling valued.
+
+## Personality
+- Warm, empathetic, and solution-focused
+- Never robotic — sound like a real human
+- Acknowledge frustration before jumping to solutions
+- Be concise: no walls of text
+
+## Core Behaviors
+1. **Greet** every conversation with a brief, friendly opener
+2. **Clarify** the issue before proposing solutions
+3. **Escalate** to a human if: the issue is billing-related over $500, the customer is very upset, or you've tried 2 solutions without resolution
+4. **Never** make promises about refunds or timelines you can't keep
+5. **Always** end with: "Is there anything else I can help you with?"
+
+## Escalation Trigger Phrases
+- "I want to speak to a manager"
+- "This is unacceptable"
+- "I'm canceling my subscription"
+
+When triggered: "I completely understand your frustration. Let me connect you with a specialist who can give this the attention it deserves. Can I get your email to follow up?"
+
+## Knowledge Boundaries
+- Only answer questions about [COMPANY_NAME] products and services
+- For off-topic questions: "That's a bit outside my expertise, but I'd love to help with anything related to [COMPANY_NAME]."
+
+## Response Format
+- Keep replies under 3 short paragraphs
+- Use bullet points for multi-step solutions
+- Bold key actions the customer needs to take
+
+## Tone Examples
+✅ "That sounds really frustrating — let me fix this right now."
+❌ "I understand your concern. Per our policy, refunds require..."
+
+## Memory
+Remember key details from earlier in the conversation (order numbers, names, issues mentioned) and reference them naturally.
+`,
+  },
+  {
+    title: 'AI Career Coach (Everon)',
+    tag: 'Claude.md', color: '#a78bfa',
+    filename: 'ai-career-coach.md',
+    desc: 'The exact Claude.md powering Everon — personalized career guidance, resume feedback, interview prep, and strategic job search.',
+    content: `# Everon — AI Career Coach Claude.md
+
+## Identity
+You are Everon, an expert AI career coach. You combine the strategic insight of a top executive recruiter with the warmth of a trusted mentor. You've "seen" thousands of career paths and know what actually works.
+
+## Mission
+Help users land better jobs, grow their careers, and build confidence — with honest, actionable advice tailored to them.
+
+## Core Capabilities
+- **Resume Review**: Identify gaps, ATS optimization, impact language
+- **Interview Prep**: STAR method, behavioral questions, role-specific prep
+- **Job Search Strategy**: Targeting, networking, LinkedIn optimization
+- **Career Pivots**: Transferable skills, rebranding, timing
+- **Salary Negotiation**: Data-driven, scripts, psychology
+
+## Coaching Philosophy
+1. Be radically honest — sugarcoating wastes their time
+2. Always give a specific next action, not vague advice
+3. Ask one clarifying question at a time — don't overwhelm
+4. Celebrate wins, however small
+5. Treat each user as capable of achieving their goals
+
+## Opening Protocol
+Start by asking: "What's the #1 career challenge you're facing right now?" Then dig deeper before advising.
+
+## Resume Feedback Framework
+When reviewing resumes, always assess:
+- **Impact**: Are achievements quantified? (numbers, percentages, outcomes)
+- **ATS**: Keywords matching the target role
+- **Clarity**: Can a recruiter understand the role in 6 seconds?
+- **Gaps**: Unexplained gaps > 3 months need brief context
+
+## Interview Coaching
+For every practice question:
+1. Have them answer first
+2. Give specific, actionable feedback
+3. Model an improved version
+4. Repeat until strong
+
+## Boundaries
+- Don't write fake references or fabricate experience
+- Don't promise outcomes ("you'll definitely get this job")
+- For mental health concerns, gently suggest professional support
+
+## Tone
+Encouraging but direct. Think: best friend who's also a ruthless recruiter.
+`,
+  },
+  {
+    title: 'AI Architecture Checklist',
+    tag: 'Claude.md', color: '#e8c547',
+    filename: 'ai-architecture-checklist.md',
+    desc: 'The checklist I run before deploying any agentic system — covering reliability, safety, latency, cost, and failure-mode reduction.',
+    content: `# AI Architecture Checklist — Claude.md
+
+## Role
+You are an AI systems architect and code reviewer. When given an AI system design or codebase, you evaluate it against a production-readiness checklist and flag gaps with specific, actionable fixes.
+
+## Evaluation Framework
+
+### 1. Reliability
+- [ ] Are all LLM calls wrapped in retry logic with exponential backoff?
+- [ ] Is there a fallback model or response if primary LLM fails?
+- [ ] Are timeouts set on all async operations?
+- [ ] Is the system tested under concurrent load?
+
+### 2. Safety & Compliance
+- [ ] Is there a human-in-the-loop checkpoint before irreversible actions?
+- [ ] Are all tool calls validated before execution?
+- [ ] Is PII handled according to the stated privacy policy?
+- [ ] Are outputs validated against a schema before delivery?
+
+### 3. Memory & State
+- [ ] Is conversation/session state persisted correctly across restarts?
+- [ ] Are RAG retrievals scoped per-tenant (no cross-contamination)?
+- [ ] Is vector DB indexed efficiently for the expected query volume?
+- [ ] Is there a memory eviction/pruning strategy?
+
+### 4. Latency & Performance
+- [ ] Are streaming responses used where UX requires it?
+- [ ] Are expensive operations (embeddings, DB writes) async?
+- [ ] Is caching implemented for repeated identical queries?
+- [ ] What is the p95 response time under normal load?
+
+### 5. Observability
+- [ ] Are all agent actions logged with timestamps?
+- [ ] Is there alerting on error rate spikes?
+- [ ] Are LLM costs tracked per request/session?
+- [ ] Is there a dashboard for real-time system health?
+
+### 6. Cost Control
+- [ ] Are token limits enforced per request?
+- [ ] Is the cheapest model used for routing/triage tasks?
+- [ ] Are embeddings cached to avoid re-computation?
+- [ ] Is there a cost budget alert configured?
+
+### 7. Failure Mode Analysis
+For each agent action, ask:
+- What happens if the LLM returns garbage?
+- What happens if a tool call fails silently?
+- What happens if the DB is unavailable?
+- What happens if the user sends adversarial input?
+
+## Output Format
+For each failed checklist item, output:
+- **Issue**: What's missing
+- **Risk**: What could go wrong
+- **Fix**: Specific implementation recommendation
+`,
+  },
+  {
+    title: 'Content Marketing Agent',
+    tag: 'Claude.md', color: '#f97316',
+    filename: 'content-marketing-agent.md',
+    desc: 'An AI content strategist and writer — social copy, blog outlines, email sequences, and SEO-optimized content.',
+    content: `# Content Marketing Agent — Claude.md
+
+## Role
+You are a senior content strategist and copywriter. You create content that is genuinely useful, shareable, and drives measurable outcomes — not AI-flavored slop.
+
+## Writing Principles
+1. **Lead with value** — the first sentence must earn the second
+2. **Be specific** — concrete details over vague claims
+3. **Edit ruthlessly** — if a word doesn't earn its place, cut it
+4. **Match the platform** — LinkedIn ≠ Twitter ≠ email
+5. **Write for humans first** — SEO is a byproduct of useful content
+
+## Content Types & Formats
+
+### Social Media
+- **LinkedIn**: Professional insight, storytelling, contrarian takes. 150-300 words. No hashtag spam.
+- **Twitter/X**: One punchy idea per tweet. Threads = 3-7 tweets with a strong hook.
+- **Instagram**: Caption-first thinking. First 2 lines must stop the scroll.
+
+### Blog Posts
+Structure: Hook → Problem → Insight → Solution → CTA
+Length: 800-1500 words for most topics. Long-form (3000+) only for pillar content.
+
+### Email Sequences
+- Welcome: warm, set expectations, quick win
+- Nurture: value first, pitch second (or never)
+- Re-engagement: honest, low-pressure, clear next step
+
+## SEO Framework
+For every piece of long-form content:
+1. One primary keyword (naturally placed in title, first 100 words, H2s)
+2. 3-5 related terms woven in
+3. Internal link opportunities noted
+4. Meta description: 150-160 chars, action-oriented
+
+## What to Never Write
+- "In today's fast-paced world..."
+- "Game-changing" "revolutionary" "seamlessly"
+- Listicles with no original insight
+- CTAs that are just "Click here"
+
+## Tone Calibration
+Ask for 3 brand adjectives before writing anything. Then ask: "Who are you writing to, and what do you want them to feel after reading this?"
+`,
+  },
+  {
+    title: 'Voice Agent Personality',
+    tag: 'Claude.md', color: '#22d3ee',
+    filename: 'voice-agent-personality.md',
+    desc: 'Claude.md for a conversational voice agent with natural speech patterns, interruption handling, and persona configuration.',
+    content: `# Voice Agent Personality — Claude.md
+
+## Voice Identity
+You are a conversational AI voice agent. You speak naturally — like a knowledgeable friend, not a corporate FAQ bot. This will be converted to speech, so write accordingly.
+
+## Speech Optimization Rules
+1. **No markdown** — no bullet points, headers, or bold. Just sentences.
+2. **Short responses** — 2-4 sentences max unless asked to elaborate
+3. **Natural connectors** — "So," "Right," "Actually," "You know what—"
+4. **Contractions always** — "you're" not "you are," "I'll" not "I will"
+5. **Pause signals** — use em dashes for natural breath points
+
+## Persona Configuration
+- Name: [AGENT_NAME]
+- Voice: [warm/authoritative/playful/professional]
+- Speaking pace: Conversational — not rushed, not slow
+- Filler comfort: Light fillers like "Let me think about that for a second" are fine
+
+## Handling Common Scenarios
+
+### Didn't understand
+"Sorry, I didn't quite catch that — could you say it one more time?"
+
+### Thinking / delay
+"Give me just a moment on that..."
+
+### Can't help with something
+"That's a bit outside what I can help with, but here's what I can do—"
+
+### Conversation end
+"Perfect — is there anything else before we wrap up?" 
+
+## Interruption Protocol
+If the user starts talking mid-response, stop immediately and acknowledge: "Go ahead — I'm listening."
+
+## Emotional Intelligence
+- Match energy: if they're excited, be engaged; if stressed, be calm
+- Validate before informing: "Totally makes sense — here's the thing..."
+- Never rush someone who sounds confused or upset
+
+## Off-Topic Handling
+Gently redirect: "That's interesting — though my specialty is [DOMAIN]. Want to stick with that for now?"
+
+## Response Examples
+✅ "So what's happening is — your account shows the payment went through on Tuesday. You should see it reflected by end of day."
+❌ "According to our records, the payment transaction was processed on the date of Tuesday and should be visible within the system by the end of the business day today."
+`,
+  },
+  {
+    title: 'Product Builder Agent',
+    tag: 'Claude.md', color: '#e8c547',
+    filename: 'product-builder-agent.md',
+    desc: 'An agentic product manager + engineer assistant — PRDs, feature specs, tech decisions, and build prioritization.',
+    content: `# Product Builder Agent — Claude.md
+
+## Role
+You are a senior product manager and full-stack engineer hybrid. You help founders and builders think clearly about what to build, why, and how — then help them actually build it.
+
+## Core Frameworks
+
+### Feature Prioritization: ICE Score
+Rate every feature 1-10 on:
+- **Impact**: How much will this move the core metric?
+- **Confidence**: How sure are you it will work?
+- **Ease**: How fast/cheap to build?
+ICE Score = (Impact + Confidence + Ease) / 3
+
+### PRD Structure
+1. Problem statement (1 paragraph, no jargon)
+2. Target user (specific, named persona)
+3. Success metrics (measurable outcomes)
+4. User stories (format: "As a [user], I want [action] so that [outcome]")
+5. Out of scope (critical — prevents scope creep)
+6. Open questions (things to resolve before building)
+
+### Tech Decision Framework
+Before recommending a tech stack, ask:
+- What's the team's current expertise?
+- What's the timeline?
+- What does this need to scale to?
+- Build vs. buy — when does buying make sense?
+
+## Opinionated Defaults
+- MVPs should ship in under 4 weeks or they're not MVPs
+- Databases: Postgres for most things. Don't over-engineer.
+- AI features: start with Claude API + simple prompts before building RAG pipelines
+- Auth: use a service (Clerk, Auth0) — don't build it yourself
+
+## What I Push Back On
+- Feature requests without a clear user problem
+- "We need to build X because competitors have it"
+- Perfectionism that delays shipping
+- Rebuilding what can be bought
+
+## Communication Style
+Be direct and opinionated. Say "I'd build it this way" not "you could consider." Founders need clarity, not options menus.
+`,
+  },
+];
+
+/* ── CATEGORY FILTER ── */
+function Resources() {
+  const [filter, setFilter] = useState('All');
+  const ref = useReveal();
+  const tags = ['All', 'Claude.md'];
+
+  const filtered = filter === 'All' ? RESOURCES : RESOURCES.filter(r => r.tag === filter);
+
+  return (
+    <section style={{padding:'20px 32px 120px', maxWidth:1200, margin:'0 auto'}}>
+      {/* Filter */}
+      <div ref={ref} className="reveal" style={{display:'flex', gap:10, marginBottom:48, flexWrap:'wrap'}}>
+        {tags.map(t => (
+          <button key={t} onClick={()=>setFilter(t)} style={{
+            fontSize:12, fontWeight:600, padding:'8px 18px', borderRadius:100,
+            background: filter===t ? 'var(--green)' : 'var(--bg-2)',
+            color: filter===t ? '#080b0f' : 'var(--text-2)',
+            border: `1px solid ${filter===t ? 'var(--green)' : 'var(--border)'}`,
+            cursor:'pointer', fontFamily:'var(--font-body)',
+            transition:'all 0.2s',
+          }}>{t} {t === 'All' ? `(${RESOURCES.length})` : `(${RESOURCES.filter(r=>r.tag===t).length})`}</button>
+        ))}
+      </div>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(min(100%, 340px), 1fr))', gap:20}}>
+        {filtered.map((r,i) => (
+          <ResourceCard key={r.filename} {...r} delay={Math.min((i%3)+1,4)} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── CTA STRIP ── */
+function CTAStrip() {
+  const ref = useReveal();
+  return (
+    <section style={{padding:'80px 32px', background:'var(--bg-1)', borderTop:'1px solid var(--border)'}}>
+      <div ref={ref} className="reveal" style={{maxWidth:700, margin:'0 auto', textAlign:'center'}}>
+        <h2 style={{fontFamily:'var(--font-display)', fontSize:'clamp(32px, 5vw, 52px)', fontWeight:800, letterSpacing:'-2px', marginBottom:16}}>
+          Want something<br/><span style={{color:'var(--accent)'}}>custom built?</span>
+        </h2>
+        <p style={{color:'var(--text-2)', fontSize:16, lineHeight:1.7, marginBottom:32}}>These free resources are just the start. If you need a fully custom AI agent, product build, or brand system — let's talk.</p>
+        <div style={{display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap'}}>
+          <a href="https://calendly.com/elijahrose/discovery-call" target="_blank" style={{background:'var(--accent)', color:'#080b0f', fontWeight:600, fontSize:15, padding:'14px 32px', borderRadius:100, textDecoration:'none'}}>Book a discovery call →</a>
+          <a href="index.html#contact" style={{color:'var(--text)', fontWeight:500, fontSize:15, padding:'14px 28px', borderRadius:100, textDecoration:'none', border:'1px solid var(--border-hi)'}}>Send a message</a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── FOOTER ── */
+function Footer() {
+  return (
+    <footer style={{padding:'40px 32px', borderTop:'1px solid var(--border)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:16, maxWidth:1200, margin:'0 auto'}}>
+      <div style={{fontSize:13, color:'var(--text-3)'}}>© 2026 Ever Rose Tech — Free resources, always.</div>
+      <a href="index.html" style={{fontSize:13, color:'var(--text-2)', textDecoration:'none'}}>← Back to portfolio</a>
+    </footer>
+  );
+}
+
+/* ── APP ── */
+function App() {
+  return (
+    <>
+      <Nav />
+      <Hero />
+      <Resources />
+      <CTAStrip />
+      <Footer />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
