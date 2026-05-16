@@ -103,6 +103,8 @@
       .nav-links-desktop { display: none !important; }
       .about-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
       .projects-grid { grid-template-columns: 1fr !important; }
+      .project-section-grid { grid-template-columns: 1fr !important; }
+      .project-section-preview { height: 360px !important; }
       .services-grid { grid-template-columns: 1fr !important; }
       .pricing-grid { grid-template-columns: 1fr !important; }
       .contact-grid { grid-template-columns: 1fr !important; }
@@ -183,6 +185,72 @@ function useReveal(threshold = 0.15) {
   }, []);
   return ref;
 }
+function Icon({ name, size = 16, color = 'currentColor', stroke = 2, style = {} }) {
+  const base = {
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: color,
+    strokeWidth: stroke,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    style: { display: 'block', ...style },
+    'aria-hidden': true,
+  };
+
+  switch (name) {
+    case 'check':
+      return <svg {...base}><path d="M5 13l4 4L19 7" /></svg>;
+    case 'checkCircle':
+      return <svg {...base}><circle cx="12" cy="12" r="9" /><path d="M8 12l3 3 5-6" /></svg>;
+    case 'bolt':
+      return <svg {...base}><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" /></svg>;
+    case 'robot':
+      return (
+        <svg {...base}>
+          <rect x="4" y="7" width="16" height="12" rx="3" />
+          <path d="M12 3v4" />
+          <circle cx="9" cy="13" r="1" />
+          <circle cx="15" cy="13" r="1" />
+          <path d="M9 17h6" />
+        </svg>
+      );
+    case 'cpu':
+      return (
+        <svg {...base}>
+          <rect x="7" y="7" width="10" height="10" rx="2" />
+          <path d="M4 9h3M4 15h3M17 9h3M17 15h3M9 4v3M15 4v3M9 17v3M15 17v3" />
+        </svg>
+      );
+    case 'phone':
+      return <svg {...base}><path d="M22 16.5v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.5 5.2 2 2 0 0 1 5.5 3h3a2 2 0 0 1 2 1.7l.6 2.6a2 2 0 0 1-.5 1.9l-1.5 1.5a16 16 0 0 0 6.5 6.5l1.5-1.5a2 2 0 0 1 1.9-.5l2.6.6a2 2 0 0 1 1.7 2z" /></svg>;
+    case 'chart':
+      return <svg {...base}><path d="M4 19h16" /><path d="M8 16v-6M12 16v-8M16 16v-4" /></svg>;
+    case 'folder':
+      return <svg {...base}><path d="M3 7h6l2 2h10v9a2 2 0 0 1-2 2H3z" /></svg>;
+    case 'mail':
+      return <svg {...base}><rect x="2" y="6" width="20" height="12" rx="2" /><path d="M22 8l-10 6L2 8" /></svg>;
+    case 'spark':
+      return <svg {...base}><path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.6-4.9-2.6-4.9 2.6.9-5.6-4-3.9 5.5-.8z" /></svg>;
+    case 'file':
+      return <svg {...base}><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6" /></svg>;
+    case 'mic':
+      return <svg {...base}><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z" /><path d="M19 10v1a7 7 0 0 1-14 0v-1" /><path d="M12 19v3" /></svg>;
+    case 'lock':
+      return <svg {...base}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>;
+    case 'wrench':
+      return <svg {...base}><path d="M14 7a5 5 0 0 0-6.8 6.8L2 19l3 3 5.2-5.2A5 5 0 0 0 17 10l-3 3-2-2 3-3z" /></svg>;
+    case 'puzzle':
+      return <svg {...base}><path d="M9 3h6a1 1 0 0 1 1 1v3a2 2 0 1 0 0 4v3a1 1 0 0 1-1 1H9v-3a2 2 0 1 1 0-4V4a1 1 0 0 1 1-1z" /></svg>;
+    case 'refresh':
+      return <svg {...base}><path d="M21 12a9 9 0 1 1-2.6-6.4" /><path d="M21 3v6h-6" /></svg>;
+    case 'download':
+      return <svg {...base}><path d="M12 3v12" /><path d="M7 10l5 5 5-5" /><path d="M5 21h14" /></svg>;
+    default:
+      return null;
+  }
+}
 
 /* ─── NAV ─── */
 function Nav() {
@@ -197,7 +265,7 @@ function Nav() {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
-  const links = ['Work','About','Services','Process','Resources','Contact'];
+  const links = ['Work','About','Mindset','Services','Process','Resources','Contact'];
   return (
     <>
       <nav style={{
@@ -312,8 +380,8 @@ function Hero() {
         <h1 style={{...spring(0.2), fontFamily:'var(--font-display)', fontWeight:800, fontSize:'clamp(52px, 8vw, 108px)', lineHeight:0.92, letterSpacing:'-3px', marginBottom:36}}>
           <span className="shimmer-text">AI Systems</span><br/><span style={{color:'var(--text-2)'}}>Engineer</span><span style={{color:'var(--accent)'}}>.</span>
         </h1>
-        <p style={{...spring(0.35), fontSize:'clamp(15px, 2vw, 19px)', color:'var(--text-2)', maxWidth:480, lineHeight:1.65, marginBottom:44}}>
-          Technical specialist managing the complete AI design-to-deployment pipeline — architecting, evaluating, and repairing production-grade systems that prioritize precision, strict compliance, and team coordination over unmonitored autonomy.
+        <p style={{...spring(0.35), fontSize:'clamp(15px, 2vw, 19px)', color:'var(--text-2)', maxWidth:520, lineHeight:1.65, marginBottom:44}}>
+          I build AI systems that ship cleanly, stay accountable, and respect real-world constraints. This portfolio is also a field guide: the mindset, ethics, and best practices I rely on so builders leave with something useful.
         </p>
         <div style={{...spring(0.45), display:'flex', gap:14, flexWrap:'wrap', alignItems:'center'}} className="hero-btns">
           <a href="#work" style={{
@@ -324,7 +392,7 @@ function Hero() {
             onMouseEnter={e=>{e.currentTarget.style.transform='scale(1.03)';}}
             onMouseLeave={e=>{e.currentTarget.style.transform='scale(1)';}}
           >See my work ↓</a>
-          <a href="https://calendly.com/elijahrose/discovery-call" target="_blank" style={{
+          <a href="#resources" style={{
             color:'var(--text)', fontWeight:500, fontSize:15,
             padding:'14px 28px', borderRadius:100, textDecoration:'none',
             border:'1px solid var(--border-hi)',
@@ -332,10 +400,10 @@ function Hero() {
           }}
             onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(255,255,255,0.3)';}}
             onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border-hi)';}}
-          >Schedule a call</a>
+          >Explore resources</a>
         </div>
         <div style={{...spring(0.55), display:'flex', gap:32, marginTop:56, paddingTop:36, borderTop:'1px solid var(--border)'}} className="stats-row">
-          {[['6','AI systems built','var(--accent)'],['12mo','Solo, production','var(--cyan)'],['3','Live products','var(--purple)']].map(([n,l,col])=>(
+          {[['6','AI systems built','var(--accent)'],['12mo','Production delivery','var(--cyan)'],['3','Live products','var(--purple)']].map(([n,l,col])=>(
             <div key={n}>
               <div style={{fontFamily:'var(--font-display)', fontSize:36, fontWeight:700, letterSpacing:'-1px', color:col, textShadow:`0 0 30px ${col}55`}}>{n}</div>
               <div style={{fontSize:12, color:'var(--text-2)', marginTop:2, textTransform:'uppercase', letterSpacing:'0.06em'}}>{l}</div>
@@ -391,6 +459,7 @@ function Marquee() {
 
 /* ─── TECH STACK ─── */
 function TechStack() {
+  const [open, setOpen] = useState(false);
   const techs = [
     {name:'Claude API', color:'var(--accent)', bg:'var(--accent-dim)', dot:'#e8c547'},
     {name:'GPT-4o', color:'var(--accent)', bg:'var(--accent-dim)', dot:'#e8c547'},
@@ -413,29 +482,48 @@ function TechStack() {
   return (
     <section style={{padding:'72px 32px', background:'var(--bg-1)', borderTop:'1px solid var(--border)', borderBottom:'1px solid var(--border)'}}>
       <div style={{maxWidth:1200, margin:'0 auto'}}>
-        <div ref={ref} className="reveal" style={{marginBottom:32, textAlign:'center'}}>
-          <span style={{fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--text-3)'}}>Tech stack</span>
+        <div ref={ref} className="reveal" style={{textAlign:'center'}}>
+          <span style={{fontSize:11, fontWeight:600, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--text-3)'}}>Details</span>
+          <h3 style={{fontFamily:'var(--font-display)', fontSize:'clamp(22px, 3vw, 28px)', fontWeight:700, letterSpacing:'-0.6px', margin:'10px 0 14px'}}>Tech stack (secondary)</h3>
+          <p style={{color:'var(--text-2)', fontSize:14, maxWidth:520, margin:'0 auto'}}>Outcomes lead. The stack is here if you want to see implementation detail.</p>
         </div>
-        <div style={{display:'flex', flexWrap:'wrap', gap:10, justifyContent:'center'}}>
-          {techs.map((t,i) => (
-            <span key={t.name} className="tech-badge reveal" style={{
-              color:t.color, background:t.bg, borderColor:t.color+'33',
-              opacity:0, transform:'translateY(20px)',
-              transition:`opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${i*0.06}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${i*0.06}s`,
-            }}
-              ref={el => {
-                if (!el) return;
-                const io = new IntersectionObserver(([e]) => {
-                  if (e.isIntersecting) { el.style.opacity='1'; el.style.transform='translateY(0)'; io.disconnect(); }
-                }, {threshold:0.1});
-                io.observe(el);
+        <details
+          style={{marginTop:28, background:'var(--bg)', border:'1px solid var(--border)', borderRadius:18, padding:'14px 18px'}}
+          onToggle={e => setOpen(e.currentTarget.open)}
+        >
+          <summary style={{cursor:'pointer', listStyle:'none', display:'flex', alignItems:'center', justifyContent:'space-between', fontWeight:600, color:'var(--text)', fontSize:14}}>
+            View tech stack
+            <span style={{
+              color:'var(--text-3)',
+              transition:'transform 0.25s cubic-bezier(0.22,1,0.36,1), opacity 0.25s ease',
+              transform: open ? 'rotate(180deg) scale(1.05)' : 'rotate(0deg) scale(1)',
+              opacity: open ? 0.9 : 0.7,
+              display:'inline-flex',
+              width:14,
+              justifyContent:'center',
+            }}>{open ? '−' : '+'}</span>
+          </summary>
+          <div style={{marginTop:18, display:'flex', flexWrap:'wrap', gap:10, justifyContent:'center'}}>
+            {techs.map((t,i) => (
+              <span key={t.name} className="tech-badge reveal" style={{
+                color:t.color, background:t.bg, borderColor:t.color+'33',
+                opacity:0, transform:'translateY(20px)',
+                transition:`opacity 0.5s cubic-bezier(0.22,1,0.36,1) ${i*0.06}s, transform 0.5s cubic-bezier(0.22,1,0.36,1) ${i*0.06}s`,
               }}
-            >
-              <span style={{width:6,height:6,borderRadius:'50%',background:t.dot,display:'inline-block',boxShadow:`0 0 6px ${t.dot}`}}></span>
-              {t.name}
-            </span>
-          ))}
-        </div>
+                ref={el => {
+                  if (!el) return;
+                  const io = new IntersectionObserver(([e]) => {
+                    if (e.isIntersecting) { el.style.opacity='1'; el.style.transform='translateY(0)'; io.disconnect(); }
+                  }, {threshold:0.1});
+                  io.observe(el);
+                }}
+              >
+                <span style={{width:6,height:6,borderRadius:'50%',background:t.dot,display:'inline-block',boxShadow:`0 0 6px ${t.dot}`}}></span>
+                {t.name}
+              </span>
+            ))}
+          </div>
+        </details>
       </div>
     </section>
   );
@@ -455,8 +543,11 @@ function About() {
           <p style={{color:'var(--text-2)', lineHeight:1.8, marginBottom:20, fontSize:16}}>
             I'm Elijah Rose — AI Engineer and founder of Elijah Rose. I design and deploy agentic AI systems, voice agents, and intelligent digital products for founders and product teams.
           </p>
+          <p style={{color:'var(--text-2)', lineHeight:1.8, marginBottom:20, fontSize:16}}>
+            I collaborate directly with teams and integrate into existing workflows, contributing as a focused builder or a technical lead.
+          </p>
           <p style={{color:'var(--text-2)', lineHeight:1.8, marginBottom:36, fontSize:16}}>
-            Creative developer who went deep on AI engineering in early 2025. Built 6 production-architecture AI systems in 12 months — solo. Design background means systems are built for real users and operators, not just to compile. Currently focused on AI code generation evaluation: systematic approaches to validate and harden AI-generated code before it ships.
+            Creative developer who went deep on AI engineering in early 2025. Built 6 production-architecture AI systems in 12 months. Design background means systems are built for real users and operators, not just to compile. My focus is honest, testable AI: guardrails, evaluation, and a clear human checkpoint before anything reaches production.
           </p>
           <div style={{display:'flex', gap:12, flexWrap:'wrap'}}>
             {['Multi-Agent Orchestration','Voice AI','RAG Systems','LLM Evaluation','FastAPI','AWS'].map(tag => (
@@ -486,81 +577,724 @@ function About() {
 
 function var_radius() { return 'var(--radius)'; }
 
-/* ─── PROJECT CARD ─── */
-function ProjectCard({ index, title, tag, desc, image, accent, href, delay, stack }) {
-  const ref = useReveal(0.1);
-  const [hovered, setHovered] = useState(false);
+/* ─── MINDSET ─── */
+function Mindset() {
+  const ref = useReveal();
+  const values = [
+    {
+      title:'Mindset',
+      items:[
+        'Build for reliability before novelty',
+        'Ship small, iterate with real feedback',
+        'Prefer clarity over cleverness',
+      ],
+      color:'var(--accent)',
+      bg:'var(--accent-dim)',
+    },
+    {
+      title:'Ethics',
+      items:[
+        'Human-in-the-loop for critical actions',
+        'Transparent outputs and traceable decisions',
+        'Privacy-respecting data boundaries',
+      ],
+      color:'var(--cyan)',
+      bg:'var(--cyan-dim)',
+    },
+    {
+      title:'Operating Style',
+      items:[
+        'Strong contracts between systems',
+        'Measured latency, cost, and failure rates',
+        'Production checks before scale',
+      ],
+      color:'var(--green)',
+      bg:'var(--green-dim)',
+    },
+  ];
   return (
-    <div ref={ref} className={`reveal reveal-delay-${delay}`} style={{
-      position:'relative', borderRadius:24, overflow:'hidden',
-      background:'var(--bg-1)', border:'1px solid var(--border)',
-      transition:'all 0.5s cubic-bezier(0.22,1,0.36,1)',
-      transform: hovered ? 'translateY(-6px)' : 'none',
-      boxShadow: hovered ? `0 32px 64px rgba(0,0,0,0.5)` : 'none',
-      cursor:'pointer',
-    }}
-      onMouseEnter={()=>setHovered(true)}
-      onMouseLeave={()=>setHovered(false)}
-    >
-      <div style={{height:320, position:'relative', overflow:'hidden', background:accent+'22'}}>
-        <img src={image} alt={title} style={{
-          width:'100%', height:'100%', objectFit:'cover',
-          transition:'transform 0.6s cubic-bezier(0.22,1,0.36,1)',
-          transform: hovered ? 'scale(1.06)' : 'scale(1)',
-        }} />
-        <div style={{position:'absolute', inset:0, background:`linear-gradient(to bottom, transparent 40%, rgba(8,11,15,0.95) 100%)`}} />
-      </div>
-      <div style={{padding:'28px 32px 32px'}}>
-        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12}}>
-          <span style={{fontSize:11, fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', color:accent, background:accent+'18', padding:'4px 12px', borderRadius:100}}>{tag}</span>
-          <span style={{fontSize:12, color:'var(--text-3)'}}>0{index+1}</span>
+    <section id="mindset" style={{padding:'120px 32px', background:'var(--bg-1)', borderTop:'1px solid var(--border)', borderBottom:'1px solid var(--border)'}}>
+      <div style={{maxWidth:1200, margin:'0 auto'}}>
+        <div ref={ref} className="reveal" style={{display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:56, flexWrap:'wrap', gap:24}}>
+          <div>
+            <div style={{marginBottom:14, fontSize:12, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)'}}>Mindset</div>
+            <h2 style={{fontFamily:'var(--font-display)', fontSize:'clamp(36px, 5vw, 56px)', fontWeight:800, letterSpacing:'-2px', lineHeight:0.95}}>
+              Principles that<br/><span style={{color:'var(--accent)'}}>shape the work.</span>
+            </h2>
+          </div>
+          <p style={{color:'var(--text-2)', maxWidth:360, fontSize:15, lineHeight:1.7}}>
+            This site is more than a showcase. It is a reference point for how I think, build, and decide when AI meets real-world stakes.
+          </p>
         </div>
-        <h3 style={{fontFamily:'var(--font-display)', fontSize:32, fontWeight:800, letterSpacing:'-1px', marginBottom:10}}>{title}</h3>
-        <p style={{fontSize:14, color:'var(--text-2)', lineHeight:1.7, marginBottom:24}}>{desc}</p>
-        <div style={{display:'flex', flexWrap:'wrap', gap:6, marginBottom:20}}>
-          {(stack||[]).map(s=>(
-            <span key={s} style={{fontSize:10, fontWeight:600, padding:'3px 9px', borderRadius:100, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'var(--text-3)', letterSpacing:'0.04em'}}>{s}</span>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(260px, 1fr))', gap:16}}>
+          {values.map((v,i) => {
+            const r = useReveal(0.1);
+            return (
+              <div key={v.title} ref={r} className={`reveal reveal-delay-${i+1}`} style={{
+                background:'var(--bg)', border:'1px solid var(--border)',
+                borderRadius:20, padding:'28px', transition:'all 0.3s cubic-bezier(0.22,1,0.36,1)',
+              }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)'; e.currentTarget.style.transform='translateY(-4px)';}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.transform='none';}}
+              >
+                <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:v.color, background:v.bg, padding:'4px 12px', borderRadius:100, display:'inline-block', marginBottom:16}}>{v.title}</span>
+                <ul style={{listStyle:'none', display:'flex', flexDirection:'column', gap:12}}>
+                  {v.items.map(item => (
+                    <li key={item} style={{display:'flex', gap:10, alignItems:'flex-start', color:'var(--text-2)', fontSize:14, lineHeight:1.6}}>
+                      <span style={{width:8, height:8, borderRadius:'50%', background:v.color, boxShadow:`0 0 8px ${v.color}`}}></span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── KAZI ORCHESTRATE MINI UI ─── */
+function KaziMiniUI() {
+  const [activeTab, setActiveTab] = useState('command');
+  const [approvedIdx, setApprovedIdx] = useState(null);
+  const tabs = ['command','inbox','agents'];
+  const agents = [
+    {name:'Riley', role:'Research', color:'#a78bfa', status:'running', task:'Analyzing signals for Acme Corp'},
+    {name:'Jordan', role:'Execution', color:'#34d399', status:'done', task:'Draft email sent to queue'},
+    {name:'Sam', role:'QA', color:'#60a5fa', status:'waiting', task:'Awaiting Jordan output'},
+  ];
+  const drafts = [
+    {to:'Sarah Chen · Acme Corp', subject:'Re: Q3 Partnership', preview:'Hi Sarah, following up on our conversation about the integration timeline...', agent:'Jordan'},
+    {to:'Marcus Liu · Vertex AI', subject:'Intro: Kazi Platform', preview:'Marcus, I came across your recent work on multi-agent systems and thought...', agent:'Jordan'},
+  ];
+  const A = '#7c3aed';
+  return (
+    <div style={{width:'100%',height:'100%',background:'linear-gradient(135deg,#0f0a1e,#1a1333,#0d1520)',fontFamily:'Inter,sans-serif',display:'flex',flexDirection:'column',overflow:'hidden',userSelect:'none'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8,padding:'10px 14px',borderBottom:'1px solid rgba(255,255,255,0.07)',flexShrink:0}}>
+        <div style={{width:28,height:28,borderRadius:8,background:'linear-gradient(135deg,#7c3aed,#4f46e5)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800,color:'#fff'}}>K</div>
+        <span style={{fontSize:12,fontWeight:700,color:'#fff',flex:1}}>Kazi Orchestrate</span>
+        <div style={{display:'flex',gap:4}}>
+          {tabs.map(t=>(
+            <button key={t} onClick={()=>setActiveTab(t)} style={{padding:'3px 10px',borderRadius:20,border:'none',cursor:'pointer',fontSize:10,fontWeight:600,textTransform:'capitalize',background:activeTab===t?A+'33':'transparent',color:activeTab===t?'#c4b5fd':'rgba(255,255,255,0.4)',transition:'all 0.2s'}}>
+              {t==='command'?'Command':t==='inbox'?'Inbox':'Agents'}
+            </button>
           ))}
         </div>
-        <a href={href || '#'} style={{
-          display:'inline-flex', alignItems:'center', gap:8,
-          fontSize:13, fontWeight:600, color:accent, textDecoration:'none',
-          transition:'gap 0.2s',
-        }}
-          onMouseEnter={e=>{e.currentTarget.style.gap='12px';}}
-          onMouseLeave={e=>{e.currentTarget.style.gap='8px';}}
-        >View project <span>→</span></a>
+      </div>
+      <div style={{flex:1,overflow:'hidden',position:'relative'}}>
+        {activeTab==='command' && (
+          <div style={{padding:'12px 14px',display:'flex',flexDirection:'column',gap:10,height:'100%',overflowY:'auto'}}>
+            <div style={{fontSize:10,fontWeight:600,color:'rgba(255,255,255,0.35)',textTransform:'uppercase',letterSpacing:'0.1em'}}>Live Executions</div>
+            {agents.map(ag=>(
+              <div key={ag.name} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:10,padding:'10px 12px'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+                  <div style={{width:24,height:24,borderRadius:'50%',background:ag.color+'22',border:`1px solid ${ag.color}44`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:ag.color}}>{ag.name[0]}</div>
+                  <span style={{fontSize:11,fontWeight:600,color:'#fff'}}>{ag.name}</span>
+                  <span style={{fontSize:9,color:'rgba(255,255,255,0.35)'}}>{ag.role}</span>
+                  <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:4}}>
+                    <div style={{width:6,height:6,borderRadius:'50%',background:ag.status==='running'?'#fbbf24':ag.status==='done'?'#34d399':'rgba(255,255,255,0.2)',boxShadow:ag.status==='running'?'0 0 6px #fbbf24':ag.status==='done'?'0 0 6px #34d399':'none'}} />
+                    <span style={{fontSize:9,color:'rgba(255,255,255,0.4)',textTransform:'capitalize'}}>{ag.status}</span>
+                  </div>
+                </div>
+                <div style={{fontSize:10,color:'rgba(255,255,255,0.45)',paddingLeft:32}}>{ag.task}</div>
+              </div>
+            ))}
+            <div style={{background:'rgba(124,58,237,0.08)',border:'1px solid rgba(124,58,237,0.2)',borderRadius:10,padding:'10px 12px'}}>
+              <div style={{fontSize:10,fontWeight:600,color:'#a78bfa',marginBottom:4,display:'flex',alignItems:'center',gap:6}}>
+                <Icon name="bolt" size={12} color="#a78bfa" />
+                Flow Orchestrator
+              </div>
+              <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+                {['Research','Draft','Review','Approve','Send'].map((step,i)=>(
+                  <div key={step} style={{display:'flex',alignItems:'center',gap:4}}>
+                    <div style={{fontSize:9,padding:'2px 8px',borderRadius:20,background:i<2?'rgba(52,211,153,0.15)':i===2?'rgba(251,191,36,0.15)':'rgba(255,255,255,0.05)',color:i<2?'#34d399':i===2?'#fbbf24':'rgba(255,255,255,0.3)',border:`1px solid ${i<2?'rgba(52,211,153,0.3)':i===2?'rgba(251,191,36,0.3)':'rgba(255,255,255,0.08)'}`}}>{step}</div>
+                    {i<4 && <span style={{fontSize:8,color:'rgba(255,255,255,0.2)'}}>→</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        {activeTab==='inbox' && (
+          <div style={{padding:'12px 14px',display:'flex',flexDirection:'column',gap:8,height:'100%',overflowY:'auto'}}>
+            <div style={{fontSize:10,fontWeight:600,color:'rgba(255,255,255,0.35)',textTransform:'uppercase',letterSpacing:'0.1em'}}>Pending Approval · {drafts.length}</div>
+            {drafts.map((d,i)=>(
+              <div key={i} style={{background:'rgba(255,255,255,0.04)',border:`1px solid ${approvedIdx===i?'rgba(52,211,153,0.4)':'rgba(255,255,255,0.08)'}`,borderRadius:10,padding:'10px 12px',transition:'border-color 0.3s'}}>
+                <div style={{display:'flex',alignItems:'flex-start',gap:8,marginBottom:6}}>
+                  <div style={{width:22,height:22,borderRadius:'50%',background:'rgba(52,211,153,0.15)',border:'1px solid rgba(52,211,153,0.3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,fontWeight:700,color:'#34d399',flexShrink:0}}>J</div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:10,fontWeight:600,color:'#fff',marginBottom:1}}>{d.subject}</div>
+                    <div style={{fontSize:9,color:'rgba(255,255,255,0.4)'}}>{d.to}</div>
+                  </div>
+                </div>
+                <div style={{fontSize:10,color:'rgba(255,255,255,0.45)',marginBottom:8,lineHeight:1.5,paddingLeft:30}}>{d.preview}</div>
+                <div style={{display:'flex',gap:6,paddingLeft:30}}>
+                  <button onClick={()=>setApprovedIdx(i)} style={{padding:'3px 12px',borderRadius:20,border:'none',cursor:'pointer',fontSize:9,fontWeight:600,background:approvedIdx===i?'rgba(52,211,153,0.3)':'rgba(52,211,153,0.15)',color:'#34d399',transition:'all 0.2s'}}>
+                    {approvedIdx===i ? (
+                      <span style={{display:'inline-flex',alignItems:'center',gap:6}}>
+                        <Icon name="check" size={10} color="#34d399" />
+                        Approved
+                      </span>
+                    ) : 'Approve'}
+                  </button>
+                  <button style={{padding:'3px 12px',borderRadius:20,border:'1px solid rgba(255,255,255,0.1)',cursor:'pointer',fontSize:9,fontWeight:600,background:'transparent',color:'rgba(255,255,255,0.4)'}}>Edit</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {activeTab==='agents' && (
+          <div style={{padding:'12px 14px',display:'flex',flexDirection:'column',gap:8,height:'100%',overflowY:'auto'}}>
+            <div style={{fontSize:10,fontWeight:600,color:'rgba(255,255,255,0.35)',textTransform:'uppercase',letterSpacing:'0.1em'}}>Agent Crew</div>
+            {[
+              {name:'Riley',role:'Research & Intelligence',color:'#a78bfa',tasks:24,rate:'98%'},
+              {name:'Jordan',role:'Execution & Output',color:'#34d399',tasks:41,rate:'100%'},
+              {name:'Sam',role:'Quality & Oversight',color:'#60a5fa',tasks:38,rate:'96%'},
+              {name:'Alex',role:'Creative Director',color:'#f472b6',tasks:17,rate:'99%'},
+            ].map(ag=>(
+              <div key={ag.name} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:10,padding:'10px 12px',display:'flex',alignItems:'center',gap:10}}>
+                <div style={{width:32,height:32,borderRadius:'50%',background:ag.color+'22',border:`1px solid ${ag.color}44`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,color:ag.color,flexShrink:0}}>{ag.name[0]}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:11,fontWeight:600,color:'#fff'}}>{ag.name}</div>
+                  <div style={{fontSize:9,color:'rgba(255,255,255,0.4)'}}>{ag.role}</div>
+                </div>
+                <div style={{textAlign:'right'}}>
+                  <div style={{fontSize:11,fontWeight:700,color:ag.color}}>{ag.rate}</div>
+                  <div style={{fontSize:9,color:'rgba(255,255,255,0.3)'}}>{ag.tasks} tasks</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
+  );
+}
+
+/* ─── RELAY MINI UI ─── */
+function RelayMiniUI() {
+  const [activeCall, setActiveCall] = useState(null);
+  const calls = [
+    {id:0,company:'Pinnacle Health',agent:'Agent 01',status:'live',duration:'2:14',topic:'Insurance verification',sentiment:92},
+    {id:1,company:'TechFlow Inc',agent:'Agent 02',status:'live',duration:'0:47',topic:'Contract renewal follow-up',sentiment:78},
+    {id:2,company:'Meridian Group',agent:'Agent 03',status:'completed',duration:'4:02',topic:'Onboarding call',sentiment:95},
+  ];
+  const A = '#22d3ee';
+  return (
+    <div style={{width:'100%',height:'100%',background:'linear-gradient(135deg,#030f1a,#071a2e,#041524)',fontFamily:'Inter,sans-serif',display:'flex',flexDirection:'column',overflow:'hidden',userSelect:'none'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8,padding:'10px 14px',borderBottom:'1px solid rgba(34,211,238,0.1)',flexShrink:0}}>
+        <div style={{width:28,height:28,borderRadius:8,background:'linear-gradient(135deg,#0891b2,#06b6d4)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,color:'#fff'}}>R</div>
+        <span style={{fontSize:12,fontWeight:700,color:'#fff',flex:1}}>Relay</span>
+        <div style={{display:'flex',alignItems:'center',gap:4}}>
+          <div style={{width:6,height:6,borderRadius:'50%',background:'#34d399',boxShadow:'0 0 6px #34d399'}} />
+          <span style={{fontSize:9,color:'#34d399',fontWeight:600}}>2 live</span>
+        </div>
+      </div>
+      <div style={{display:'flex',borderBottom:'1px solid rgba(255,255,255,0.06)',flexShrink:0}}>
+        {[['Active Calls','2',A],['Calls Today','47','#fff'],['Avg Sentiment','88%','#34d399'],['Resolved','94%','#a78bfa']].map(([label,val,color])=>(
+          <div key={label} style={{flex:1,padding:'8px 10px',borderRight:'1px solid rgba(255,255,255,0.06)',textAlign:'center'}}>
+            <div style={{fontSize:13,fontWeight:700,color}}>{val}</div>
+            <div style={{fontSize:8,color:'rgba(255,255,255,0.35)',marginTop:1}}>{label}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'10px 12px',display:'flex',flexDirection:'column',gap:8}}>
+        <div style={{fontSize:10,fontWeight:600,color:'rgba(255,255,255,0.35)',textTransform:'uppercase',letterSpacing:'0.1em'}}>Active Dispatches</div>
+        {calls.map(c=>(
+          <div key={c.id} onClick={()=>setActiveCall(activeCall===c.id?null:c.id)} style={{background:activeCall===c.id?'rgba(34,211,238,0.06)':'rgba(255,255,255,0.03)',border:`1px solid ${activeCall===c.id?'rgba(34,211,238,0.25)':'rgba(255,255,255,0.07)'}`,borderRadius:10,padding:'10px 12px',cursor:'pointer',transition:'all 0.2s'}}>
+            <div style={{display:'flex',alignItems:'center',gap:8}}>
+              <div style={{width:8,height:8,borderRadius:'50%',background:c.status==='live'?'#34d399':'rgba(255,255,255,0.2)',boxShadow:c.status==='live'?'0 0 6px #34d399':'none',flexShrink:0}} />
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:11,fontWeight:600,color:'#fff'}}>{c.company}</div>
+                <div style={{fontSize:9,color:'rgba(255,255,255,0.4)'}}>{c.agent} · {c.topic}</div>
+              </div>
+              <div style={{textAlign:'right',flexShrink:0}}>
+                <div style={{fontSize:11,fontWeight:700,color:c.status==='live'?A:'rgba(255,255,255,0.3)'}}>{c.duration}</div>
+              </div>
+            </div>
+            {activeCall===c.id && (
+              <div style={{marginTop:10,paddingTop:10,borderTop:'1px solid rgba(255,255,255,0.07)'}}>
+                <div style={{fontSize:9,color:'rgba(255,255,255,0.4)',marginBottom:6}}>Sentiment score</div>
+                <div style={{height:4,background:'rgba(255,255,255,0.08)',borderRadius:2,overflow:'hidden'}}>
+                  <div style={{height:'100%',width:`${c.sentiment}%`,background:`linear-gradient(90deg,${A},#34d399)`,borderRadius:2,transition:'width 0.6s ease'}} />
+                </div>
+                <div style={{display:'flex',justifyContent:'space-between',marginTop:4}}>
+                  <span style={{fontSize:9,color:'rgba(255,255,255,0.3)'}}>Negative</span>
+                  <span style={{fontSize:9,color:'#34d399',fontWeight:600}}>{c.sentiment}%</span>
+                  <span style={{fontSize:9,color:'rgba(255,255,255,0.3)'}}>Positive</span>
+                </div>
+                <div style={{marginTop:8,padding:'6px 8px',background:'rgba(34,211,238,0.06)',borderRadius:6,border:'1px solid rgba(34,211,238,0.15)'}}>
+                  <div style={{fontSize:9,color:A,fontWeight:600,marginBottom:2}}>Extracted JSON</div>
+                  <div style={{fontSize:8,color:'rgba(255,255,255,0.5)',fontFamily:'monospace',lineHeight:1.6}}>{`{ "status": "in_progress",\n  "next_step": "send_quote",\n  "blocker": null }`}</div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── RHEMA MINI UI ─── */
+function RhemaMiniUI() {
+  const [activeChar, setActiveChar] = useState(null);
+  const [inputVal, setInputVal] = useState('');
+  const [chatMsgs, setChatMsgs] = useState([]);
+  const chars = [
+    {name:'Paul',   role:'Apostle & Letter Writer', color:'#818cf8', bg:'from-indigo-900/60 to-slate-900',  letter:'P', accent:'#6366f1'},
+    {name:'David',  role:'King & Psalmist',          color:'#fbbf24', bg:'from-amber-900/50 to-slate-900',   letter:'D', accent:'#f59e0b'},
+    {name:'Mary',   role:'Mother of Jesus',           color:'#f472b6', bg:'from-pink-900/50 to-slate-900',    letter:'M', accent:'#ec4899'},
+    {name:'Moses',  role:'Prophet & Leader',          color:'#34d399', bg:'from-emerald-900/50 to-slate-900', letter:'Mo',accent:'#10b981'},
+  ];
+  const replies = {
+    Paul:['Do not be anxious about anything, but in every situation, by prayer and petition, present your requests to God.','I have learned, in whatever state I am, to be content. The peace of God surpasses all understanding.','I can do all things through Christ who strengthens me. Press on toward the goal.'],
+    David:['The Lord is my shepherd; I shall not want. He makes me lie down in green pastures and restores my soul.','Even in the valley of the shadow of death, I will fear no evil — His rod and staff comfort me.','Create in me a clean heart, O God. Renew a right spirit within me. Your mercies are new every morning.'],
+    Mary:['Be it unto me according to your word. Trust in the Lord\'s timing — His plans far exceed our understanding.','He who is mighty has done great things for me. Do not be afraid, for you have found grace.','Blessed are those who believe, for there will be a fulfillment of those things spoken to them.'],
+    Moses:['The Lord will fight for you; you need only to be still. He parted seas — He will make a way for you too.','I AM has sent you. When the way seems impossible, remember who goes before you into the wilderness.','Do not be afraid. Stand firm and see the deliverance the Lord will bring you today.'],
+  };
+  const greetings = {
+    Paul:'Peace be with you. I have walked the road to Damascus and seen the blazing light of truth. What weighs on your heart today?',
+    David:'The Lord is my shepherd and my song. I have known the depths of failure and the heights of His mercy. Speak freely.',
+    Mary:'Greetings, beloved. I pondered many things in my heart. What would you like to know or discuss?',
+    Moses:'I AM has sent me. I have stood before Pharaoh and before God on the holy mountain. Ask what you seek.',
+  };
+  const curChar = chars.find(c=>c.name===activeChar);
+  const selectChar = (name) => {
+    setActiveChar(name);
+    setChatMsgs([{role:'char', text: greetings[name]}]);
+    setInputVal('');
+  };
+  const send = () => {
+    const v = inputVal.trim(); if(!v || !activeChar) return;
+    const pool = replies[activeChar];
+    const reply = pool[Math.floor(Math.random()*pool.length)];
+    setChatMsgs(m=>[...m,{role:'user',text:v},{role:'char',text:reply}]);
+    setInputVal('');
+  };
+
+  /* ── DASHBOARD ── */
+  if(!activeChar) return (
+    <div style={{width:'100%',height:'100%',background:'linear-gradient(135deg,#020617 0%,#0f172a 50%,#1e1b4b 100%)',fontFamily:'Inter,sans-serif',display:'flex',flexDirection:'column',overflow:'hidden',userSelect:'none',position:'relative'}}>
+      {/* orbs */}
+      <div style={{position:'absolute',top:'-60px',left:'20%',width:260,height:260,borderRadius:'50%',background:'rgba(96,165,250,0.07)',filter:'blur(60px)',pointerEvents:'none'}}/>
+      <div style={{position:'absolute',bottom:'20px',right:'-30px',width:200,height:200,borderRadius:'50%',background:'rgba(99,102,241,0.08)',filter:'blur(50px)',pointerEvents:'none'}}/>
+      {/* top nav */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 16px',background:'rgba(2,6,23,0.8)',backdropFilter:'blur(16px)',borderBottom:'1px solid rgba(96,165,250,0.12)',flexShrink:0,position:'relative',zIndex:2}}>
+        <button style={{width:30,height:30,borderRadius:8,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div style={{display:'flex',alignItems:'center',gap:6}}>
+          <span style={{display:'inline-flex'}}><Icon name="spark" size={16} color="#c7d2fe" /></span>
+          <span style={{fontSize:15,fontWeight:800,background:'linear-gradient(90deg,#60a5fa,#818cf8)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',letterSpacing:'-0.3px'}}>Rhema</span>
+        </div>
+        <button style={{width:30,height:30,borderRadius:8,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.08)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+      </div>
+      {/* greeting */}
+      <div style={{padding:'16px 16px 12px',position:'relative',zIndex:1,flexShrink:0}}>
+        <div style={{fontSize:11,color:'rgba(255,255,255,0.35)',marginBottom:3,letterSpacing:'0.04em'}}>CHOOSE A GUIDE</div>
+        <div style={{fontSize:16,fontWeight:700,color:'#f1f5f9',letterSpacing:'-0.3px'}}>Who would you like to speak with?</div>
+      </div>
+      {/* character cards */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,padding:'0 12px',flexShrink:0,position:'relative',zIndex:1}}>
+        {chars.map(c=>(
+          <div key={c.name} onClick={()=>selectChar(c.name)}
+            style={{background:`linear-gradient(135deg,${c.accent}22,${c.accent}08)`,border:`1px solid ${c.accent}35`,borderRadius:14,padding:'12px 14px',cursor:'pointer',transition:'all 0.2s',position:'relative',overflow:'hidden'}}>
+            <div style={{position:'absolute',top:-20,right:-20,width:70,height:70,borderRadius:'50%',background:`${c.accent}10`,filter:'blur(20px)',pointerEvents:'none'}}/>
+            <div style={{width:38,height:38,borderRadius:12,background:`${c.accent}20`,border:`1px solid ${c.accent}40`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,color:c.color,marginBottom:8,letterSpacing:'-0.5px'}}>{c.letter}</div>
+            <div style={{fontSize:12,fontWeight:700,color:'#f1f5f9',marginBottom:2}}>{c.name}</div>
+            <div style={{fontSize:9,color:'rgba(255,255,255,0.4)',lineHeight:1.3}}>{c.role}</div>
+            <div style={{marginTop:8,fontSize:9,color:c.color,fontWeight:600,display:'flex',alignItems:'center',gap:3}}>Chat now <span style={{fontSize:10}}>→</span></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  /* ── CHAT VIEW ── */
+  const A = curChar.accent;
+  return (
+    <div style={{width:'100%',height:'100%',background:'linear-gradient(135deg,#020617 0%,#0f172a 50%,#1e1b4b 100%)',fontFamily:'Inter,sans-serif',display:'flex',flexDirection:'column',overflow:'hidden',userSelect:'none',position:'relative'}}>
+      <div style={{position:'absolute',top:'-40px',left:'25%',width:200,height:200,borderRadius:'50%',background:`${A}0f`,filter:'blur(50px)',pointerEvents:'none'}}/>
+      {/* chat header */}
+      <div style={{display:'flex',alignItems:'center',gap:10,padding:'12px 14px',background:'rgba(2,6,23,0.85)',backdropFilter:'blur(16px)',borderBottom:`1px solid ${A}20`,flexShrink:0,position:'relative',zIndex:2}}>
+        <button onClick={()=>setActiveChar(null)} style={{width:28,height:28,borderRadius:8,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(255,255,255,0.6)',cursor:'pointer',fontSize:12,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>←</button>
+        <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${A}40,${A}18)`,border:`1px solid ${A}50`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800,color:curChar.color,flexShrink:0}}>{curChar.letter}</div>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{fontSize:13,fontWeight:700,color:'#f1f5f9'}}>{curChar.name}</div>
+          <div style={{fontSize:9,color:'rgba(255,255,255,0.4)'}}>{curChar.role}</div>
+        </div>
+        <div style={{display:'flex',gap:4}}>
+          {chars.map(c=>(
+            <div key={c.name} onClick={()=>selectChar(c.name)} style={{width:26,height:26,borderRadius:8,background:c.name===activeChar?`${c.accent}25`:'rgba(255,255,255,0.04)',border:`1px solid ${c.name===activeChar?c.accent+'50':'rgba(255,255,255,0.08)'}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:c.name===activeChar?c.color:'rgba(255,255,255,0.3)',cursor:'pointer'}}>{c.letter}</div>
+          ))}
+        </div>
+      </div>
+      {/* messages */}
+      <div style={{flex:1,overflowY:'auto',padding:'12px 14px',display:'flex',flexDirection:'column',gap:10,position:'relative',zIndex:1}}>
+        {chatMsgs.map((m,i)=>(
+          <div key={i} style={{display:'flex',justifyContent:m.role==='user'?'flex-end':'flex-start',alignItems:'flex-end',gap:8}}>
+            {m.role==='char' && (
+              <div style={{width:28,height:28,borderRadius:8,background:`${A}25`,border:`1px solid ${A}40`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:800,color:curChar.color,flexShrink:0}}>{curChar.letter}</div>
+            )}
+            <div style={{maxWidth:'76%',padding:'10px 13px',borderRadius:m.role==='user'?'16px 16px 4px 16px':'4px 16px 16px 16px',background:m.role==='user'?`linear-gradient(135deg,${A},#7c3aed)`:'rgba(248,250,252,0.08)',border:m.role==='char'?`1px solid ${A}25`:'none',fontSize:11,color:m.role==='user'?'#fff':'rgba(241,245,249,0.92)',lineHeight:1.65,backdropFilter:m.role==='char'?'blur(8px)':'none'}}>
+              {m.role==='char' && <div style={{fontSize:9,fontWeight:600,color:curChar.color,marginBottom:4,letterSpacing:'0.05em'}}>{curChar.name.toUpperCase()}</div>}
+              {m.text}
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* input */}
+      <div style={{padding:'10px 14px 12px',borderTop:`1px solid ${A}18`,background:'rgba(2,6,23,0.7)',backdropFilter:'blur(16px)',display:'flex',gap:8,alignItems:'center',flexShrink:0,position:'relative',zIndex:2}}>
+        <input value={inputVal} onChange={e=>setInputVal(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')send();}} placeholder={`Message ${curChar.name}...`}
+          style={{flex:1,background:'rgba(255,255,255,0.06)',border:`1px solid ${A}25`,borderRadius:24,padding:'9px 16px',fontSize:11,color:'#f1f5f9',outline:'none',fontFamily:'Inter,sans-serif'}}/>
+        <button onClick={send} style={{width:34,height:34,borderRadius:10,border:'none',background:`linear-gradient(135deg,${A},#7c3aed)`,color:'#fff',cursor:'pointer',fontSize:14,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:`0 4px 12px ${A}40`}}>→</button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── KAZI CODER MINI UI ─── */
+function KaziCoderMiniUI() {
+  const [mode, setMode] = useState('feature');
+  const A = '#e8c547';
+  const messages = [
+    {role:'user',text:'Scaffold a new API endpoint for user authentication with JWT and refresh tokens'},
+    {role:'agent',text:'On it. Reading your existing auth patterns first...', tools:[{name:'read_file',path:'src/auth/middleware.ts',status:'done'},{name:'search_workspace',path:'JWT patterns',status:'done'}]},
+    {role:'agent',text:"Here's the endpoint following your existing patterns. Wired up refresh token rotation and the rate-limit middleware from your other protected routes.", hasCode:true},
+  ];
+  const modes = ['feature','debug','deploy','plan'];
+  const modeColors = {feature:'#6b7bff',debug:'#fb923c',deploy:'#34d399',plan:'#fde68a'};
+  return (
+    <div style={{width:'100%',height:'100%',background:'linear-gradient(160deg,#0f1b3d,#0a1628,#0d1f3c)',fontFamily:'Inter,sans-serif',display:'flex',flexDirection:'column',overflow:'hidden',userSelect:'none'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8,padding:'8px 12px',borderBottom:'1px solid rgba(255,255,255,0.08)',flexShrink:0}}>
+        <div style={{width:26,height:26,borderRadius:'50%',overflow:'hidden',background:'rgba(107,123,255,0.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#a5b4fc',border:'1px solid rgba(107,123,255,0.3)',flexShrink:0}}>C</div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:11,fontWeight:600,color:'#fff',lineHeight:1}}>Cody</div>
+          <div style={{fontSize:9,color:'rgba(255,255,255,0.35)'}}>Senior Engineering Agent</div>
+        </div>
+        <div style={{display:'flex',gap:3}}>
+          {modes.map(m=>(
+            <button key={m} onClick={()=>setMode(m)} style={{padding:'2px 7px',borderRadius:20,border:'none',cursor:'pointer',fontSize:8,fontWeight:600,textTransform:'capitalize',background:mode===m?modeColors[m]+'25':'transparent',color:mode===m?modeColors[m]:'rgba(255,255,255,0.3)',transition:'all 0.2s'}}>
+              {m}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:'auto',padding:'10px 10px',display:'flex',flexDirection:'column',gap:8}}>
+        {messages.map((m,i)=>(
+          <div key={i} style={{display:'flex',flexDirection:'column',alignItems:m.role==='user'?'flex-end':'flex-start',gap:4}}>
+            {m.tools && (
+              <div style={{background:'rgba(15,23,42,0.7)',border:'1px solid rgba(107,123,255,0.2)',borderRadius:8,padding:'6px 8px',width:'100%'}}>
+                {m.tools.map(t=>(
+                  <div key={t.name} style={{display:'flex',alignItems:'center',gap:6,padding:'2px 0'}}>
+                    <div style={{width:14,height:14,borderRadius:4,background:'rgba(52,211,153,0.15)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                      <svg width="8" height="9" viewBox="0 0 12 14" fill="none" stroke="rgba(52,211,153,0.8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 1H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V5L7 1z"/><polyline points="7 1 7 5 11 5"/></svg>
+                    </div>
+                    <span style={{fontSize:9,color:'rgba(255,255,255,0.5)',flex:1}}>{t.name}</span>
+                    <span style={{fontSize:8,color:'#34d399',background:'rgba(52,211,153,0.1)',padding:'1px 5px',borderRadius:10,display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
+                      <Icon name="check" size={10} color="#34d399" />
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{maxWidth:'88%',padding:'7px 10px',borderRadius:m.role==='user'?'12px 12px 3px 12px':'12px 12px 12px 3px',background:m.role==='user'?'linear-gradient(135deg,#6b7bff,#8b5cf6)':'rgba(255,255,255,0.06)',border:m.role==='agent'?'1px solid rgba(255,255,255,0.09)':'none',fontSize:10,color:'rgba(255,255,255,0.9)',lineHeight:1.5}}>
+              {m.text}
+              {m.hasCode && (
+                <div style={{marginTop:6,background:'rgba(0,0,0,0.4)',borderRadius:6,padding:'6px 8px',border:'1px solid rgba(255,255,255,0.08)'}}>
+                  <div style={{fontSize:8,color:'#d8b4fe',fontFamily:'monospace',lineHeight:1.6}}>{`export const authRouter = Router();\n\nauthRouter.post('/login', rateLimit,\n  async (req, res) => {\n    // JWT + refresh token logic\n  });`}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{padding:'6px 10px 8px',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:6,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:24,padding:'5px 6px 5px 12px'}}>
+          <span style={{flex:1,fontSize:10,color:'rgba(255,255,255,0.3)'}}>Message Cody...</span>
+          <div style={{width:24,height:24,borderRadius:'50%',background:'linear-gradient(135deg,#6b7bff,#8b5cf6)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:'#fff',cursor:'pointer',flexShrink:0}}>→</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── EVERON MINI UI ─── */
+function EveronMiniUI() {
+  const [inputVal, setInputVal] = useState('');
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [chatMsgs, setChatMsgs] = useState([
+    {role:'assistant', text:"Hi there! I'm Everon, your AI career coach. I'm here to help with resume reviews, job searching, interview prep, and career advice. What would you like to work on today?"}
+  ]);
+  const [replyIdx, setReplyIdx] = useState(0);
+
+  const categories = [
+    {label:'Resume',     suggestions:['Review my resume and suggest improvements','Make my resume stand out for tech roles','Rewrite my summary section']},
+    {label:'Job Search', suggestions:['Find remote software engineer jobs','Top companies hiring right now','Search for entry-level marketing roles']},
+    {label:'Interview',  suggestions:['Help me prepare for a PM interview','Common behavioral interview questions','How do I answer "Tell me about yourself"?']},
+    {label:'Career',     suggestions:['How do I transition into UX design?','What skills do I need to get promoted?','How do I negotiate a higher salary?']},
+  ];
+  const replies = [
+    "Great question! To make your resume stand out, tailor it to the specific job description. Use strong action verbs, quantify your achievements, and ensure your most relevant skills are prominent. Want me to review a specific section?",
+    "For job searching, I recommend LinkedIn, Indeed, and niche boards in your field. Set up alerts so you can apply within 24 hours of a posting going live — speed matters. What type of role are you targeting?",
+    "For interview prep, practice the STAR method: Situation, Task, Action, Result. Research the company thoroughly and prepare 3–5 thoughtful questions to ask them. Want a mock interview?",
+    "Salary negotiation: always let them make the first offer, then counter with a range where your target is the low end. Back it up with market data from Glassdoor or Levels.fyi. What's your current situation?",
+    "To transition careers, start by identifying transferable skills, then build a targeted portfolio of work in the new field. Networking in the new industry is critical — most roles are filled before they're posted.",
+  ];
+  const send = (text) => {
+    const v = (text || inputVal).trim(); if(!v) return;
+    const reply = replies[replyIdx % replies.length];
+    setReplyIdx(i=>i+1);
+    setChatMsgs(m=>[...m,{role:'user',text:v},{role:'assistant',text:reply}]);
+    setInputVal('');
+    setActiveCategory(null);
+  };
+  const activeCat = categories.find(c=>c.label===activeCategory);
+
+  return (
+    <div style={{width:'100%',height:'100%',background:'linear-gradient(160deg,#05060f 0%,#0a0d1a 50%,#0d0a1f 100%)',fontFamily:'Inter,sans-serif',display:'flex',flexDirection:'column',overflow:'hidden',userSelect:'none',position:'relative'}}>
+      {/* glow orbs */}
+      <div style={{position:'absolute',top:'-80px',left:'-40px',width:280,height:280,borderRadius:'50%',background:'radial-gradient(circle,rgba(124,58,237,0.18),transparent)',filter:'blur(60px)',pointerEvents:'none',zIndex:0}}/>
+      <div style={{position:'absolute',bottom:'80px',right:'-60px',width:220,height:220,borderRadius:'50%',background:'radial-gradient(circle,rgba(34,211,238,0.1),transparent)',filter:'blur(50px)',pointerEvents:'none',zIndex:0}}/>
+      <div style={{position:'absolute',top:'40%',left:'30%',width:150,height:150,borderRadius:'50%',background:'radial-gradient(circle,rgba(167,139,250,0.08),transparent)',filter:'blur(40px)',pointerEvents:'none',zIndex:0}}/>
+
+      {/* header */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 16px',background:'rgba(5,6,15,0.85)',backdropFilter:'blur(20px)',borderBottom:'1px solid rgba(255,255,255,0.06)',flexShrink:0,position:'relative',zIndex:2}}>
+        <div>
+          <div style={{fontSize:17,fontWeight:800,color:'#f8fafc',letterSpacing:'-0.5px',lineHeight:1}}>Everon</div>
+          <div style={{fontSize:9,color:'rgba(255,255,255,0.35)',marginTop:2,letterSpacing:'0.04em'}}>Your AI Career Coach</div>
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <div style={{display:'flex',alignItems:'center',gap:5,background:'rgba(74,222,128,0.1)',border:'1px solid rgba(74,222,128,0.2)',borderRadius:20,padding:'4px 9px'}}>
+            <div style={{width:6,height:6,borderRadius:'50%',background:'#4ade80',boxShadow:'0 0 6px #4ade80'}}/>
+            <span style={{fontSize:9,color:'#4ade80',fontWeight:600}}>Online</span>
+          </div>
+          <div style={{width:30,height:30,borderRadius:10,background:'linear-gradient(135deg,rgba(124,58,237,0.4),rgba(167,139,250,0.2))',border:'1px solid rgba(167,139,250,0.3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:'#c4b5fd'}}>E</div>
+        </div>
+      </div>
+
+      {/* messages */}
+      <div style={{flex:1,overflowY:'auto',padding:'14px 14px 8px',display:'flex',flexDirection:'column',gap:12,position:'relative',zIndex:1}}>
+        {chatMsgs.map((m,i)=>(
+          <div key={i} style={{display:'flex',justifyContent:m.role==='user'?'flex-end':'flex-start',alignItems:'flex-end',gap:8}}>
+            {m.role==='assistant' && (
+              <div style={{width:28,height:28,borderRadius:9,background:'linear-gradient(135deg,#7c3aed,#a78bfa)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:800,color:'#fff',flexShrink:0,boxShadow:'0 2px 8px rgba(124,58,237,0.4)'}}>E</div>
+            )}
+            <div style={{maxWidth:'76%',padding:'10px 13px',borderRadius:m.role==='user'?'16px 16px 4px 16px':'4px 16px 16px 16px',background:m.role==='user'?'linear-gradient(135deg,#7c3aed,#a78bfa)':'rgba(255,255,255,0.07)',border:m.role==='assistant'?'1px solid rgba(167,139,250,0.15)':'none',fontSize:11,color:m.role==='user'?'#fff':'rgba(241,245,249,0.92)',lineHeight:1.65,backdropFilter:'blur(8px)'}}>
+              {m.text}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* quick action categories */}
+      {chatMsgs.length <= 1 && (
+        <div style={{padding:'0 12px 8px',position:'relative',zIndex:2}}>
+          <div style={{fontSize:9,color:'rgba(255,255,255,0.3)',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:7}}>Ask about</div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+            {categories.map(c=>(
+              <button key={c.label} onClick={()=>setActiveCategory(activeCategory===c.label?null:c.label)}
+                style={{padding:'5px 12px',borderRadius:20,border:`1px solid ${activeCategory===c.label?'rgba(167,139,250,0.5)':'rgba(255,255,255,0.1)'}`,background:activeCategory===c.label?'rgba(124,58,237,0.2)':'rgba(255,255,255,0.05)',color:activeCategory===c.label?'#c4b5fd':'rgba(255,255,255,0.55)',fontSize:10,fontWeight:600,cursor:'pointer',transition:'all 0.15s'}}>{c.label}</button>
+            ))}
+          </div>
+          {activeCat && (
+            <div style={{marginTop:8,display:'flex',flexDirection:'column',gap:5}}>
+              {activeCat.suggestions.map(s=>(
+                <button key={s} onClick={()=>send(s)}
+                  style={{textAlign:'left',padding:'8px 12px',borderRadius:10,border:'1px solid rgba(167,139,250,0.2)',background:'rgba(124,58,237,0.08)',color:'rgba(241,245,249,0.75)',fontSize:10,cursor:'pointer',lineHeight:1.4,fontFamily:'Inter,sans-serif'}}>{s}</button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* input bar */}
+      <div style={{padding:'8px 12px 12px',borderTop:'1px solid rgba(255,255,255,0.06)',background:'rgba(5,6,15,0.8)',backdropFilter:'blur(20px)',display:'flex',gap:7,alignItems:'center',flexShrink:0,position:'relative',zIndex:2}}>
+        <div style={{width:30,height:30,borderRadius:9,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div style={{width:30,height:30,borderRadius:9,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+        </div>
+        <input value={inputVal} onChange={e=>setInputVal(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')send();}} placeholder="Ask Everon..."
+          style={{flex:1,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:22,padding:'9px 15px',fontSize:11,color:'#f1f5f9',outline:'none',fontFamily:'Inter,sans-serif'}}/>
+        <button onClick={()=>send()} style={{width:34,height:34,borderRadius:10,border:'none',background:'linear-gradient(135deg,#7c3aed,#a78bfa)',color:'#fff',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:'0 4px 12px rgba(124,58,237,0.5)'}}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── PROJECT SECTION ─── */
+function ProjectCard({ index, title, tag, desc, image, accent, href, delay, stack, MiniUI, features }) {
+  const refHeader = useReveal(0.1);
+  const refContent = useReveal(0.08);
+  return (
+    <section style={{padding:'120px 0', position:'relative', overflow:'hidden', borderTop:'1px solid var(--border)'}}>
+      {/* per-section glow orb */}
+      <div style={{position:'absolute',width:600,height:600,borderRadius:'50%',filter:'blur(120px)',pointerEvents:'none',background:`radial-gradient(circle,${accent}18,transparent)`,top:'50%',left:index%2===0?'-100px':'auto',right:index%2!==0?'-100px':'auto',transform:'translateY(-50%)',zIndex:0}} />
+      <div style={{maxWidth:1200, margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1}}>
+        {/* section label */}
+        <div ref={refHeader} className="reveal" style={{marginBottom:56}}>
+          <div style={{display:'inline-flex',alignItems:'center',gap:8,background:accent+'12',border:`1px solid ${accent}25`,color:accent,padding:'6px 16px',borderRadius:100,fontSize:11,fontWeight:600,letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:0}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:accent,display:'inline-block',boxShadow:`0 0 6px ${accent}`}}></span>
+            {tag}
+          </div>
+        </div>
+        {/* two-column grid: demo left, text right */}
+        <div ref={refContent} className="reveal project-section-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:72,alignItems:'center'}}>
+          {/* Left: interactive demo */}
+          <div className="project-section-preview" style={{
+            borderRadius:20,
+            overflow:'hidden',
+            border:`1px solid ${accent}28`,
+            boxShadow:`0 24px 80px rgba(0,0,0,0.55), 0 0 0 1px ${accent}10`,
+            height:520,
+            background:accent+'07',
+            flexShrink:0,
+          }}>
+            {MiniUI ? (
+              <MiniUI />
+            ) : (
+              <img src={image} alt={title} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'top'}} />
+            )}
+          </div>
+
+          {/* Right: text content */}
+          <div>
+            <h3 style={{fontFamily:'var(--font-display)',fontSize:'clamp(28px,3.5vw,44px)',fontWeight:800,letterSpacing:'-0.02em',lineHeight:1.1,marginBottom:16}}>{title}<span style={{color:accent}}>.</span></h3>
+            <p style={{fontSize:16,color:'rgba(240,237,232,0.45)',lineHeight:1.75,marginBottom:36}}>{desc}</p>
+            {/* features list */}
+            {features && features.length > 0 && (
+              <div style={{display:'flex',flexDirection:'column',gap:20,marginBottom:36}}>
+                {features.map((f,i)=>(
+                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:16}}>
+                    <div style={{width:44,height:44,borderRadius:12,background:accent+'14',border:`1px solid ${accent}25`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                      <Icon name={f.icon} size={18} color={accent} />
+                    </div>
+                    <div>
+                      <div style={{fontFamily:'var(--font-display)',fontSize:15,fontWeight:700,marginBottom:4}}>{f.title}</div>
+                      <div style={{fontSize:13,color:'rgba(240,237,232,0.45)',lineHeight:1.65}}>{f.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {/* stack pills */}
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:32}}>
+              {(stack||[]).map(s=>(
+                <span key={s} style={{fontSize:11,fontWeight:600,padding:'5px 13px',borderRadius:100,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(240,237,232,0.45)',letterSpacing:'0.04em'}}>{s}</span>
+              ))}
+            </div>
+            <a href={href || '#'} style={{
+              display:'inline-flex',alignItems:'center',gap:8,
+              padding:'12px 28px',borderRadius:100,
+              background:accent,color:'#fff',
+              fontWeight:600,fontSize:14,textDecoration:'none',
+              transition:'opacity 0.2s',
+            }}
+              onMouseEnter={e=>{e.currentTarget.style.opacity='0.82';}}
+              onMouseLeave={e=>{e.currentTarget.style.opacity='1';}}
+            >View project →</a>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
 /* ─── PROJECTS ─── */
 function Projects() {
   const projects = [
-    {title:'Kazi Orchestrate', tag:'Execution OS · SaaS', desc:'Full-stack orchestration platform for deploying team-coordinated AI agents with 24/7 RAG assistant for account management. Demonstrates ability to build multi-service platforms with operational safety and human-in-the-loop integration.', image:(window.__resources && window.__resources.kaziScreenshot)||'images/kazi-screenshot.png', accent:'#7c3aed', href:'projects/kazi.html', stack:['React','FastAPI','ChromaDB','Docker','AWS EC2']},
-    {title:'Relay', tag:'Voice AI · In Development', desc:'Multi-tenant B2B platform dispatching parallel voice AI agents to coordinate complex transactions. Replaces sequential manual calls with parallel dispatch — extracts structured JSON (status, blockers, next steps) into unified dashboard.', image:'images/kazi-screenshot.png', accent:'#22d3ee', href:'projects/relay.html', stack:['LiveKit','FastAPI','React/TS','ChromaDB','OpenAI']},
-    {title:'Rhema', tag:'AI · Faith Tech', desc:'AI-powered biblical guidance platform — chat with biblical characters, faith-building games, and personalized spiritual growth experiences built on production architecture.', image:(window.__resources && window.__resources.rhemaLogo)||'images/rhema-logo.png', accent:'#6366f1', href:'projects/rhema.html', stack:['React','Claude API','FastAPI']},
-    {title:'Everon', tag:'AI · Career Coach', desc:'AI career assistant with resume analysis, coaching chat, and real-time LiveKit voice. Firebase auth, Firestore persistence. Rebuilt from prototype to production architecture.', image:(window.__resources && window.__resources.everonIcon)||'images/Everon-icon.png', accent:'#a78bfa', href:'projects/everon.html', stack:['LiveKit','Firebase','React','Claude API']},
-    {title:'Kazi Coder (Cody)', tag:'VS Code · AI Agent', desc:'VS Code sidebar chat assistant powered by Claude or GPT. Autonomous code execution with deep memory persistence, self-correction, and context-aware tool orchestration. Deployed via AWS Bedrock.', image:(window.__resources && window.__resources.kaziCoderScreenshot)||'images/kazi-coder-screenshot.png', accent:'#e8c547', href:'projects/kazi-coder.html', stack:['VS Code','AWS Bedrock','Claude','OpenAI','TypeScript']},
-
+    {
+      title:'Kazi Orchestrate',
+      tag:'Live · Execution OS & Multi-Agent SaaS',
+      desc:'Full-stack orchestration platform for deploying team-coordinated AI agents with 24/7 RAG assistant for account management. One place where your agents work — and you approve.',
+      MiniUI:KaziMiniUI, accent:'#7c3aed', href:'projects/kazi.html',
+      stack:['React','FastAPI','ChromaDB','Docker','AWS EC2'],
+      features:[
+        {icon:'check', title:'Human-in-the-loop', desc:'Every agent output lands in your queue for approval before it goes anywhere.'},
+        {icon:'robot', title:'Five specialized agents', desc:'Riley, Jordan, Sam, Alex, and Cody — each with a distinct role in your workflow.'},
+        {icon:'cpu', title:'24/7 RAG memory', desc:'Persistent ChromaDB vector memory gives every agent access to your documents at all times.'},
+      ],
+    },
+    {
+      title:'Relay',
+      tag:'In Development · Voice AI Platform',
+      desc:'Multi-tenant B2B platform dispatching parallel voice AI agents to coordinate complex transactions. Replaces sequential manual calls with parallel dispatch — extracts structured JSON into a unified dashboard.',
+      MiniUI:RelayMiniUI, accent:'#22d3ee', href:'projects/relay.html',
+      stack:['LiveKit','FastAPI','React/TS','ChromaDB','OpenAI'],
+      features:[
+        {icon:'phone', title:'Parallel dispatch', desc:'Multiple voice agents run simultaneously — no more sequential manual calls.'},
+        {icon:'chart', title:'Sentiment analysis', desc:'Real-time sentiment scoring on every call, streamed to your dashboard.'},
+        {icon:'folder', title:'Structured JSON output', desc:'Extracts status, blockers, and next steps into a clean, queryable record.'},
+      ],
+    },
+    {
+      title:'Rhema',
+      tag:'Live · AI Faith Tech',
+      desc:'AI-powered biblical guidance platform — chat with biblical characters, faith-building games, and personalized spiritual growth experiences built on production architecture.',
+      MiniUI:RhemaMiniUI, accent:'#6366f1', href:'projects/rhema.html',
+      stack:['React','Claude API','FastAPI'],
+      features:[
+        {icon:'mail', title:'Scriptural characters', desc:'Converse with Paul, David, Mary, or Moses — each with distinct voice and theology.'},
+        {icon:'spark', title:'Faith-building experiences', desc:'Personalized spiritual growth games and guided reflection built in.'},
+        {icon:'bolt', title:'Production architecture', desc:'Claude-powered responses with FastAPI backend and full session persistence.'},
+      ],
+    },
+    {
+      title:'Everon',
+      tag:'Live · AI Career Coach',
+      desc:'AI career assistant with resume analysis, coaching chat, and real-time LiveKit voice. Firebase auth, Firestore persistence. Rebuilt from prototype to production architecture.',
+      MiniUI:EveronMiniUI,
+      accent:'#a78bfa', href:'projects/everon.html',
+      stack:['LiveKit','Firebase','React','Claude API'],
+      features:[
+        {icon:'file', title:'Resume analysis', desc:'AI-powered resume review with targeted, actionable feedback.'},
+        {icon:'mic', title:'Voice coaching', desc:'Real-time LiveKit voice sessions for dynamic career coaching conversations.'},
+        {icon:'lock', title:'Production-ready', desc:'Firebase auth and Firestore persistence — rebuilt from prototype to production.'},
+      ],
+    },
+    {
+      title:'Kazi Coder (Cody)',
+      tag:'VS Code · AI Engineering Agent',
+      desc:'VS Code sidebar chat assistant powered by Claude or GPT. Autonomous code execution with deep memory persistence, self-correction, and context-aware tool orchestration. Deployed via AWS Bedrock.',
+      MiniUI:KaziCoderMiniUI, accent:'#e8c547', href:'projects/kazi-coder.html',
+      stack:['VS Code','AWS Bedrock','Claude','OpenAI','TypeScript'],
+      features:[
+        {icon:'wrench', title:'Autonomous execution', desc:'Cody reads your repo, runs tools, and ships code end-to-end without hand-holding.'},
+        {icon:'puzzle', title:'Deep memory', desc:'Persistent context across sessions — Cody remembers your patterns and preferences.'},
+        {icon:'refresh', title:'Self-correction', desc:'Catches its own mistakes, re-evaluates, and fixes before asking for help.'},
+      ],
+    },
+                      <div style={{width:44,height:44,borderRadius:12,background:accent+'14',border:`1px solid ${accent}25`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                        <Icon name={f.icon} size={18} color={accent} />
+                      </div>
   ];
   const ref = useReveal();
   return (
-    <section id="work" style={{padding:'120px 32px', maxWidth:1200, margin:'0 auto'}}>
-      <div ref={ref} className="reveal" style={{display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:64, flexWrap:'wrap', gap:24}}>
-        <div>
-          <div style={{marginBottom:14, fontSize:12, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)'}}>Featured Work</div>
-          <h2 style={{fontFamily:'var(--font-display)', fontSize:'clamp(36px, 5vw, 56px)', fontWeight:800, letterSpacing:'-2px', lineHeight:0.95}}>
-            Products I've<br/><span style={{color:'var(--accent)'}}>built & shipped.</span>
-          </h2>
+    <div id="work">
+      <section style={{padding:'120px 0 60px'}}>
+        <div style={{maxWidth:1200,margin:'0 auto',padding:'0 24px'}}>
+          <div ref={ref} className="reveal">
+            <div style={{marginBottom:14,fontSize:12,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--accent)'}}>Featured Work</div>
+            <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',flexWrap:'wrap',gap:24}}>
+              <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(36px,5vw,56px)',fontWeight:800,letterSpacing:'-2px',lineHeight:0.95}}>
+                Products I've<br/><span style={{color:'var(--accent)'}}>built & shipped.</span>
+              </h2>
+              <p style={{color:'var(--text-2)',maxWidth:320,fontSize:15,lineHeight:1.7}}>With a passion for clarity and function — I design and build things that actually work in the real world.</p>
+            </div>
+          </div>
         </div>
-        <p style={{color:'var(--text-2)', maxWidth:320, fontSize:15, lineHeight:1.7}}>With a passion for clarity and function — I design and build things that actually work in the real world.</p>
-      </div>
-      <div className="projects-grid" style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(min(100%, 520px), 1fr))', gap:24}}>
-        {projects.map((p,i) => <ProjectCard key={p.title} index={i} delay={Math.min(i+1,5)} {...p} />)}
-      </div>
-    </section>
+      </section>
+      {projects.map((p,i) => <ProjectCard key={p.title} index={i} delay={Math.min(i+1,5)} {...p} />)}
+    </div>
   );
 }
 
@@ -790,7 +1524,9 @@ function Pricing() {
                 <div style={{display:'flex', flexDirection:'column', gap:12, marginBottom:32}}>
                   {p.features.map(f => (
                     <div key={f} style={{display:'flex', gap:10, alignItems:'flex-start'}}>
-                      <span style={{fontSize:14, marginTop:1, flexShrink:0}}>✓</span>
+                      <span style={{marginTop:1, flexShrink:0, display:'inline-flex'}}>
+                        <Icon name="check" size={14} color={featured ? '#080b0f' : 'var(--text-2)'} />
+                      </span>
                       <span style={{fontSize:14, opacity:0.8}}>{f}</span>
                     </div>
                   ))}
@@ -816,17 +1552,18 @@ function Pricing() {
 function ResourcesTeaser() {
   const ref = useReveal();
   const resources = [
-    {title:'Claude.md Starter Pack', desc:'Production-ready Claude.md files for AI agents, customer support bots, and creative assistants.', tag:'Free Download', color:'var(--green)'},
-    {title:'AI Agent Prompts Library', desc:'50+ battle-tested system prompts for agentic workflows across industries.', tag:'Free Download', color:'#a78bfa'},
-    {title:'AI Architecture Checklist', desc:'The checklist I use before deploying any agentic system — covering reliability, safety, latency, and cost.', tag:'Free Download', color:'var(--accent)'},
+    {title:'Prompt Playbooks', desc:'Battle-tested system prompts and guardrails for reliable agent behavior.', tag:'Free Download', color:'var(--green)'},
+    {title:'AI Best Practices', desc:'Decision frameworks for evaluation, safety, and deployment readiness.', tag:'Field Guide', color:'#a78bfa'},
+    {title:'Architecture Checklists', desc:'The checklist I use before shipping: reliability, latency, cost, and oversight.', tag:'Free Download', color:'var(--accent)'},
   ];
   return (
     <section id="resources" style={{padding:'120px 32px', maxWidth:1200, margin:'0 auto'}}>
       <div ref={ref} className="reveal" style={{display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:48, flexWrap:'wrap', gap:24}}>
         <div>
-          <div style={{marginBottom:14, fontSize:12, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--green)'}}>Free Resources</div>
+          <div style={{marginBottom:14, fontSize:12, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--green)'}}>Inspiration & Resources</div>
           <h2 style={{fontFamily:'var(--font-display)', fontSize:'clamp(36px, 5vw, 56px)', fontWeight:800, letterSpacing:'-2px', lineHeight:0.95}}>
-            Tools for<br/><span style={{color:'var(--green)'}}>builders.</span>
+            Leave with
+            <br/><span style={{color:'var(--green)'}}>something useful.</span>
           </h2>
         </div>
         <a href="resources.html" style={{fontSize:14, fontWeight:600, color:'var(--green)', textDecoration:'none', padding:'12px 24px', border:'1px solid rgba(74,222,128,0.3)', borderRadius:100, transition:'all 0.2s'}}
@@ -849,7 +1586,7 @@ function ResourcesTeaser() {
               <span style={{fontSize:11, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:r.color, background:r.color+'18', padding:'4px 12px', borderRadius:100, marginBottom:16, display:'inline-block'}}>{r.tag}</span>
               <h3 style={{fontFamily:'var(--font-display)', fontSize:20, fontWeight:800, letterSpacing:'-0.5px', marginBottom:10, marginTop:8}}>{r.title}</h3>
               <p style={{fontSize:13, color:'var(--text-2)', lineHeight:1.7}}>{r.desc}</p>
-              <a href="resources.html" style={{marginTop:20, display:'inline-flex', alignItems:'center', gap:6, fontSize:13, color:r.color, fontWeight:600, textDecoration:'none'}}>Download free ↓</a>
+              <a href="resources.html" style={{marginTop:20, display:'inline-flex', alignItems:'center', gap:6, fontSize:13, color:r.color, fontWeight:600, textDecoration:'none'}}>Open resource →</a>
             </div>
           );
         })}
@@ -890,7 +1627,9 @@ function ContactForm() {
 
   if (status === 'success') return (
     <div style={{background:'var(--bg-2)',border:'1px solid var(--border-hi)',borderRadius:24,padding:'60px 40px',textAlign:'center',boxShadow:'0 0 60px rgba(74,222,128,0.08)'}}>
-      <div style={{fontSize:40,marginBottom:16}}>✓</div>
+      <div style={{fontSize:40,marginBottom:16,display:'inline-flex',justifyContent:'center'}}>
+        <Icon name="checkCircle" size={40} color="var(--green)" />
+      </div>
       <h3 style={{fontFamily:'var(--font-display)',fontSize:24,fontWeight:700,marginBottom:10,color:'var(--green)'}}>Message sent!</h3>
       <p style={{color:'var(--text-2)',fontSize:15}}>I'll get back to you within 24 hours.</p>
       <button onClick={()=>setStatus('idle')} style={{marginTop:24,padding:'10px 24px',borderRadius:100,background:'transparent',border:'1px solid var(--border-hi)',color:'var(--text-2)',cursor:'pointer',fontSize:13,fontFamily:'var(--font-body)'}}>Send another</button>
@@ -1043,7 +1782,7 @@ function VoiceWidget() {
         <div ref={messagesRef} style={{flex:1, overflowY:'auto', padding:'16px', display:'flex', flexDirection:'column', gap:10}}>
           {messages.length === 0 && (
             <div>
-              <p style={{fontSize:14, color:'var(--text-2)', lineHeight:1.7, marginBottom:16}}>Hey! 👋 I'm Elijah's AI assistant. Ask me anything about his work, services, or projects.</p>
+              <p style={{fontSize:14, color:'var(--text-2)', lineHeight:1.7, marginBottom:16}}>Hey, I'm Elijah's AI assistant. Ask me anything about his work, services, or projects.</p>
               <div style={{display:'flex', flexDirection:'column', gap:8}}>
                 {suggestions.map(s => (
                   <button key={s} onClick={()=>send(s)} style={{textAlign:'left', background:'var(--bg-2)', border:'1px solid var(--border)', borderRadius:10, padding:'9px 14px', color:'var(--text-2)', fontSize:13, cursor:'pointer', transition:'all 0.2s', fontFamily:'var(--font-body)'}}
@@ -1108,6 +1847,7 @@ function App() {
       <Marquee />
       <TechStack />
       <About />
+      <Mindset />
       <Projects />
       <Services />
       <Process />

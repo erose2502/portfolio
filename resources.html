@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Free Resources — Elijah Rose</title>
-  <meta name="description" content="Free AI tools, Claude.md templates, prompts, and brand strategy resources from Elijah Rose.">
+  <title>Inspiration & Resources — Elijah Rose</title>
+  <meta name="description" content="Inspiration, prompts, and best practices for building reliable AI systems from Elijah Rose.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="images/favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,6 +57,30 @@ function useReveal(threshold = 0.12) {
   return ref;
 }
 
+function Icon({ name, size = 16, color = 'currentColor', stroke = 2, style = {} }) {
+  const base = {
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: color,
+    strokeWidth: stroke,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    style: { display: 'block', ...style },
+    'aria-hidden': true,
+  };
+
+  switch (name) {
+    case 'check':
+      return <svg {...base}><path d="M5 13l4 4L19 7" /></svg>;
+    case 'download':
+      return <svg {...base}><path d="M12 3v12" /><path d="M7 10l5 5 5-5" /><path d="M5 21h14" /></svg>;
+    default:
+      return null;
+  }
+}
+
 /* ── NAV ── */
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -100,13 +124,13 @@ function Hero() {
   return (
     <section style={{padding:'140px 32px 80px', maxWidth:900, margin:'0 auto', textAlign:'center'}}>
       <div style={spring(0.1)}>
-        <span style={{fontSize:12, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--green)', background:'var(--green-dim)', padding:'6px 14px', borderRadius:100, border:'1px solid rgba(74,222,128,0.2)'}}>Free for everyone</span>
+        <span style={{fontSize:12, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--green)', background:'var(--green-dim)', padding:'6px 14px', borderRadius:100, border:'1px solid rgba(74,222,128,0.2)'}}>Always free, always useful</span>
       </div>
       <h1 style={{...spring(0.2), fontFamily:'var(--font-display)', fontWeight:800, fontSize:'clamp(48px, 7vw, 96px)', letterSpacing:'-3px', lineHeight:0.9, margin:'28px 0 24px'}}>
-        Tools for<br/><span style={{color:'var(--green)'}}>AI builders</span><span style={{color:'var(--accent)'}}>.</span>
+        Inspiration &<br/><span style={{color:'var(--green)'}}>resources</span><span style={{color:'var(--accent)'}}>.</span>
       </h1>
       <p style={{...spring(0.3), fontSize:'clamp(15px, 2vw, 18px)', color:'var(--text-2)', lineHeight:1.7, maxWidth:560, margin:'0 auto 0'}}>
-        Downloadable Claude.md files, agent prompts, brand templates, and more — curated from real projects, free to use.
+        A field guide for builders: prompts, playbooks, and best practices that keep AI systems reliable, safe, and shippable.
       </p>
     </section>
   );
@@ -163,7 +187,17 @@ function ResourceCard({ title, desc, tag, color, content, filename, delay }) {
           transition:'all 0.25s cubic-bezier(0.22,1,0.36,1)',
           transform: hovered && !downloaded ? 'scale(1.02)' : 'scale(1)',
         }}>
-          {downloaded ? '✓ Downloaded!' : `↓ Download ${filename}`}
+          {downloaded ? (
+            <span style={{display:'inline-flex',alignItems:'center',gap:8}}>
+              <Icon name="check" size={14} color="#080b0f" />
+              Downloaded
+            </span>
+          ) : (
+            <span style={{display:'inline-flex',alignItems:'center',gap:8}}>
+              <Icon name="download" size={14} color="#080b0f" />
+              Download {filename}
+            </span>
+          )}
         </button>
       </div>
     </div>
@@ -212,8 +246,8 @@ When triggered: "I completely understand your frustration. Let me connect you wi
 - Bold key actions the customer needs to take
 
 ## Tone Examples
-✅ "That sounds really frustrating — let me fix this right now."
-❌ "I understand your concern. Per our policy, refunds require..."
+Good: "That sounds really frustrating — let me fix this right now."
+Avoid: "I understand your concern. Per our policy, refunds require..."
 
 ## Memory
 Remember key details from earlier in the conversation (order numbers, names, issues mentioned) and reference them naturally.
@@ -433,8 +467,8 @@ If the user starts talking mid-response, stop immediately and acknowledge: "Go a
 Gently redirect: "That's interesting — though my specialty is [DOMAIN]. Want to stick with that for now?"
 
 ## Response Examples
-✅ "So what's happening is — your account shows the payment went through on Tuesday. You should see it reflected by end of day."
-❌ "According to our records, the payment transaction was processed on the date of Tuesday and should be visible within the system by the end of the business day today."
+Good: "So what's happening is — your account shows the payment went through on Tuesday. You should see it reflected by end of day."
+Avoid: "According to our records, the payment transaction was processed on the date of Tuesday and should be visible within the system by the end of the business day today."
 `,
   },
   {
