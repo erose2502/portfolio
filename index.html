@@ -578,6 +578,29 @@ function About() {
 function var_radius() { return 'var(--radius)'; }
 
 /* ─── MINDSET ─── */
+function MindsetCard({ value: v, index: i }) {
+  const r = useReveal(0.1);
+  return (
+    <div ref={r} className={`reveal reveal-delay-${i+1}`} style={{
+      background:'var(--bg)', border:'1px solid var(--border)',
+      borderRadius:20, padding:'28px', transition:'all 0.3s cubic-bezier(0.22,1,0.36,1)',
+    }}
+      onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)'; e.currentTarget.style.transform='translateY(-4px)';}}
+      onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.transform='none';}}
+    >
+      <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:v.color, background:v.bg, padding:'4px 12px', borderRadius:100, display:'inline-block', marginBottom:16}}>{v.title}</span>
+      <ul style={{listStyle:'none', display:'flex', flexDirection:'column', gap:12}}>
+        {v.items.map(item => (
+          <li key={item} style={{display:'flex', gap:10, alignItems:'flex-start', color:'var(--text-2)', fontSize:14, lineHeight:1.6}}>
+            <span style={{width:8, height:8, borderRadius:'50%', background:v.color, boxShadow:`0 0 8px ${v.color}`}}></span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Mindset() {
   const ref = useReveal();
   const values = [
@@ -627,28 +650,7 @@ function Mindset() {
           </p>
         </div>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(260px, 1fr))', gap:16}}>
-          {values.map((v,i) => {
-            const r = useReveal(0.1);
-            return (
-              <div key={v.title} ref={r} className={`reveal reveal-delay-${i+1}`} style={{
-                background:'var(--bg)', border:'1px solid var(--border)',
-                borderRadius:20, padding:'28px', transition:'all 0.3s cubic-bezier(0.22,1,0.36,1)',
-              }}
-                onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)'; e.currentTarget.style.transform='translateY(-4px)';}}
-                onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.transform='none';}}
-              >
-                <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:v.color, background:v.bg, padding:'4px 12px', borderRadius:100, display:'inline-block', marginBottom:16}}>{v.title}</span>
-                <ul style={{listStyle:'none', display:'flex', flexDirection:'column', gap:12}}>
-                  {v.items.map(item => (
-                    <li key={item} style={{display:'flex', gap:10, alignItems:'flex-start', color:'var(--text-2)', fontSize:14, lineHeight:1.6}}>
-                      <span style={{width:8, height:8, borderRadius:'50%', background:v.color, boxShadow:`0 0 8px ${v.color}`}}></span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+          {values.map((v,i) => <MindsetCard key={v.title} value={v} index={i} />)}
         </div>
       </div>
     </section>
