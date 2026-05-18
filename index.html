@@ -1275,9 +1275,6 @@ function Projects() {
         {icon:'refresh', title:'Self-correction', desc:'Catches its own mistakes, re-evaluates, and fixes before asking for help.'},
       ],
     },
-                      <div style={{width:44,height:44,borderRadius:12,background:accent+'14',border:`1px solid ${accent}25`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                        <Icon name={f.icon} size={18} color={accent} />
-                      </div>
   ];
   const ref = useReveal();
   return (
@@ -1404,6 +1401,26 @@ function ServiceIcon({ type }) {
 }
 
 /* ─── SERVICES ─── */
+function ServiceCard({ service: s, index: i }) {
+  const r = useReveal(0.1);
+  return (
+    <div ref={r} className={`reveal reveal-delay-${Math.min(i+1,5)}`} style={{
+      padding:'32px 32px 36px', borderBottom:'1px solid var(--border)', borderRight:'1px solid var(--border)',
+      transition:'background 0.3s',
+    }}
+      onMouseEnter={e=>e.currentTarget.style.background='var(--bg-2)'}
+      onMouseLeave={e=>e.currentTarget.style.background='transparent'}
+    >
+      <ServiceIcon type={s.icon} />
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:14}}>
+        <span style={{fontFamily:'var(--font-display)', fontSize:13, fontWeight:800, color:'var(--text-3)'}}>{s.n}</span>
+        {s.tag && <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--accent)', background:'var(--accent-dim)', padding:'4px 10px', borderRadius:100}}>{s.tag}</span>}
+      </div>
+      <h3 style={{fontFamily:'var(--font-display)', fontSize:22, fontWeight:800, letterSpacing:'-0.5px', marginBottom:12}}>{s.title}</h3>
+      <p style={{fontSize:14, color:'var(--text-2)', lineHeight:1.7}}>{s.desc}</p>
+    </div>
+  );
+}
 function Services() {
   const ref = useReveal();
   const services = [
@@ -1424,26 +1441,7 @@ function Services() {
           </h2>
         </div>
         <div className="services-grid" style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(min(100%, 340px), 1fr))', gap:2}}>
-          {services.map((s,i) => {
-            const r = useReveal(0.1);
-            return (
-              <div key={s.n} ref={r} className={`reveal reveal-delay-${Math.min(i+1,5)}`} style={{
-                padding:'32px 32px 36px', borderBottom:'1px solid var(--border)', borderRight:'1px solid var(--border)',
-                transition:'background 0.3s',
-              }}
-                onMouseEnter={e=>e.currentTarget.style.background='var(--bg-2)'}
-                onMouseLeave={e=>e.currentTarget.style.background='transparent'}
-              >
-                <ServiceIcon type={s.icon} />
-                <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:14}}>
-                  <span style={{fontFamily:'var(--font-display)', fontSize:13, fontWeight:800, color:'var(--text-3)'}}>{s.n}</span>
-                  {s.tag && <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--accent)', background:'var(--accent-dim)', padding:'4px 10px', borderRadius:100}}>{s.tag}</span>}
-                </div>
-                <h3 style={{fontFamily:'var(--font-display)', fontSize:22, fontWeight:800, letterSpacing:'-0.5px', marginBottom:12}}>{s.title}</h3>
-                <p style={{fontSize:14, color:'var(--text-2)', lineHeight:1.7}}>{s.desc}</p>
-              </div>
-            );
-          })}
+          {services.map((s,i) => <ServiceCard key={s.n} service={s} index={i} />)}
         </div>
       </div>
     </section>
@@ -1451,6 +1449,22 @@ function Services() {
 }
 
 /* ─── PROCESS ─── */
+function ProcessStep({ step: s, index: i }) {
+  const r = useReveal(0.1);
+  return (
+    <div ref={r} className={`reveal reveal-delay-${Math.min(i+1,5)}`} style={{
+      display:'grid', gridTemplateColumns:'80px 1fr', gap:32,
+      padding:'32px 0', borderTop:'1px solid var(--border)',
+      alignItems:'center',
+    }}>
+      <span style={{fontFamily:'var(--font-display)', fontSize:48, fontWeight:700, background:'linear-gradient(135deg, var(--accent), var(--cyan))', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', opacity:0.6}}>{s.n}</span>
+      <div>
+        <h3 style={{fontFamily:'var(--font-display)', fontSize:26, fontWeight:800, letterSpacing:'-0.5px', marginBottom:8}}>{s.title}</h3>
+        <p style={{color:'var(--text-2)', fontSize:15, lineHeight:1.7}}>{s.desc}</p>
+      </div>
+    </div>
+  );
+}
 function Process() {
   const steps = [
     {n:'01', title:'Discovery', desc:'I start with a deep-dive call to understand your goals, constraints, and what success looks like.'},
@@ -1468,27 +1482,51 @@ function Process() {
           How I work<span style={{color:'var(--accent)'}}>.</span>
         </h2>
       </div>
-      {steps.map((s,i) => {
-        const r = useReveal(0.1);
-        return (
-          <div key={s.n} ref={r} className={`reveal reveal-delay-${Math.min(i+1,5)}`} style={{
-            display:'grid', gridTemplateColumns:'80px 1fr', gap:32,
-            padding:'32px 0', borderTop:'1px solid var(--border)',
-            alignItems:'center',
-          }}>
-            <span style={{fontFamily:'var(--font-display)', fontSize:48, fontWeight:700, background:'linear-gradient(135deg, var(--accent), var(--cyan))', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', opacity:0.6}}>{s.n}</span>
-            <div>
-              <h3 style={{fontFamily:'var(--font-display)', fontSize:26, fontWeight:800, letterSpacing:'-0.5px', marginBottom:8}}>{s.title}</h3>
-              <p style={{color:'var(--text-2)', fontSize:15, lineHeight:1.7}}>{s.desc}</p>
-            </div>
-          </div>
-        );
-      })}
+      {steps.map((s,i) => <ProcessStep key={s.n} step={s} index={i} />)}
     </section>
   );
 }
 
 /* ─── PRICING ─── */
+function PricingCard({ plan: p, index: i }) {
+  const r = useReveal(0.1);
+  const featured = p.tag === 'Most popular';
+  return (
+    <div ref={r} className={`reveal reveal-delay-${i+1}`} style={{
+      background: featured ? 'var(--accent)' : 'var(--bg-2)',
+      border: `1px solid ${featured ? 'var(--accent)' : 'var(--border)'}`,
+      borderRadius:24, padding:'36px 32px',
+      color: featured ? '#080b0f' : 'var(--text)',
+    }}>
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:24}}>
+        <div>
+          <div style={{fontSize:12, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', opacity:0.6, marginBottom:6}}>{p.name}</div>
+          <div style={{fontFamily:'var(--font-display)', fontSize:42, fontWeight:800, letterSpacing:'-2px', lineHeight:1}}>{p.price}<span style={{fontSize:14, fontWeight:400, letterSpacing:0}}>{p.period}</span></div>
+        </div>
+        {p.tag && <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', background: featured ? 'rgba(0,0,0,0.15)' : 'var(--accent-dim)', color: featured ? '#080b0f' : 'var(--accent)', padding:'4px 10px', borderRadius:100}}>{p.tag}</span>}
+      </div>
+      <p style={{fontSize:14, opacity:0.65, marginBottom:28, lineHeight:1.6}}>{p.desc}</p>
+      <div style={{display:'flex', flexDirection:'column', gap:12, marginBottom:32}}>
+        {p.features.map(f => (
+          <div key={f} style={{display:'flex', gap:10, alignItems:'flex-start'}}>
+            <span style={{marginTop:1, flexShrink:0, display:'inline-flex'}}>
+              <Icon name="check" size={14} color={featured ? '#080b0f' : 'var(--text-2)'} />
+            </span>
+            <span style={{fontSize:14, opacity:0.8}}>{f}</span>
+          </div>
+        ))}
+      </div>
+      <a href="#contact" style={{
+        display:'block', textAlign:'center', padding:'14px',
+        borderRadius:100, fontWeight:600, fontSize:14, textDecoration:'none',
+        background: featured ? '#080b0f' : 'transparent',
+        color: featured ? 'var(--accent)' : 'var(--text)',
+        border: `1px solid ${featured ? 'transparent' : 'var(--border-hi)'}`,
+        transition:'all 0.2s',
+      }}>Get started →</a>
+    </div>
+  );
+}
 function Pricing() {
   const ref = useReveal();
   const plans = [
@@ -1505,45 +1543,7 @@ function Pricing() {
           <p style={{color:'var(--text-2)', marginTop:16, fontSize:16}}>Every stage of growth, covered.</p>
         </div>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap:16}}>
-          {plans.map((p,i) => {
-            const r = useReveal(0.1);
-            const featured = p.tag === 'Most popular';
-            return (
-              <div key={p.name} ref={r} className={`reveal reveal-delay-${i+1}`} style={{
-                background: featured ? 'var(--accent)' : 'var(--bg-2)',
-                border: `1px solid ${featured ? 'var(--accent)' : 'var(--border)'}`,
-                borderRadius:24, padding:'36px 32px',
-                color: featured ? '#080b0f' : 'var(--text)',
-              }}>
-                <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:24}}>
-                  <div>
-                    <div style={{fontSize:12, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', opacity:0.6, marginBottom:6}}>{p.name}</div>
-                    <div style={{fontFamily:'var(--font-display)', fontSize:42, fontWeight:800, letterSpacing:'-2px', lineHeight:1}}>{p.price}<span style={{fontSize:14, fontWeight:400, letterSpacing:0}}>{p.period}</span></div>
-                  </div>
-                  {p.tag && <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', background: featured ? 'rgba(0,0,0,0.15)' : 'var(--accent-dim)', color: featured ? '#080b0f' : 'var(--accent)', padding:'4px 10px', borderRadius:100}}>{p.tag}</span>}
-                </div>
-                <p style={{fontSize:14, opacity:0.65, marginBottom:28, lineHeight:1.6}}>{p.desc}</p>
-                <div style={{display:'flex', flexDirection:'column', gap:12, marginBottom:32}}>
-                  {p.features.map(f => (
-                    <div key={f} style={{display:'flex', gap:10, alignItems:'flex-start'}}>
-                      <span style={{marginTop:1, flexShrink:0, display:'inline-flex'}}>
-                        <Icon name="check" size={14} color={featured ? '#080b0f' : 'var(--text-2)'} />
-                      </span>
-                      <span style={{fontSize:14, opacity:0.8}}>{f}</span>
-                    </div>
-                  ))}
-                </div>
-                <a href="#contact" style={{
-                  display:'block', textAlign:'center', padding:'14px',
-                  borderRadius:100, fontWeight:600, fontSize:14, textDecoration:'none',
-                  background: featured ? '#080b0f' : 'transparent',
-                  color: featured ? 'var(--accent)' : 'var(--text)',
-                  border: `1px solid ${featured ? 'transparent' : 'var(--border-hi)'}`,
-                  transition:'all 0.2s',
-                }}>Get started →</a>
-              </div>
-            );
-          })}
+          {plans.map((p,i) => <PricingCard key={p.name} plan={p} index={i} />)}
         </div>
       </div>
     </section>
@@ -1551,6 +1551,24 @@ function Pricing() {
 }
 
 /* ─── RESOURCES TEASER ─── */
+function ResourceCard({ resource: r, index: i }) {
+  const ref2 = useReveal(0.1);
+  return (
+    <div ref={ref2} className={`reveal reveal-delay-${i+1}`} style={{
+      background:'var(--bg-1)', border:'1px solid var(--border)',
+      borderRadius:20, padding:'28px', transition:'all 0.3s cubic-bezier(0.22,1,0.36,1)',
+      cursor:'pointer',
+    }}
+      onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)'; e.currentTarget.style.transform='translateY(-4px)';}}
+      onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.transform='none';}}
+    >
+      <span style={{fontSize:11, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:r.color, background:r.color+'18', padding:'4px 12px', borderRadius:100, marginBottom:16, display:'inline-block'}}>{r.tag}</span>
+      <h3 style={{fontFamily:'var(--font-display)', fontSize:20, fontWeight:800, letterSpacing:'-0.5px', marginBottom:10, marginTop:8}}>{r.title}</h3>
+      <p style={{fontSize:13, color:'var(--text-2)', lineHeight:1.7}}>{r.desc}</p>
+      <a href="resources.html" style={{marginTop:20, display:'inline-flex', alignItems:'center', gap:6, fontSize:13, color:r.color, fontWeight:600, textDecoration:'none'}}>Open resource →</a>
+    </div>
+  );
+}
 function ResourcesTeaser() {
   const ref = useReveal();
   const resources = [
@@ -1574,24 +1592,7 @@ function ResourcesTeaser() {
         >Browse all resources →</a>
       </div>
       <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap:16}}>
-        {resources.map((r,i) => {
-          const ref2 = useReveal(0.1);
-          return (
-            <div key={r.title} ref={ref2} className={`reveal reveal-delay-${i+1}`} style={{
-              background:'var(--bg-1)', border:'1px solid var(--border)',
-              borderRadius:20, padding:'28px', transition:'all 0.3s cubic-bezier(0.22,1,0.36,1)',
-              cursor:'pointer',
-            }}
-              onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)'; e.currentTarget.style.transform='translateY(-4px)';}}
-              onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.transform='none';}}
-            >
-              <span style={{fontSize:11, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:r.color, background:r.color+'18', padding:'4px 12px', borderRadius:100, marginBottom:16, display:'inline-block'}}>{r.tag}</span>
-              <h3 style={{fontFamily:'var(--font-display)', fontSize:20, fontWeight:800, letterSpacing:'-0.5px', marginBottom:10, marginTop:8}}>{r.title}</h3>
-              <p style={{fontSize:13, color:'var(--text-2)', lineHeight:1.7}}>{r.desc}</p>
-              <a href="resources.html" style={{marginTop:20, display:'inline-flex', alignItems:'center', gap:6, fontSize:13, color:r.color, fontWeight:600, textDecoration:'none'}}>Open resource →</a>
-            </div>
-          );
-        })}
+        {resources.map((r,i) => <ResourceCard key={r.title} resource={r} index={i} />)}
       </div>
     </section>
   );
