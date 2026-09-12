@@ -1,95 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><title>Everon — Elijah Rose</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="../images/favicon.png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--bg:#080b0f;--bg-1:#0d1117;--bg-2:#161b24;--border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.14);--text:#f0ede8;--text-2:rgba(240,237,232,0.5);--text-3:rgba(240,237,232,0.28);--accent:#a78bfa;--font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;}
-    html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-    .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}.reveal.visible{opacity:1;transform:none}
-    @keyframes glow-pulse{0%,100%{opacity:.2}50%{opacity:.45}}.glow-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:glow-pulse 4s ease-in-out infinite}
-    @media(max-width:768px){.d-hero{padding:100px 20px 60px !important}.d-grid{grid-template-columns:1fr !important;gap:16px !important}.px-s{padding-left:20px !important;padding-right:20px !important}}
-  </style>
+<meta charset="utf-8">
+<title>Everon — Elijah Rose</title>
+<meta name="description" content="Everon: an AI career assistant rebuilt from prototype to production architecture.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#060607">
+<link rel="icon" href="../images/favicon.png" type="image/png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Everon — Elijah Rose">
+<meta property="og:description" content="Everon: an AI career assistant rebuilt from prototype to production architecture.">
+<script>
+(function(){
+  var ok={bone:1,ember:1,cobalt:1,mono:1};
+  var q=new URLSearchParams(location.search).get('theme');
+  var t=ok[q]?q:(ok[localStorage.getItem('er-theme')]?localStorage.getItem('er-theme'):'bone');
+  if(q&&ok[q]) try{localStorage.setItem('er-theme',q);}catch(e){}
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
 </head>
-<body><div id="root"></div>
-<script type="text/babel">
-const{useState,useEffect,useRef}=React;
-function useReveal(t=0.12){const ref=useRef(null);useEffect(()=>{const el=ref.current;if(!el)return;const io=new IntersectionObserver(([e])=>{if(e.isIntersecting){el.classList.add('visible');io.disconnect();}},{threshold:t});io.observe(el);return()=>io.disconnect();},[]);return ref;}
-function Nav(){const[s,setS]=useState(false);useEffect(()=>{const h=()=>setS(window.scrollY>40);window.addEventListener('scroll',h);return()=>window.removeEventListener('scroll',h);},[]);return(<nav style={{position:'fixed',top:0,left:0,right:0,zIndex:999,padding:'0 28px',height:64,background:s?'rgba(8,11,15,0.95)':'transparent',backdropFilter:s?'blur(20px)':'none',borderBottom:s?'1px solid var(--border)':'1px solid transparent',transition:'all .4s',display:'flex',alignItems:'center',justifyContent:'space-between'}}><a href="../index.html" style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,color:'var(--text)',textDecoration:'none'}}>Elijah Rose<span style={{color:'#e8c547'}}>.</span></a><a href="../index.html#work" style={{fontSize:13,color:'var(--text-2)',textDecoration:'none',fontWeight:500,padding:'8px 16px',border:'1px solid var(--border)',borderRadius:100}} onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--border-hi)';e.currentTarget.style.color='var(--text)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--text-2)'}}>← All projects</a></nav>);}
+<body>
 
-function App(){
-  const[v,setV]=useState(false);useEffect(()=>{setTimeout(()=>setV(true),80);},[]);
-  const sp=d=>({opacity:v?1:0,transform:v?'none':'translateY(28px)',transition:`opacity .8s cubic-bezier(.22,1,.36,1) ${d}s,transform .8s cubic-bezier(.22,1,.36,1) ${d}s`});
-  const A='#a78bfa',AD='rgba(167,139,250,0.1)';
-  const features=[
-    {title:'AI Resume Analysis',desc:'Upload a PDF resume and receive instant AI-powered feedback: professional summary, career level assessment, strengths, improvement areas, actionable recommendations, and ATS keyword optimization.'},
-    {title:'AI Career Coaching',desc:'Interactive chat with an AI assistant for personalized career advice, interview preparation, job search strategies, and career development planning.'},
-    {title:'Real-time voice coaching',desc:'Natural voice conversations with the AI career coach via LiveKit-powered audio streaming. Hands-free career coaching with real-time STT/TTS.'},
-    {title:'Job search integration',desc:'Search and discover job opportunities from LinkedIn and Indeed with AI-powered job matching based on your resume profile.'},
-    {title:'Authentication & persistence',desc:'Firebase auth with email/password and Google OAuth. Firestore persistence for conversation history, resume uploads, and coaching session continuity across devices.'},
-    {title:'Rebuilt from prototype',desc:'Everon was fully rebuilt from a stateless prototype to production architecture — demonstrating the ability to refactor and harden AI systems, not just greenfield build.'},
-  ];
-  const ref1=useReveal();
-  return(<>
-    <Nav/>
-    <section className="d-hero" style={{padding:'120px 32px 72px',maxWidth:1100,margin:'0 auto',position:'relative'}}>
-      <div className="glow-orb" style={{width:450,height:450,background:`radial-gradient(circle,${A}18,transparent)`,top:'-60px',right:'-40px'}}/>
-      <div style={sp(0.1)}><span style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,background:AD,padding:'5px 13px',borderRadius:100,border:`1px solid ${A}44`}}>Live · AI Career Assistant</span></div>
-      <h1 style={{...sp(0.2),fontFamily:'var(--font-display)',fontSize:'clamp(44px,7vw,84px)',fontWeight:700,letterSpacing:'-3px',lineHeight:.92,margin:'22px 0 18px'}}>Everon<span style={{color:A}}>.</span></h1>
-      <p style={{...sp(0.25),fontFamily:'var(--font-display)',fontSize:'clamp(17px,2.5vw,26px)',fontWeight:600,color:'var(--text-2)',letterSpacing:'-0.5px',marginBottom:20}}>AI-powered career assistant — rebuilt from prototype to production.</p>
-      <p style={{...sp(0.3),fontSize:'clamp(14px,1.8vw,17px)',color:'var(--text-2)',maxWidth:580,lineHeight:1.75,marginBottom:36}}>Everon is an intelligent AI career assistant that helps job seekers optimize resumes, prepare for interviews, and discover relevant opportunities. Built with OpenAI GPT-4, LiveKit voice integration, and Firebase authentication. Firebase auth, Firestore persistence. Rebuilt from prototype to production architecture.</p>
-      <div style={{...sp(0.4),display:'flex',gap:10,flexWrap:'wrap',marginBottom:36}}>
-        {['React 18','TypeScript','OpenAI GPT-4','LiveKit','Firebase Auth','Firestore','Vite'].map(s=><span key={s} style={{fontSize:11,fontWeight:600,padding:'5px 13px',borderRadius:100,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.12)',color:'var(--text-2)'}}>{s}</span>)}
-      </div>
-    </section>
+<header class="nav" id="nav">
+  <a href="../" class="nav__mark" aria-label="Elijah Rose, home">ELIJAH ROSE<i>.</i></a>
+  <a class="nav__l" href="../#work">Work</a>
+  <a class="nav__l" href="../#capabilities">Capabilities</a>
+  <a class="nav__l" href="../#engagement">Engagement</a>
+  <a class="nav__l" href="../resources">Resources</a>
+  <a class="btn btn--sig btn--sm" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">Book a call
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</header>
 
-    <section className="px-s" style={{padding:'0 32px 56px',maxWidth:1100,margin:'0 auto'}}>
-      <div style={{background:'var(--bg-1)',border:`1px solid ${A}33`,borderLeft:`3px solid ${A}`,borderRadius:14,padding:'26px 30px'}}>
-        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:10}}>Mindset applied</div>
-        <p style={{fontSize:14,color:'var(--text-2)',lineHeight:1.7,marginBottom:14}}>Career guidance should be practical, respectful, and measurable. Everon emphasizes actionable advice and user-owned progress.</p>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:12}}>
-          {[
-            'Actionable feedback over generic advice',
-            'Clear boundaries on recommendations',
-            'Data ownership and privacy by default',
-          ].map(item => (
-            <div key={item} style={{display:'flex',gap:10,alignItems:'flex-start',fontSize:13,color:'var(--text-2)'}}>
-              <span style={{width:8,height:8,borderRadius:'50%',background:A,boxShadow:`0 0 6px ${A}`}}></span>
-              <span>{item}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+<main>
+<section class="phead">
+  <div class="phead__grid" aria-hidden="true"></div>
+  <div class="wrap">
+    <a class="back" href="../#work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> All projects</a>
+    <span class="tag tag--sig rv in">Live · AI career assistant</span>
+    <h1 class="giant rv in" data-d="1">Everon<em>.</em></h1>
+    <p class="phead__sub rv in" data-d="2">Rebuilt from prototype to <em>production</em>.</p>
+    <p class="lede phead__body rv in" data-d="2">Everon is an intelligent AI career assistant that helps job seekers optimize resumes, prepare for interviews, and discover relevant opportunities. Built with OpenAI GPT-4, LiveKit voice integration, Firebase auth, and Firestore persistence.</p>
+    <div class="chips rv in" data-d="3"><span>React 18</span><span>TypeScript</span><span>OpenAI GPT-4</span><span>LiveKit</span><span>Firebase Auth</span><span>Firestore</span><span>Vite</span></div>
+    <div class="phead__cta rv in" data-d="3"><a class="btn btn--sig" href="https://everon-coach.vercel.app" target="_blank" rel="noopener">View live project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn btn--line" href="../#contact">Discuss a build like this</a></div>
+  </div>
+</section><section class="mind">
+  <div class="wrap mind__g">
+    <div class="rv"><h2>Mindset applied</h2><p>Career guidance should be practical, respectful, and measurable. Everon emphasizes actionable advice and user-owned progress.</p></div>
+    <ul class="rv" data-d="1"><li>Actionable feedback over generic advice</li><li>Clear boundaries on recommendations</li><li>Data ownership and privacy by default</li></ul>
+  </div>
+</section><section class="sec">
+  <div class="wrap">
+    <div class="sec__head rv"><span class="tag">Features</span><h2 class="h2">Comprehensive career AI,<br>from resume <em>to offer</em>.</h2></div>
+    <div class="fgrid rv" data-d="1"><article class="fcard"><i>01</i><b>AI resume analysis</b><p>Upload a PDF resume and receive instant AI-powered feedback: professional summary, career level assessment, strengths, improvement areas, actionable recommendations, and ATS keyword optimization.</p></article><article class="fcard"><i>02</i><b>AI career coaching</b><p>Interactive chat with an AI assistant for personalized career advice, interview preparation, job search strategies, and career development planning.</p></article><article class="fcard"><i>03</i><b>Real-time voice coaching</b><p>Natural voice conversations with the AI career coach via LiveKit-powered audio streaming. Hands-free coaching with real-time STT and TTS.</p></article><article class="fcard"><i>04</i><b>Job search integration</b><p>Search and discover job opportunities from LinkedIn and Indeed with AI-powered job matching based on your resume profile.</p></article><article class="fcard"><i>05</i><b>Authentication &amp; persistence</b><p>Firebase auth with email, password, and Google OAuth. Firestore persistence for conversation history, resume uploads, and session continuity across devices.</p></article><article class="fcard"><i>06</i><b>Rebuilt from prototype</b><p>Everon was fully rebuilt from a stateless prototype into production architecture, demonstrating the ability to refactor and harden AI systems, not just greenfield build.</p></article></div>
+  </div>
+</section>
+</main>
+<section class="next">
+  <div class="wrap">
+    <a href="../projects/kazi-coder">
+      <div><span class="tag">Next project</span><h2>Kazi Coder</h2></div>
+      <span class="ul">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+    </a>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap">
+    <span class="tag">Next step</span>
+    <h2 class="h2">Let's build <em>something</em></h2>
+    <p>Starting from scratch or scaling fast, either works. Book a call, or send a brief and I will come back within 24 hours.</p>
+    <div class="band__cta">
+      <a class="btn btn--sig" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">Book a discovery call
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn--line" href="../#contact">Send a brief</a>
+    </div>
+  </div>
+</section>
 
-    <section className="px-s" style={{padding:'0 32px 72px',maxWidth:1100,margin:'0 auto'}}>
-      <div style={{borderRadius:20,border:'1px solid var(--border-hi)',background:'var(--bg-1)',display:'flex',alignItems:'center',justifyContent:'center',minHeight:260,boxShadow:`0 0 60px ${A}15`}}>
-        <img src="../images/Everon-icon.png" alt="Everon" style={{maxWidth:200,maxHeight:200,objectFit:'contain',padding:48,opacity:.85}}/>
-      </div>
-    </section>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__t">
+      <span class="tag">Elijah Rose &middot; AI Systems Engineer</span>
+      <nav class="foot__l" aria-label="Footer">
+        <a class="ul" href="https://www.linkedin.com/in/elijah-rose-7532251b0" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="ul" href="https://github.com/erose2502" target="_blank" rel="noopener">GitHub</a>
+        <a class="ul" href="../resources">Resources</a>
+        <a class="ul" href="../#contact">Contact</a>
+      </nav>
+    </div>
+    <div class="foot__w" aria-hidden="true">ELIJAH ROSE<i>.</i></div>
+    <div class="foot__b"><span>&copy; 2026 Elijah Rose</span><span>Built by hand. No frameworks.</span></div>
+  </div>
+</footer>
 
-    <section className="px-s" style={{padding:'0 32px 80px',maxWidth:1100,margin:'0 auto'}}>
-      <div ref={ref1} className="reveal" style={{marginBottom:32}}>
-        <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:A,marginBottom:10}}>Features</div>
-        <h2 style={{fontFamily:'var(--font-display)',fontSize:'clamp(26px,4vw,40px)',fontWeight:700,letterSpacing:'-1.5px'}}>Comprehensive career AI,<br/>from resume to offer.</h2>
-      </div>
-      <div className="d-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-        {features.map((f,i)=>{const r=useReveal();return(<div key={f.title} ref={r} className="reveal" style={{padding:'24px 26px',background:'var(--bg-1)',border:'1px solid var(--border)',borderRadius:14,borderTop:`2px solid ${A}44`,transitionDelay:`${i*0.06}s`}}><h3 style={{fontFamily:'var(--font-display)',fontSize:15,fontWeight:700,marginBottom:8,color:A}}>{f.title}</h3><p style={{fontSize:13,color:'var(--text-2)',lineHeight:1.75}}>{f.desc}</p></div>);})}
-      </div>
-    </section>
-
-    <section style={{padding:'60px 32px',background:'var(--bg-1)',borderTop:'1px solid var(--border)',textAlign:'center'}}>
-      <div style={{marginBottom:14,fontSize:11,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'var(--text-3)'}}>Next project</div>
-      <a href="kazi.html" style={{fontFamily:'var(--font-display)',fontSize:'clamp(28px,4vw,48px)',fontWeight:700,color:'var(--text)',textDecoration:'none',display:'inline-flex',alignItems:'center',gap:14,transition:'gap .2s'}} onMouseEnter={e=>e.currentTarget.style.gap='22px'} onMouseLeave={e=>e.currentTarget.style.gap='14px'}>Kazi Orchestrate <span style={{color:'#7c3aed'}}>→</span></a>
-    </section>
-  </>);
-}
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-</script></body></html>
+<script>
+(function(){
+  var nav=document.getElementById('nav');
+  function s(){ nav.classList.toggle('stuck', scrollY>20); }
+  s(); addEventListener('scroll', s, {passive:true});
+  var rvs=document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{threshold:.1,rootMargin:'0px 0px -6% 0px'});
+    rvs.forEach(function(el){ io.observe(el); });
+  } else { rvs.forEach(function(el){ el.classList.add('in'); }); }
+})();
+</script>
+</body>
+</html>

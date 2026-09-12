@@ -1,217 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Inspiration & Resources — Elijah Rose</title>
-  <meta name="description" content="Inspiration, prompts, and best practices for building reliable AI systems from Elijah Rose.">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="images/favicon.png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #080b0f; --bg-1: #0d1117; --bg-2: #161b24;
-      --border: rgba(255,255,255,0.07); --border-hi: rgba(255,255,255,0.14);
-      --text: #f0ede8; --text-2: rgba(240,237,232,0.5); --text-3: rgba(240,237,232,0.28);
-      --accent: #e8c547; --accent-dim: rgba(232,197,71,0.12);
-      --green: #4ade80; --green-dim: rgba(74,222,128,0.1);
-      --purple: #a78bfa; --purple-dim: rgba(167,139,250,0.1);
-      --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
-    }
-    html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-    ::selection { background: var(--accent); color: #080b0f; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
-    .reveal.visible { opacity: 1; transform: none; }
-    .reveal-delay-1 { transition-delay: 0.08s; }
-    .reveal-delay-2 { transition-delay: 0.16s; }
-    .reveal-delay-3 { transition-delay: 0.24s; }
-    .reveal-delay-4 { transition-delay: 0.32s; }
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-    .marquee-run { animation: marquee 20s linear infinite; display: flex; white-space: nowrap; }
-  </style>
+<meta charset="utf-8">
+<title>Field Notes &amp; Resources — Elijah Rose</title>
+<meta name="description" content="Free Claude.md templates, prompt playbooks, and AI architecture checklists from Elijah Rose.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#060607">
+<link rel="icon" href="images/favicon.png" type="image/png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Field Notes &amp; Resources — Elijah Rose">
+<meta property="og:description" content="Free Claude.md templates, prompt playbooks, and AI architecture checklists from Elijah Rose.">
+<script>
+(function(){
+  var ok={bone:1,ember:1,cobalt:1,mono:1};
+  var q=new URLSearchParams(location.search).get('theme');
+  var t=ok[q]?q:(ok[localStorage.getItem('er-theme')]?localStorage.getItem('er-theme'):'bone');
+  if(q&&ok[q]) try{localStorage.setItem('er-theme',q);}catch(e){}
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useRef } = React;
 
-function useReveal(threshold = 0.12) {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { el.classList.add('visible'); io.disconnect(); }
-    }, { threshold });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  return ref;
-}
+<header class="nav" id="nav">
+  <a href="" class="nav__mark" aria-label="Elijah Rose, home">ELIJAH ROSE<i>.</i></a>
+  <a class="nav__l" href="#work">Work</a>
+  <a class="nav__l" href="#capabilities">Capabilities</a>
+  <a class="nav__l" href="#engagement">Engagement</a>
+  <a class="nav__l" href="resources">Resources</a>
+  <a class="btn btn--sig btn--sm" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">Book a call
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</header>
 
-function Icon({ name, size = 16, color = 'currentColor', stroke = 2, style = {} }) {
-  const base = {
-    width: size,
-    height: size,
-    viewBox: '0 0 24 24',
-    fill: 'none',
-    stroke: color,
-    strokeWidth: stroke,
-    strokeLinecap: 'round',
-    strokeLinejoin: 'round',
-    style: { display: 'block', ...style },
-    'aria-hidden': true,
-  };
+<main>
+<section class="phead">
+  <div class="phead__grid" aria-hidden="true"></div>
+  <div class="wrap">
+    <a class="back" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Back to portfolio</a>
+    <span class="tag tag--sig rv in">Always free, no email gate</span>
+    <h1 class="giant rv in" data-d="1">Field<br><em>notes</em></h1>
+    <p class="lede phead__body rv in" data-d="2">A field guide for builders: the prompts, playbooks, and checklists that keep AI systems reliable, safe, and shippable. Every file is the real one I use, not a sanitized sample.</p>
+  </div>
+</section>
 
-  switch (name) {
-    case 'check':
-      return <svg {...base}><path d="M5 13l4 4L19 7" /></svg>;
-    case 'download':
-      return <svg {...base}><path d="M12 3v12" /><path d="M7 10l5 5 5-5" /><path d="M5 21h14" /></svg>;
-    default:
-      return null;
-  }
-}
-
-/* ── NAV ── */
-function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', h);
-    return () => window.removeEventListener('scroll', h);
-  }, []);
-  return (
-    <nav style={{
-      position:'fixed', top:0, left:0, right:0, zIndex:999,
-      padding:'0 32px', height:68,
-      background: scrolled ? 'rgba(8,11,15,0.92)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(20px)' : 'none',
-      borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
-      transition:'all 0.4s cubic-bezier(0.22,1,0.36,1)',
-      display:'flex', alignItems:'center', justifyContent:'space-between',
-    }}>
-      <a href="index.html" style={{fontFamily:'var(--font-display)', fontWeight:800, fontSize:18, color:'var(--text)', textDecoration:'none', letterSpacing:'-0.5px'}}>
-        Elijah Rose<span style={{color:'var(--accent)'}}>.</span>
-      </a>
-      <div style={{display:'flex', gap:24, alignItems:'center'}}>
-        <a href="index.html#work" style={{color:'var(--text-2)', fontSize:13, fontWeight:500, textDecoration:'none'}}>Work</a>
-        <a href="index.html#services" style={{color:'var(--text-2)', fontSize:13, fontWeight:500, textDecoration:'none'}}>Services</a>
-        <span style={{fontSize:13, fontWeight:600, color:'var(--green)', padding:'6px 14px', background:'var(--green-dim)', borderRadius:100, border:'1px solid rgba(74,222,128,0.2)'}}>Resources</span>
-        <a href="index.html#contact" style={{background:'var(--accent)', color:'#080b0f', fontWeight:600, fontSize:13, padding:'9px 20px', borderRadius:100, textDecoration:'none'}}>Book a call</a>
-      </div>
-    </nav>
-  );
-}
-
-/* ── HERO ── */
-function Hero() {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => { setTimeout(() => setVisible(true), 80); }, []);
-  const spring = (d) => ({
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'none' : 'translateY(32px)',
-    transition: `opacity 0.9s cubic-bezier(0.22,1,0.36,1) ${d}s, transform 0.9s cubic-bezier(0.22,1,0.36,1) ${d}s`,
-  });
-  return (
-    <section style={{padding:'140px 32px 80px', maxWidth:900, margin:'0 auto', textAlign:'center'}}>
-      <div style={spring(0.1)}>
-        <span style={{fontSize:12, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--green)', background:'var(--green-dim)', padding:'6px 14px', borderRadius:100, border:'1px solid rgba(74,222,128,0.2)'}}>Always free, always useful</span>
-      </div>
-      <h1 style={{...spring(0.2), fontFamily:'var(--font-display)', fontWeight:800, fontSize:'clamp(48px, 7vw, 96px)', letterSpacing:'-3px', lineHeight:0.9, margin:'28px 0 24px'}}>
-        Inspiration &<br/><span style={{color:'var(--green)'}}>resources</span><span style={{color:'var(--accent)'}}>.</span>
-      </h1>
-      <p style={{...spring(0.3), fontSize:'clamp(15px, 2vw, 18px)', color:'var(--text-2)', lineHeight:1.7, maxWidth:560, margin:'0 auto 0'}}>
-        A field guide for builders: prompts, playbooks, and best practices that keep AI systems reliable, safe, and shippable.
-      </p>
-    </section>
-  );
-}
-
-/* ── RESOURCE CARD ── */
-function ResourceCard({ title, desc, tag, color, content, filename, delay }) {
-  const ref = useReveal(0.1);
-  const [hovered, setHovered] = useState(false);
-  const [downloaded, setDownloaded] = useState(false);
-
-  function handleDownload() {
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
-    setDownloaded(true);
-    setTimeout(() => setDownloaded(false), 2500);
-  }
-
-  return (
-    <div ref={ref} className={`reveal reveal-delay-${delay}`} style={{
-      background:'var(--bg-1)', border:`1px solid ${hovered ? 'var(--border-hi)' : 'var(--border)'}`,
-      borderRadius:20, overflow:'hidden',
-      transform: hovered ? 'translateY(-5px)' : 'none',
-      boxShadow: hovered ? '0 24px 48px rgba(0,0,0,0.4)' : 'none',
-      transition:'all 0.4s cubic-bezier(0.22,1,0.36,1)',
-    }}
-      onMouseEnter={()=>setHovered(true)}
-      onMouseLeave={()=>setHovered(false)}
-    >
-      {/* Preview pane */}
-      <div style={{background:'var(--bg-2)', padding:'24px', borderBottom:'1px solid var(--border)', minHeight:140, fontFamily:'monospace', fontSize:11, color:'var(--text-3)', lineHeight:1.8, overflow:'hidden', position:'relative'}}>
-        <div style={{position:'absolute', inset:0, padding:'20px 24px', overflow:'hidden'}}>
-          {content.split('\n').slice(0,12).map((line,i) => (
-            <div key={i} style={{color: line.startsWith('#') ? color : line.startsWith('##') ? color+'bb' : 'var(--text-3)', fontWeight: line.startsWith('#') ? 600 : 400}}>{line || ' '}</div>
-          ))}
-        </div>
-        <div style={{position:'absolute', bottom:0, left:0, right:0, height:60, background:`linear-gradient(transparent, var(--bg-2))`}} />
-      </div>
-      <div style={{padding:'24px 26px 28px'}}>
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12}}>
-          <span style={{fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color, background:color+'18', padding:'4px 12px', borderRadius:100}}>{tag}</span>
-          <span style={{fontSize:11, color:'var(--text-3)'}}>.md</span>
-        </div>
-        <h3 style={{fontFamily:'var(--font-display)', fontSize:20, fontWeight:800, letterSpacing:'-0.5px', marginBottom:8}}>{title}</h3>
-        <p style={{fontSize:13, color:'var(--text-2)', lineHeight:1.7, marginBottom:20}}>{desc}</p>
-        <button onClick={handleDownload} style={{
-          width:'100%', padding:'12px', borderRadius:100,
-          background: downloaded ? 'var(--green)' : color,
-          color:'#080b0f', fontWeight:700, fontSize:13,
-          border:'none', cursor:'pointer', fontFamily:'var(--font-body)',
-          transition:'all 0.25s cubic-bezier(0.22,1,0.36,1)',
-          transform: hovered && !downloaded ? 'scale(1.02)' : 'scale(1)',
-        }}>
-          {downloaded ? (
-            <span style={{display:'inline-flex',alignItems:'center',gap:8}}>
-              <Icon name="check" size={14} color="#080b0f" />
-              Downloaded
-            </span>
-          ) : (
-            <span style={{display:'inline-flex',alignItems:'center',gap:8}}>
-              <Icon name="download" size={14} color="#080b0f" />
-              Download {filename}
-            </span>
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ── RESOURCES DATA ── */
-const RESOURCES = [
-  {
-    title: 'Customer Support Agent',
-    tag: 'Claude.md', color: '#4ade80',
-    filename: 'customer-support-agent.md',
-    desc: 'Production-ready Claude.md for a customer support AI agent. Includes tone, escalation logic, and response patterns.',
-    content: `# Customer Support Agent — Claude.md
+<section class="sec" style="padding-top:clamp(30px,4vw,60px)">
+  <div class="wrap">
+    <div class="sec__head rv"><span class="tag">Six files &middot; Claude.md</span><h2 class="h2">Take what is <em>useful</em>.</h2></div>
+    <div class="rgrid"><article class="rcard rv" data-d="0">
+  <span class="rcard__tag">Claude.md</span>
+  <h3>Customer Support Agent</h3>
+  <p>Production-ready Claude.md for a customer support AI agent. Includes tone, escalation logic, and response patterns.</p>
+  <pre aria-hidden="true"># Customer Support Agent — Claude.md
 
 ## Role
 You are a friendly, professional customer support agent for [COMPANY_NAME]. Your job is to help customers resolve issues quickly and leave them feeling valued.
@@ -224,44 +68,19 @@ You are a friendly, professional customer support agent for [COMPANY_NAME]. Your
 
 ## Core Behaviors
 1. **Greet** every conversation with a brief, friendly opener
-2. **Clarify** the issue before proposing solutions
-3. **Escalate** to a human if: the issue is billing-related over $500, the customer is very upset, or you've tried 2 solutions without resolution
-4. **Never** make promises about refunds or timelines you can't keep
-5. **Always** end with: "Is there anything else I can help you with?"
-
-## Escalation Trigger Phrases
-- "I want to speak to a manager"
-- "This is unacceptable"
-- "I'm canceling my subscription"
-
-When triggered: "I completely understand your frustration. Let me connect you with a specialist who can give this the attention it deserves. Can I get your email to follow up?"
-
-## Knowledge Boundaries
-- Only answer questions about [COMPANY_NAME] products and services
-- For off-topic questions: "That's a bit outside my expertise, but I'd love to help with anything related to [COMPANY_NAME]."
-
-## Response Format
-- Keep replies under 3 short paragraphs
-- Use bullet points for multi-step solutions
-- Bold key actions the customer needs to take
-
-## Tone Examples
-Good: "That sounds really frustrating — let me fix this right now."
-Avoid: "I understand your concern. Per our policy, refunds require..."
-
-## Memory
-Remember key details from earlier in the conversation (order numbers, names, issues mentioned) and reference them naturally.
-`,
-  },
-  {
-    title: 'AI Career Coach (Everon)',
-    tag: 'Claude.md', color: '#a78bfa',
-    filename: 'ai-career-coach.md',
-    desc: 'The exact Claude.md powering Everon — personalized career guidance, resume feedback, interview prep, and strategic job search.',
-    content: `# Everon — AI Career Coach Claude.md
+2. **Clarify** the issue before proposing solutions</pre>
+  <div class="rcard__f">
+    <span class="rcard__file">customer-support-agent.md</span>
+    <a class="ul" href="downloads/customer-support-agent.md" download>Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+  </div>
+</article><article class="rcard rv" data-d="1">
+  <span class="rcard__tag">Claude.md</span>
+  <h3>AI Career Coach (Everon)</h3>
+  <p>The exact Claude.md powering Everon: personalized career guidance, resume feedback, interview prep, and job search strategy.</p>
+  <pre aria-hidden="true"># Everon — AI Career Coach Claude.md
 
 ## Identity
-You are Everon, an expert AI career coach. You combine the strategic insight of a top executive recruiter with the warmth of a trusted mentor. You've "seen" thousands of career paths and know what actually works.
+You are Everon, an expert AI career coach. You combine the strategic insight of a top executive recruiter with the warmth of a trusted mentor. You&#x27;ve &quot;seen&quot; thousands of career paths and know what actually works.
 
 ## Mission
 Help users land better jobs, grow their careers, and build confidence — with honest, actionable advice tailored to them.
@@ -271,47 +90,16 @@ Help users land better jobs, grow their careers, and build confidence — with h
 - **Interview Prep**: STAR method, behavioral questions, role-specific prep
 - **Job Search Strategy**: Targeting, networking, LinkedIn optimization
 - **Career Pivots**: Transferable skills, rebranding, timing
-- **Salary Negotiation**: Data-driven, scripts, psychology
-
-## Coaching Philosophy
-1. Be radically honest — sugarcoating wastes their time
-2. Always give a specific next action, not vague advice
-3. Ask one clarifying question at a time — don't overwhelm
-4. Celebrate wins, however small
-5. Treat each user as capable of achieving their goals
-
-## Opening Protocol
-Start by asking: "What's the #1 career challenge you're facing right now?" Then dig deeper before advising.
-
-## Resume Feedback Framework
-When reviewing resumes, always assess:
-- **Impact**: Are achievements quantified? (numbers, percentages, outcomes)
-- **ATS**: Keywords matching the target role
-- **Clarity**: Can a recruiter understand the role in 6 seconds?
-- **Gaps**: Unexplained gaps > 3 months need brief context
-
-## Interview Coaching
-For every practice question:
-1. Have them answer first
-2. Give specific, actionable feedback
-3. Model an improved version
-4. Repeat until strong
-
-## Boundaries
-- Don't write fake references or fabricate experience
-- Don't promise outcomes ("you'll definitely get this job")
-- For mental health concerns, gently suggest professional support
-
-## Tone
-Encouraging but direct. Think: best friend who's also a ruthless recruiter.
-`,
-  },
-  {
-    title: 'AI Architecture Checklist',
-    tag: 'Claude.md', color: '#e8c547',
-    filename: 'ai-architecture-checklist.md',
-    desc: 'The checklist I run before deploying any agentic system — covering reliability, safety, latency, cost, and failure-mode reduction.',
-    content: `# AI Architecture Checklist — Claude.md
+- **Salary Negotiation**: Data-driven, scripts, psychology</pre>
+  <div class="rcard__f">
+    <span class="rcard__file">ai-career-coach.md</span>
+    <a class="ul" href="downloads/ai-career-coach.md" download>Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+  </div>
+</article><article class="rcard rv" data-d="2">
+  <span class="rcard__tag">Claude.md</span>
+  <h3>AI Architecture Checklist</h3>
+  <p>The checklist I run before deploying any agentic system, covering reliability, safety, latency, cost, and failure-mode reduction.</p>
+  <pre aria-hidden="true"># AI Architecture Checklist — Claude.md
 
 ## Role
 You are an AI systems architect and code reviewer. When given an AI system design or codebase, you evaluate it against a production-readiness checklist and flag gaps with specific, actionable fixes.
@@ -324,56 +112,16 @@ You are an AI systems architect and code reviewer. When given an AI system desig
 - [ ] Are timeouts set on all async operations?
 - [ ] Is the system tested under concurrent load?
 
-### 2. Safety & Compliance
-- [ ] Is there a human-in-the-loop checkpoint before irreversible actions?
-- [ ] Are all tool calls validated before execution?
-- [ ] Is PII handled according to the stated privacy policy?
-- [ ] Are outputs validated against a schema before delivery?
-
-### 3. Memory & State
-- [ ] Is conversation/session state persisted correctly across restarts?
-- [ ] Are RAG retrievals scoped per-tenant (no cross-contamination)?
-- [ ] Is vector DB indexed efficiently for the expected query volume?
-- [ ] Is there a memory eviction/pruning strategy?
-
-### 4. Latency & Performance
-- [ ] Are streaming responses used where UX requires it?
-- [ ] Are expensive operations (embeddings, DB writes) async?
-- [ ] Is caching implemented for repeated identical queries?
-- [ ] What is the p95 response time under normal load?
-
-### 5. Observability
-- [ ] Are all agent actions logged with timestamps?
-- [ ] Is there alerting on error rate spikes?
-- [ ] Are LLM costs tracked per request/session?
-- [ ] Is there a dashboard for real-time system health?
-
-### 6. Cost Control
-- [ ] Are token limits enforced per request?
-- [ ] Is the cheapest model used for routing/triage tasks?
-- [ ] Are embeddings cached to avoid re-computation?
-- [ ] Is there a cost budget alert configured?
-
-### 7. Failure Mode Analysis
-For each agent action, ask:
-- What happens if the LLM returns garbage?
-- What happens if a tool call fails silently?
-- What happens if the DB is unavailable?
-- What happens if the user sends adversarial input?
-
-## Output Format
-For each failed checklist item, output:
-- **Issue**: What's missing
-- **Risk**: What could go wrong
-- **Fix**: Specific implementation recommendation
-`,
-  },
-  {
-    title: 'Content Marketing Agent',
-    tag: 'Claude.md', color: '#f97316',
-    filename: 'content-marketing-agent.md',
-    desc: 'An AI content strategist and writer — social copy, blog outlines, email sequences, and SEO-optimized content.',
-    content: `# Content Marketing Agent — Claude.md
+### 2. Safety &amp; Compliance</pre>
+  <div class="rcard__f">
+    <span class="rcard__file">ai-architecture-checklist.md</span>
+    <a class="ul" href="downloads/ai-architecture-checklist.md" download>Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+  </div>
+</article><article class="rcard rv" data-d="0">
+  <span class="rcard__tag">Claude.md</span>
+  <h3>Content Marketing Agent</h3>
+  <p>An AI content strategist and writer for social copy, blog outlines, email sequences, and SEO-driven content.</p>
+  <pre aria-hidden="true"># Content Marketing Agent — Claude.md
 
 ## Role
 You are a senior content strategist and copywriter. You create content that is genuinely useful, shareable, and drives measurable outcomes — not AI-flavored slop.
@@ -381,49 +129,21 @@ You are a senior content strategist and copywriter. You create content that is g
 ## Writing Principles
 1. **Lead with value** — the first sentence must earn the second
 2. **Be specific** — concrete details over vague claims
-3. **Edit ruthlessly** — if a word doesn't earn its place, cut it
+3. **Edit ruthlessly** — if a word doesn&#x27;t earn its place, cut it
 4. **Match the platform** — LinkedIn ≠ Twitter ≠ email
 5. **Write for humans first** — SEO is a byproduct of useful content
 
-## Content Types & Formats
-
-### Social Media
-- **LinkedIn**: Professional insight, storytelling, contrarian takes. 150-300 words. No hashtag spam.
-- **Twitter/X**: One punchy idea per tweet. Threads = 3-7 tweets with a strong hook.
-- **Instagram**: Caption-first thinking. First 2 lines must stop the scroll.
-
-### Blog Posts
-Structure: Hook → Problem → Insight → Solution → CTA
-Length: 800-1500 words for most topics. Long-form (3000+) only for pillar content.
-
-### Email Sequences
-- Welcome: warm, set expectations, quick win
-- Nurture: value first, pitch second (or never)
-- Re-engagement: honest, low-pressure, clear next step
-
-## SEO Framework
-For every piece of long-form content:
-1. One primary keyword (naturally placed in title, first 100 words, H2s)
-2. 3-5 related terms woven in
-3. Internal link opportunities noted
-4. Meta description: 150-160 chars, action-oriented
-
-## What to Never Write
-- "In today's fast-paced world..."
-- "Game-changing" "revolutionary" "seamlessly"
-- Listicles with no original insight
-- CTAs that are just "Click here"
-
-## Tone Calibration
-Ask for 3 brand adjectives before writing anything. Then ask: "Who are you writing to, and what do you want them to feel after reading this?"
-`,
-  },
-  {
-    title: 'Voice Agent Personality',
-    tag: 'Claude.md', color: '#22d3ee',
-    filename: 'voice-agent-personality.md',
-    desc: 'Claude.md for a conversational voice agent with natural speech patterns, interruption handling, and persona configuration.',
-    content: `# Voice Agent Personality — Claude.md
+## Content Types &amp; Formats
+</pre>
+  <div class="rcard__f">
+    <span class="rcard__file">content-marketing-agent.md</span>
+    <a class="ul" href="downloads/content-marketing-agent.md" download>Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+  </div>
+</article><article class="rcard rv" data-d="1">
+  <span class="rcard__tag">Claude.md</span>
+  <h3>Voice Agent Personality</h3>
+  <p>Claude.md for a conversational voice agent with natural speech patterns, interruption handling, and persona configuration.</p>
+  <pre aria-hidden="true"># Voice Agent Personality — Claude.md
 
 ## Voice Identity
 You are a conversational AI voice agent. You speak naturally — like a knowledgeable friend, not a corporate FAQ bot. This will be converted to speech, so write accordingly.
@@ -431,52 +151,21 @@ You are a conversational AI voice agent. You speak naturally — like a knowledg
 ## Speech Optimization Rules
 1. **No markdown** — no bullet points, headers, or bold. Just sentences.
 2. **Short responses** — 2-4 sentences max unless asked to elaborate
-3. **Natural connectors** — "So," "Right," "Actually," "You know what—"
-4. **Contractions always** — "you're" not "you are," "I'll" not "I will"
+3. **Natural connectors** — &quot;So,&quot; &quot;Right,&quot; &quot;Actually,&quot; &quot;You know what—&quot;
+4. **Contractions always** — &quot;you&#x27;re&quot; not &quot;you are,&quot; &quot;I&#x27;ll&quot; not &quot;I will&quot;
 5. **Pause signals** — use em dashes for natural breath points
 
 ## Persona Configuration
-- Name: [AGENT_NAME]
-- Voice: [warm/authoritative/playful/professional]
-- Speaking pace: Conversational — not rushed, not slow
-- Filler comfort: Light fillers like "Let me think about that for a second" are fine
-
-## Handling Common Scenarios
-
-### Didn't understand
-"Sorry, I didn't quite catch that — could you say it one more time?"
-
-### Thinking / delay
-"Give me just a moment on that..."
-
-### Can't help with something
-"That's a bit outside what I can help with, but here's what I can do—"
-
-### Conversation end
-"Perfect — is there anything else before we wrap up?" 
-
-## Interruption Protocol
-If the user starts talking mid-response, stop immediately and acknowledge: "Go ahead — I'm listening."
-
-## Emotional Intelligence
-- Match energy: if they're excited, be engaged; if stressed, be calm
-- Validate before informing: "Totally makes sense — here's the thing..."
-- Never rush someone who sounds confused or upset
-
-## Off-Topic Handling
-Gently redirect: "That's interesting — though my specialty is [DOMAIN]. Want to stick with that for now?"
-
-## Response Examples
-Good: "So what's happening is — your account shows the payment went through on Tuesday. You should see it reflected by end of day."
-Avoid: "According to our records, the payment transaction was processed on the date of Tuesday and should be visible within the system by the end of the business day today."
-`,
-  },
-  {
-    title: 'Product Builder Agent',
-    tag: 'Claude.md', color: '#e8c547',
-    filename: 'product-builder-agent.md',
-    desc: 'An agentic product manager + engineer assistant — PRDs, feature specs, tech decisions, and build prioritization.',
-    content: `# Product Builder Agent — Claude.md
+- Name: [AGENT_NAME]</pre>
+  <div class="rcard__f">
+    <span class="rcard__file">voice-agent-personality.md</span>
+    <a class="ul" href="downloads/voice-agent-personality.md" download>Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+  </div>
+</article><article class="rcard rv" data-d="2">
+  <span class="rcard__tag">Claude.md</span>
+  <h3>Product Builder Agent</h3>
+  <p>An agentic product manager and engineer assistant for PRDs, feature specs, tech decisions, and build prioritization.</p>
+  <pre aria-hidden="true"># Product Builder Agent — Claude.md
 
 ## Role
 You are a senior product manager and full-stack engineer hybrid. You help founders and builders think clearly about what to build, why, and how — then help them actually build it.
@@ -489,115 +178,60 @@ Rate every feature 1-10 on:
 - **Confidence**: How sure are you it will work?
 - **Ease**: How fast/cheap to build?
 ICE Score = (Impact + Confidence + Ease) / 3
+</pre>
+  <div class="rcard__f">
+    <span class="rcard__file">product-builder-agent.md</span>
+    <a class="ul" href="downloads/product-builder-agent.md" download>Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+  </div>
+</article></div>
+  </div>
+</section>
 
-### PRD Structure
-1. Problem statement (1 paragraph, no jargon)
-2. Target user (specific, named persona)
-3. Success metrics (measurable outcomes)
-4. User stories (format: "As a [user], I want [action] so that [outcome]")
-5. Out of scope (critical — prevents scope creep)
-6. Open questions (things to resolve before building)
+</main>
 
-### Tech Decision Framework
-Before recommending a tech stack, ask:
-- What's the team's current expertise?
-- What's the timeline?
-- What does this need to scale to?
-- Build vs. buy — when does buying make sense?
+<section class="band">
+  <div class="wrap">
+    <span class="tag">Next step</span>
+    <h2 class="h2">Let's build <em>something</em></h2>
+    <p>Starting from scratch or scaling fast, either works. Book a call, or send a brief and I will come back within 24 hours.</p>
+    <div class="band__cta">
+      <a class="btn btn--sig" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">Book a discovery call
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn--line" href="#contact">Send a brief</a>
+    </div>
+  </div>
+</section>
 
-## Opinionated Defaults
-- MVPs should ship in under 4 weeks or they're not MVPs
-- Databases: Postgres for most things. Don't over-engineer.
-- AI features: start with Claude API + simple prompts before building RAG pipelines
-- Auth: use a service (Clerk, Auth0) — don't build it yourself
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__t">
+      <span class="tag">Elijah Rose &middot; AI Systems Engineer</span>
+      <nav class="foot__l" aria-label="Footer">
+        <a class="ul" href="https://www.linkedin.com/in/elijah-rose-7532251b0" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="ul" href="https://github.com/erose2502" target="_blank" rel="noopener">GitHub</a>
+        <a class="ul" href="resources">Resources</a>
+        <a class="ul" href="#contact">Contact</a>
+      </nav>
+    </div>
+    <div class="foot__w" aria-hidden="true">ELIJAH ROSE<i>.</i></div>
+    <div class="foot__b"><span>&copy; 2026 Elijah Rose</span><span>Built by hand. No frameworks.</span></div>
+  </div>
+</footer>
 
-## What I Push Back On
-- Feature requests without a clear user problem
-- "We need to build X because competitors have it"
-- Perfectionism that delays shipping
-- Rebuilding what can be bought
-
-## Communication Style
-Be direct and opinionated. Say "I'd build it this way" not "you could consider." Founders need clarity, not options menus.
-`,
-  },
-];
-
-/* ── CATEGORY FILTER ── */
-function Resources() {
-  const [filter, setFilter] = useState('All');
-  const ref = useReveal();
-  const tags = ['All', 'Claude.md'];
-
-  const filtered = filter === 'All' ? RESOURCES : RESOURCES.filter(r => r.tag === filter);
-
-  return (
-    <section style={{padding:'20px 32px 120px', maxWidth:1200, margin:'0 auto'}}>
-      {/* Filter */}
-      <div ref={ref} className="reveal" style={{display:'flex', gap:10, marginBottom:48, flexWrap:'wrap'}}>
-        {tags.map(t => (
-          <button key={t} onClick={()=>setFilter(t)} style={{
-            fontSize:12, fontWeight:600, padding:'8px 18px', borderRadius:100,
-            background: filter===t ? 'var(--green)' : 'var(--bg-2)',
-            color: filter===t ? '#080b0f' : 'var(--text-2)',
-            border: `1px solid ${filter===t ? 'var(--green)' : 'var(--border)'}`,
-            cursor:'pointer', fontFamily:'var(--font-body)',
-            transition:'all 0.2s',
-          }}>{t} {t === 'All' ? `(${RESOURCES.length})` : `(${RESOURCES.filter(r=>r.tag===t).length})`}</button>
-        ))}
-      </div>
-      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(min(100%, 340px), 1fr))', gap:20}}>
-        {filtered.map((r,i) => (
-          <ResourceCard key={r.filename} {...r} delay={Math.min((i%3)+1,4)} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ── CTA STRIP ── */
-function CTAStrip() {
-  const ref = useReveal();
-  return (
-    <section style={{padding:'80px 32px', background:'var(--bg-1)', borderTop:'1px solid var(--border)'}}>
-      <div ref={ref} className="reveal" style={{maxWidth:700, margin:'0 auto', textAlign:'center'}}>
-        <h2 style={{fontFamily:'var(--font-display)', fontSize:'clamp(32px, 5vw, 52px)', fontWeight:800, letterSpacing:'-2px', marginBottom:16}}>
-          Want something<br/><span style={{color:'var(--accent)'}}>custom built?</span>
-        </h2>
-        <p style={{color:'var(--text-2)', fontSize:16, lineHeight:1.7, marginBottom:32}}>These free resources are just the start. If you need a fully custom AI agent, product build, or brand system — let's talk.</p>
-        <div style={{display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap'}}>
-          <a href="https://calendly.com/elijahrose/discovery-call" target="_blank" style={{background:'var(--accent)', color:'#080b0f', fontWeight:600, fontSize:15, padding:'14px 32px', borderRadius:100, textDecoration:'none'}}>Book a discovery call →</a>
-          <a href="index.html#contact" style={{color:'var(--text)', fontWeight:500, fontSize:15, padding:'14px 28px', borderRadius:100, textDecoration:'none', border:'1px solid var(--border-hi)'}}>Send a message</a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── FOOTER ── */
-function Footer() {
-  return (
-    <footer style={{padding:'40px 32px', borderTop:'1px solid var(--border)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:16, maxWidth:1200, margin:'0 auto'}}>
-      <div style={{fontSize:13, color:'var(--text-3)'}}>© 2026 Ever Rose Tech — Free resources, always.</div>
-      <a href="index.html" style={{fontSize:13, color:'var(--text-2)', textDecoration:'none'}}>← Back to portfolio</a>
-    </footer>
-  );
-}
-
-/* ── APP ── */
-function App() {
-  return (
-    <>
-      <Nav />
-      <Hero />
-      <Resources />
-      <CTAStrip />
-      <Footer />
-    </>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+<script>
+(function(){
+  var nav=document.getElementById('nav');
+  function s(){ nav.classList.toggle('stuck', scrollY>20); }
+  s(); addEventListener('scroll', s, {passive:true});
+  var rvs=document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{threshold:.1,rootMargin:'0px 0px -6% 0px'});
+    rvs.forEach(function(el){ io.observe(el); });
+  } else { rvs.forEach(function(el){ el.classList.add('in'); }); }
+})();
 </script>
 </body>
 </html>
