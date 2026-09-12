@@ -10,6 +10,15 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Everon — Elijah Rose">
 <meta property="og:description" content="Everon: an AI career assistant rebuilt from prototype to production architecture.">
+<script>
+(function(){
+  var ok={bone:1,ember:1,cobalt:1,mono:1};
+  var q=new URLSearchParams(location.search).get('theme');
+  var t=ok[q]?q:(ok[localStorage.getItem('er-theme')]?localStorage.getItem('er-theme'):'bone');
+  if(q&&ok[q]) try{localStorage.setItem('er-theme',q);}catch(e){}
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
