@@ -5,36 +5,46 @@
 <title>Field Notes &amp; Resources — Elijah Rose</title>
 <meta name="description" content="Free Claude.md templates, prompt playbooks, and AI architecture checklists from Elijah Rose.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#060607">
+<meta name="theme-color" content="#EDEAE3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0E13" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="images/favicon.png" type="image/png">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Field Notes &amp; Resources — Elijah Rose">
 <meta property="og:description" content="Free Claude.md templates, prompt playbooks, and AI architecture checklists from Elijah Rose.">
 <script>
+/* Light/dark, system preference by default, applied before first paint. */
 (function(){
-  var ok={bone:1,ember:1,cobalt:1,mono:1};
-  var q=new URLSearchParams(location.search).get('theme');
-  var t=ok[q]?q:(ok[localStorage.getItem('er-theme')]?localStorage.getItem('er-theme'):'bone');
-  if(q&&ok[q]) try{localStorage.setItem('er-theme',q);}catch(e){}
+  var t='light';
+  try{
+    var saved=localStorage.getItem('er-theme');
+    t=(saved==='light'||saved==='dark') ? saved
+      : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }catch(e){}
   document.documentElement.setAttribute('data-theme',t);
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 
 <header class="nav" id="nav">
   <a href="" class="nav__mark" aria-label="Elijah Rose, home">ELIJAH ROSE<i>.</i></a>
-  <a class="nav__l" href="#work">Work</a>
-  <a class="nav__l" href="#capabilities">Capabilities</a>
-  <a class="nav__l" href="#engagement">Engagement</a>
-  <a class="nav__l" href="resources">Resources</a>
+  <nav class="nav__links" aria-label="Primary">
+    <a class="nav__l" href="#work">Work</a>
+    <a class="nav__l" href="#capabilities">Capabilities</a>
+    <a class="nav__l" href="#engagement">Engagement</a>
+    <a class="nav__l" href="resources">Resources</a>
+  </nav>
   <a class="btn btn--sig btn--sm" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">Book a call
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
   </a>
+  <button class="tt" id="themeToggle" type="button" aria-label="Switch to dark mode">
+    <svg class="tt__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg>
+    <svg class="tt__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.4A8.4 8.4 0 0 1 9.6 4a8.4 8.4 0 1 0 10.4 10.4z"/></svg>
+  </button>
 </header>
 
 <main>
@@ -48,7 +58,7 @@
   </div>
 </section>
 
-<section class="sec" style="padding-top:clamp(30px,4vw,60px)">
+<section class="sec" style="padding-top:var(--sect-sm)">
   <div class="wrap">
     <div class="sec__head rv"><span class="tag">Six files &middot; Claude.md</span><h2 class="h2">Take what is <em>useful</em>.</h2></div>
     <div class="rgrid"><article class="rcard rv" data-d="0">
@@ -221,6 +231,27 @@ ICE Score = (Impact + Confidence + Ease) / 3
 
 <script>
 (function(){
+  var root=document.documentElement, tt=document.getElementById('themeToggle');
+  var mq=window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
+  function label(){
+    var next = root.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+    tt.setAttribute('aria-label','Switch to '+next+' mode');
+    tt.setAttribute('title','Switch to '+next+' mode');
+  }
+  label();
+  tt.addEventListener('click', function(){
+    var next = root.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('er-theme', next); }catch(e){}
+    label();
+  });
+  if(mq && mq.addEventListener){
+    mq.addEventListener('change', function(ev){
+      var saved=null; try{ saved=localStorage.getItem('er-theme'); }catch(e){}
+      if(saved!=='light' && saved!=='dark'){ root.setAttribute('data-theme', ev.matches?'dark':'light'); label(); }
+    });
+  }
+
   var nav=document.getElementById('nav');
   function s(){ nav.classList.toggle('stuck', scrollY>20); }
   s(); addEventListener('scroll', s, {passive:true});
