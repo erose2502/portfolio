@@ -917,12 +917,42 @@ html[data-theme="dark"] .tt__moon{display:block}
   .sec__note{grid-column:1/-1;padding-bottom:0}
 }
 
-/* ═══════════ LIVE DEMO ═══════════ */
+/* ═══════════ USE CASES — runnable pipelines ═══════════ */
 .demo__grid{
-  display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1.38fr);
   gap:clamp(20px,3vw,44px);align-items:start;
 }
 @media(max-width:900px){ .demo__grid{grid-template-columns:1fr} }
+
+/* use-case picker */
+.demo__cases{display:flex;flex-direction:column;gap:var(--sp-2)}
+.demo__case{
+  display:flex;flex-direction:column;gap:3px;text-align:left;
+  padding:var(--sp-4);border-radius:var(--r-lg);
+  border:1px solid var(--hair);background:transparent;
+  transition:border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease);
+}
+.demo__case:hover{border-color:var(--hair-2);background:var(--card)}
+.demo__case[aria-pressed="true"]{border-color:var(--accent);background:var(--card)}
+.demo__case b{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink)}
+.demo__case span{font-family:var(--sans);font-size:11.5px;line-height:1.45;color:var(--muted-2)}
+.demo__case em{
+  font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted-2);margin-top:4px;
+}
+.demo__case[aria-pressed="true"] em{color:var(--accent)}
+
+/* the pipeline shape, before you run it */
+.demo__flow{
+  display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2);
+  margin-bottom:var(--sp-5);
+}
+.demo__flow i{
+  font-style:normal;font-family:var(--sans);font-size:10px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  padding:var(--sp-2) var(--sp-3);border:1px solid var(--hair-2);border-radius:var(--r-full);
+}
+.demo__flow s{text-decoration:none;color:var(--hair-3);font-size:11px}
 
 .demo__lab,.demo__meta{
   font-family:var(--sans);font-size:9.5px;font-weight:700;
@@ -936,14 +966,6 @@ html[data-theme="dark"] .tt__moon{display:block}
   font-family:var(--sans);font-size:14px;line-height:1.55;
 }
 .demo__ta:focus{outline:2px solid var(--accent);outline-offset:2px;border-color:transparent}
-.demo__presets{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-3)}
-.demo__preset{
-  font-family:var(--sans);font-size:11px;font-weight:500;
-  padding:var(--sp-2) var(--sp-4);border-radius:var(--r-full);
-  border:1px solid var(--hair-2);color:var(--muted);
-  transition:color var(--t-micro) var(--ease),border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease);
-}
-.demo__preset:hover{color:var(--ink);border-color:var(--hair-3);background:var(--hair)}
 .demo__act{display:flex;align-items:center;gap:var(--sp-4);margin-top:var(--sp-5);flex-wrap:wrap}
 .demo__note{
   margin-top:var(--sp-4);font-family:var(--sans);font-size:12px;line-height:1.5;
@@ -1610,29 +1632,33 @@ html[data-theme="dark"] .tt__moon{display:block}
   </p>
 </section>
 
-<!-- ═══════════ LIVE DEMO ═══════════ -->
+<!-- ═══════════ USE CASES — runnable pipelines ═══════════ -->
 <section class="sec demo wrap" id="work">
   <div class="sec__head">
     <span class="tag sec__num rv">§ 03</span>
-    <h2 class="h2 sec__ttl rv" data-d="1">Run one<br>of my <em>pipelines</em></h2>
-    <p class="lede sec__note rv" data-d="2">A real support pipeline, live. Four model calls in sequence, each one schema-constrained so the next step can depend on it.</p>
+    <h2 class="h2 sec__ttl rv" data-d="1">Pipelines you<br>can <em>run</em></h2>
+    <p class="lede sec__note rv" data-d="2">Pick a use case and run it against your own input. Each stage is a separate model call, schema-constrained so the next stage can depend on what it returns.</p>
   </div>
 
   <div class="demo__grid rv">
-    <div class="demo__in">
-      <label class="demo__lab" for="demoInput">Inbound ticket</label>
-      <textarea id="demoInput" class="demo__ta" rows="7" spellcheck="false"></textarea>
-      <div class="demo__presets" id="demoPresets"></div>
+    <nav class="demo__cases" id="demoCases" aria-label="Use cases"></nav>
+
+    <div class="demo__panel">
+      <div class="demo__flow" id="demoFlow" aria-hidden="true"></div>
+
+      <label class="demo__lab" for="demoInput" id="demoLab">Input</label>
+      <textarea id="demoInput" class="demo__ta" rows="5" spellcheck="false"></textarea>
+
       <div class="demo__act">
         <button class="btn btn--sig" type="button" id="demoRun">Run pipeline
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <span class="demo__meta" id="demoMeta"></span>
       </div>
+
+      <ol class="demo__steps" id="demoSteps"></ol>
       <p class="demo__note" id="demoNote"></p>
     </div>
-
-    <ol class="demo__steps" id="demoSteps"></ol>
   </div>
 </section>
 
@@ -2487,49 +2513,114 @@ html[data-theme="dark"] .tt__moon{display:block}
     });
   }
 
-  /* ══ LIVE PIPELINE DEMO ══
+  /* ══ USE CASES — runnable pipelines ══
      Calls /api/run once per stage and feeds each result into the next, so the
-     sequence on screen is genuinely four model calls rather than one response
-     revealed slowly. Degrades to a clear "not configured" state when the
-     backend has no key, rather than pretending to run. */
-  (function demo(){
-    var ta = $('#demoInput'), runBtn = $('#demoRun'), stepsEl = $('#demoSteps');
-    var metaEl = $('#demoMeta'), noteEl = $('#demoNote'), presetsEl = $('#demoPresets');
-    if(!ta || !runBtn || !stepsEl) return;
+     sequence on screen is genuinely N model calls rather than one response
+     revealed slowly. Stage ids here are the contract with the backend.
+     The list and pipeline shape render fine with no backend at all; only
+     Run needs one, and it says so plainly when there isn't one. */
+  (function pipelines(){
+    var casesEl = $('#demoCases'), ta = $('#demoInput'), runBtn = $('#demoRun');
+    var stepsEl = $('#demoSteps'), metaEl = $('#demoMeta'), noteEl = $('#demoNote');
+    var flowEl = $('#demoFlow'), labEl = $('#demoLab');
+    if(!casesEl || !ta || !runBtn || !stepsEl) return;
 
-    var STAGES = [
-      { id:'classify', label:'Classify intent' },
-      { id:'extract',  label:'Extract entities' },
-      { id:'decide',   label:'Route and gate' },
-      { id:'draft',    label:'Draft reply' }
+    var CASES = [
+      {
+        id:'restaurant-voice',
+        name:'Restaurant voice agent',
+        blurb:'Answers the phone, takes the booking, hands off when it should.',
+        stack:'LiveKit · Twilio · Claude',
+        inputLabel:'Caller transcript',
+        sample:"Hi, I'd like a table for four on Friday around seven. Last time we sat near the kitchen and it was really loud, could we be somewhere quieter? It's under Dana.",
+        stages:[
+          {id:'understand', label:'Understand the call'},
+          {id:'slot',       label:'Resolve the slot'},
+          {id:'check',      label:'Check and decide'},
+          {id:'speak',      label:'Speak the reply'}
+        ]
+      },
+      {
+        id:'support-triage',
+        name:'Support triage',
+        blurb:'Classifies, extracts, applies policy, drafts the reply.',
+        stack:'Claude · structured output',
+        inputLabel:'Inbound ticket',
+        sample:"I've been charged twice for order #4417 and nobody has replied in four days. That's $240 you've taken. Cancel my subscription today and refund both charges or I'm disputing it with my bank.",
+        stages:[
+          {id:'classify', label:'Classify intent'},
+          {id:'extract',  label:'Extract entities'},
+          {id:'decide',   label:'Route and gate'},
+          {id:'draft',    label:'Draft reply'}
+        ]
+      },
+      {
+        id:'lead-qualify',
+        name:'Lead qualification',
+        blurb:'Reads an enquiry, scores the fit, picks the next move.',
+        stack:'Claude · CRM webhook',
+        inputLabel:'Inbound enquiry',
+        sample:"Hi, we run a mid-size logistics firm and we're drowning in manual quote requests, maybe 200 a week over email. We'd want something live before our Q1 peak. I run ops and I sign off on tooling.",
+        stages:[
+          {id:'read',  label:'Read the enquiry'},
+          {id:'score', label:'Score the fit'},
+          {id:'next',  label:'Pick next action'}
+        ]
+      },
+      {
+        id:'doc-extract',
+        name:'Invoice extraction',
+        blurb:'Pulls fields, validates them, routes for approval.',
+        stack:'Claude · finance queue',
+        inputLabel:'Invoice text',
+        sample:"NORTHBRIDGE SUPPLY LTD\nInvoice NB-2291\nBill to: Vector Logistics\nDate: 03/11/2026   Terms: Net 30\n2x Pallet racking    4,200.00\nDelivery                180.00\nTotal due: GBP 4,380.00",
+        stages:[
+          {id:'parse',    label:'Parse the document'},
+          {id:'validate', label:'Validate and flag'},
+          {id:'route',    label:'Route for approval'}
+        ]
+      }
     ];
 
-    var PRESETS = [
-      { name:'Angry cancellation',
-        text:"I've been charged twice for order #4417 and nobody has replied in four days. That's $240 you've taken. Cancel my subscription today and refund both charges or I'm disputing it with my bank." },
-      { name:'Technical issue',
-        text:"Since the update on Tuesday the export button does nothing on the reports page. I've tried Chrome and Safari. I need to get the Q3 numbers out before Friday." },
-      { name:'Billing question',
-        text:"Hi, could you tell me why my invoice this month is higher than last month? I think we added two seats but I want to check before I approve it." }
-    ];
+    var active = CASES[0], running = false;
 
-    ta.value = PRESETS[0].text;
+    function esc(v){
+      return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
 
-    PRESETS.forEach(function(p){
+    CASES.forEach(function(c){
       var b = document.createElement('button');
-      b.type = 'button'; b.className = 'demo__preset'; b.textContent = p.name;
-      b.addEventListener('click', function(){ ta.value = p.text; reset(); });
-      presetsEl.appendChild(b);
+      b.type = 'button';
+      b.className = 'demo__case';
+      b.setAttribute('aria-pressed', String(c === active));
+      b.innerHTML = '<b></b><span></span><em></em>';
+      b.querySelector('b').textContent = c.name;
+      b.querySelector('span').textContent = c.blurb;
+      b.querySelector('em').textContent = c.stack;
+      b.addEventListener('click', function(){ select(c); });
+      c.el = b;
+      casesEl.appendChild(b);
     });
+
+    function select(c){
+      if(running) return;
+      active = c;
+      CASES.forEach(function(x){ x.el.setAttribute('aria-pressed', String(x === c)); });
+      labEl.textContent = c.inputLabel;
+      ta.value = c.sample;
+      flowEl.innerHTML = c.stages.map(function(s){ return '<i>' + esc(s.label) + '</i>'; })
+                                 .join('<s>&rarr;</s>');
+      reset();
+      noteEl.textContent = '';
+      metaEl.textContent = '';
+    }
 
     function reset(){
       stepsEl.innerHTML = '';
-      metaEl.textContent = '';
-      STAGES.forEach(function(s, i){
+      active.stages.forEach(function(s, i){
         var li = document.createElement('li');
         li.className = 'demo__step';
         li.setAttribute('data-state','idle');
-        li.setAttribute('data-stage', s.id);
         li.innerHTML =
           '<div class="demo__head">' +
             '<span class="demo__dot"></span>' +
@@ -2542,20 +2633,17 @@ html[data-theme="dark"] .tt__moon{display:block}
       });
     }
 
-    function esc(v){
-      return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    function render(li, stage, out){
-      var body = document.createElement(stage === 'draft' ? 'div' : 'pre');
+    function render(li, out, isProse){
+      var body = document.createElement(isProse ? 'div' : 'pre');
       body.className = 'demo__body';
-      if(stage === 'draft'){
-        body.innerHTML = '<span class="demo__reply">' + esc(out.reply) + '</span>';
+      if(isProse){
+        body.innerHTML = '<span class="demo__reply">' + esc(out) + '</span>';
       } else {
         body.innerHTML = Object.keys(out).map(function(k){
           var v = out[k];
+          if(Array.isArray(v)) v = v.length ? v.join(', ') : 'none';
           return '<b>' + esc(k) + '</b>: ' + esc(v === null ? 'null' : v);
-        }).join('\\n');
+        }).join('\n');
       }
       li.appendChild(body);
     }
@@ -2567,8 +2655,6 @@ html[data-theme="dark"] .tt__moon{display:block}
       p.textContent = text;
       li.appendChild(p);
     }
-
-    var running = false;
 
     runBtn.addEventListener('click', async function(){
       if(running) return;
@@ -2582,8 +2668,8 @@ html[data-theme="dark"] .tt__moon{display:block}
 
       var prior = {}, totalMs = 0, totalOut = 0;
 
-      for(var i = 0; i < STAGES.length; i++){
-        var stage = STAGES[i];
+      for(var i = 0; i < active.stages.length; i++){
+        var stage = active.stages[i];
         var li = stepsEl.children[i];
         li.setAttribute('data-state','running');
 
@@ -2591,15 +2677,14 @@ html[data-theme="dark"] .tt__moon{display:block}
           var r = await fetch('/api/run', {
             method:'POST',
             headers:{ 'Content-Type':'application/json' },
-            body: JSON.stringify({ stage: stage.id, input: input, prior: prior })
+            body: JSON.stringify({ useCase: active.id, stage: stage.id, input: input, prior: prior })
           });
           var data = await r.json();
 
           if(!r.ok){
+            li.setAttribute('data-state','idle');
             if(data.error === 'not_configured'){
-              li.setAttribute('data-state','idle');
-              noteEl.innerHTML = 'The demo backend has no API key configured yet, so this is not running live. ' +
-                                 'The pipeline code is in <code>api/run.js</code>.';
+              noteEl.textContent = 'Live runs are not switched on yet, so this pipeline is showing its shape only. The stage definitions are in api/run.js.';
             } else if(data.error === 'rate_limited' || data.error === 'upstream_rate_limited'){
               fail(li, 'Rate limited. Give it a minute and try again.');
             } else {
@@ -2613,10 +2698,15 @@ html[data-theme="dark"] .tt__moon{display:block}
           totalOut += (data.usage && data.usage.output) || 0;
           li.setAttribute('data-state','done');
           li.querySelector('.demo__time').textContent = (data.ms || 0) + 'ms';
-          render(li, stage.id, data.output);
+
+          /* the last stage of a conversational pipeline reads better as prose */
+          var prose = data.output.reply || data.output.say;
+          render(li, prose || data.output, !!prose);
+
           metaEl.textContent = totalMs + 'ms · ' + totalOut + ' output tokens';
         } catch (e) {
-          fail(li, 'Could not reach the demo backend.');
+          li.setAttribute('data-state','idle');
+          noteEl.textContent = 'Could not reach the demo backend, so this pipeline is showing its shape only.';
           break;
         }
       }
@@ -2625,7 +2715,7 @@ html[data-theme="dark"] .tt__moon{display:block}
       runBtn.disabled = false;
     });
 
-    reset();
+    select(active);
   })();
 
   /* ══ STAGED INTAKE FLOW ══ */
