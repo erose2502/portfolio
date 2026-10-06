@@ -2610,22 +2610,6 @@ html[data-theme="dark"] .tt__moon{display:block}
   }
   function req(){ if(!ticking){ ticking = true; requestAnimationFrame(frame); } }
 
-  /* ticker runs on its own loop, touching only the ticker node */
-  if(!RM && tk){
-    var tx = 0, lastY = scrollY;
-    (function drift(){
-      var vel = scrollY - lastY; lastY = scrollY;
-      tx -= 0.5 + vel * 0.3;
-      var third = tk.scrollWidth / 3;
-      if(third > 0){
-        if(tx <= -third) tx += third;
-        if(tx > 0) tx -= third;
-      }
-      tk.style.transform = 'translate3d(' + tx.toFixed(1) + 'px,0,0)';
-      requestAnimationFrame(drift);
-    })();
-  }
-
   if(!RM) addEventListener('scroll', req, {passive:true});
 
   measure();
