@@ -917,122 +917,78 @@ html[data-theme="dark"] .tt__moon{display:block}
   .sec__note{grid-column:1/-1;padding-bottom:0}
 }
 
-/* ═══════════════════════════════════════
-   WORK — horizontal pinned gallery
-   ═══════════════════════════════════════ */
-.gal{position:relative;background:var(--surface-2);border-top:1px solid var(--hair);
-  border-radius:var(--r-3xl)}
-.gal__pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;
-  border-radius:var(--r-3xl)}
-.gal__bar{
-  display:flex;align-items:center;justify-content:space-between;gap:20px;
-  padding:var(--sect-md) var(--gut) var(--sp-4);
-  border-bottom:1px solid var(--hair);flex:none;
-  background:var(--surface-2);
-  border-radius:var(--r-3xl) var(--r-3xl) 0 0;
+/* ═══════════ LIVE DEMO ═══════════ */
+.demo__grid{
+  display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  gap:clamp(20px,3vw,44px);align-items:start;
 }
-.gal__bar h2{font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.6vw,38px);letter-spacing:-.028em;line-height:1}
-.gal__bar h2 em{font-style:italic;color:inherit}
-.gal__prog{display:flex;align-items:center;gap:var(--sp-3);font-family:var(--sans);font-size:10px;font-weight:600;
-  letter-spacing:.16em;color:var(--muted-2);font-variant-numeric:tabular-nums}
-.gal__prog b{color:var(--ink);font-weight:600}
-.gal__line{width:clamp(60px,10vw,150px);height:3px;border-radius:var(--r-full);background:var(--hair-2);position:relative;overflow:hidden}
-.gal__line i{position:absolute;inset:0;border-radius:var(--r-full);background:var(--ink);transform:scaleX(0);transform-origin:0 50%}
+@media(max-width:900px){ .demo__grid{grid-template-columns:1fr} }
 
-.gal__track{
-  flex:1;display:flex;align-items:center;gap:var(--gap);
-  padding-inline:var(--gut);
-  will-change:transform;
+.demo__lab,.demo__meta{
+  font-family:var(--sans);font-size:9.5px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);
 }
-.card{
-  flex:none;
-  width:clamp(280px,42vw,620px);
-  height:min(70svh,620px);
-  border:1px solid var(--hair);
-  border-radius:var(--r-2xl);
-  background:var(--card);
-  display:flex;flex-direction:column;
-  position:relative;overflow:hidden;
-  transition:border-color var(--t-enter) var(--ease);
+.demo__lab{display:block;margin-bottom:var(--sp-3)}
+.demo__ta{
+  width:100%;resize:vertical;min-height:140px;
+  padding:var(--sp-4);border:1px solid var(--hair-2);border-radius:var(--r-lg);
+  background:var(--card);color:var(--ink);
+  font-family:var(--sans);font-size:14px;line-height:1.55;
 }
-.card:hover{border-color:var(--hair-2)}
-.card__top{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
-  padding:var(--sp-4);flex:none;
+.demo__ta:focus{outline:2px solid var(--accent);outline-offset:2px;border-color:transparent}
+.demo__presets{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-3)}
+.demo__preset{
+  font-family:var(--sans);font-size:11px;font-weight:500;
+  padding:var(--sp-2) var(--sp-4);border-radius:var(--r-full);
+  border:1px solid var(--hair-2);color:var(--muted);
+  transition:color var(--t-micro) var(--ease),border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease);
 }
-.card__n{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--muted-2);font-variant-numeric:tabular-nums}
-.card__st{font-family:var(--sans);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);text-align:right;max-width:24ch}
-.card__media{
-  flex:none;aspect-ratio:16/9;position:relative;overflow:hidden;
-  background:var(--surface-2);margin-inline:var(--sp-4);
-  border:1px solid var(--hair);border-radius:var(--r-md);
+.demo__preset:hover{color:var(--ink);border-color:var(--hair-3);background:var(--hair)}
+.demo__act{display:flex;align-items:center;gap:var(--sp-4);margin-top:var(--sp-5);flex-wrap:wrap}
+.demo__note{
+  margin-top:var(--sp-4);font-family:var(--sans);font-size:12px;line-height:1.5;
+  color:var(--muted-2);max-width:46ch;
 }
-.card__media img{
-  width:100%;height:auto;display:block;
-  transform-origin:50% 0;
-  transition:transform var(--t-large) var(--ease);
-}
-.card:hover .card__media img{transform:scale(1.04)}
-.card__foot{padding:var(--sp-4);flex:1;display:flex;flex-direction:column;justify-content:flex-end}
-.card__foot h3{font-family:var(--serif);font-weight:400;font-size:clamp(24px,2.4vw,38px);letter-spacing:-.028em;line-height:1;margin-bottom:9px}
-.card__foot p{font-size:13px;line-height:1.6;color:var(--muted);margin-bottom:var(--sp-3);max-width:62ch;text-wrap:pretty}
-.card__meta{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.card__stack{display:flex;gap:5px;flex-wrap:wrap}
-.card__stack span{
-  font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);border:1px solid var(--hair);border-radius:var(--r-full);padding:var(--sp-1) var(--sp-3);
-}
-.card--end{
-  width:clamp(240px,26vw,360px);
-  display:flex;align-items:center;justify-content:center;
-  background:var(--plate);border-color:var(--plate);
-}
-.card--end a{display:flex;flex-direction:column;align-items:flex-start;gap:var(--sp-4);color:var(--on-plate);text-align:left;padding:var(--sp-6)}
-.card--end .h2{color:var(--on-plate);font-size:clamp(28px,3vw,44px)}
-.card--end .mono{color:var(--on-plate-2)}
+.demo__note a{color:var(--accent);text-decoration:underline}
 
-/* mini panels for projects without screenshots */
-.pane{position:absolute;inset:0;padding:var(--sp-3);display:flex;flex-direction:column;gap:var(--sp-2);
-  font-family:var(--sans);overflow:hidden;border-radius:var(--r-md)}
-.pane__h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--hair);flex:none}
-.pane__h b{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
-.pane__h span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
-.row{display:grid;grid-template-columns:1fr auto;gap:var(--sp-3);align-items:center;
-  padding:var(--sp-2) var(--sp-3);border:1px solid var(--hair);border-radius:var(--r-xs);flex:none}
-.row b{display:block;font-size:11px;font-weight:500;color:var(--ink);margin-bottom:5px;letter-spacing:.02em}
-.row span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
-.row span.on{color:var(--ink);font-weight:600}
-.wv{display:flex;align-items:flex-end;gap:2px;height:18px}
-.wv i{width:2px;border-radius:var(--r-full);background:var(--ink);opacity:.7;height:20%;animation:w 1.1s ease-in-out infinite}
-.wv.off i{background:var(--hair-3);border-radius:var(--r-full);animation:none;height:14%}
-@keyframes w{0%,100%{height:16%}50%{height:100%}}
-.tr{display:flex;flex-direction:column;gap:8px;margin-top:auto;flex:none}
-.tr div{display:flex;gap:9px;font-size:10.5px;line-height:1.5}
-.tr b{color:var(--muted-2);font-weight:700;font-size:9px;letter-spacing:.1em;flex:none;padding-top:1px}
-.tr p{color:var(--muted)}
-.orb{width:52px;height:52px;border-radius:var(--r-full);border:1px solid var(--hair-2);margin:2px auto;display:grid;place-items:center;position:relative;flex:none}
-.orb::before,.orb::after{content:'';position:absolute;inset:0;border-radius:var(--r-full);border:1px solid var(--hair-2);animation:op 3s ease-out infinite}
-.orb::after{animation-delay:1.5s}
-@keyframes op{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}
-.orb svg{width:18px;height:18px;color:var(--ink)}
-.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);
-  border:1px solid var(--hair);border-radius:var(--r-xs);overflow:hidden;flex:none}
-.kpi div{background:var(--surface);padding:var(--sp-2)}
-.kpi b{display:block;font-family:var(--serif);font-size:19px;font-weight:400;line-height:1;letter-spacing:-.02em}
-.kpi span{display:block;margin-top:4px;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
-
-/* mobile fallback: vertical scroller */
-@media(max-width:820px){
-  .gal__pin{position:static;height:auto}
-  .gal__track{
-    flex-direction:column;align-items:stretch;
-    padding-block:clamp(24px,5vw,40px);
-    transform:none !important;
-  }
-  .card{width:100%;height:auto;min-height:480px}
-  .card__media{min-height:210px}
-  .card--end{min-height:220px}
-  .gal__spacer{display:none}
+.demo__steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sp-3)}
+.demo__step{
+  border:1px solid var(--hair);border-radius:var(--r-xl);
+  background:var(--card);overflow:hidden;
+  transition:border-color var(--t-micro) var(--ease),opacity var(--t-micro) var(--ease);
+}
+.demo__step[data-state="idle"]{opacity:.5}
+.demo__step[data-state="running"]{border-color:var(--accent)}
+.demo__step[data-state="error"]{border-color:var(--hair-3)}
+.demo__head{
+  display:flex;align-items:center;gap:var(--sp-3);
+  padding:var(--sp-3) var(--sp-4);
+}
+.demo__n{
+  font-family:var(--sans);font-size:9.5px;font-weight:700;letter-spacing:.14em;
+  color:var(--muted-2);font-variant-numeric:tabular-nums;
+}
+.demo__name{font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);flex:1}
+.demo__time{
+  font-family:var(--sans);font-size:10px;letter-spacing:.08em;color:var(--muted-2);
+  font-variant-numeric:tabular-nums;
+}
+.demo__dot{
+  width:6px;height:6px;border-radius:var(--r-full);flex:none;
+  background:var(--hair-3);
+}
+.demo__step[data-state="running"] .demo__dot{background:var(--accent);animation:pulse 1.1s ease-in-out infinite}
+.demo__step[data-state="done"] .demo__dot{background:var(--ok)}
+.demo__body{
+  border-top:1px solid var(--hair);padding:var(--sp-4);
+  font-family:var(--code);font-size:11.5px;line-height:1.65;
+  color:var(--muted);white-space:pre-wrap;word-break:break-word;
+  margin:0;
+}
+.demo__body b{color:var(--ink);font-weight:600}
+.demo__reply{
+  font-family:var(--sans);font-size:13.5px;line-height:1.6;color:var(--ink);
+  white-space:pre-wrap;
 }
 
 /* ═══════════════════════════════════════
@@ -1316,10 +1272,6 @@ html[data-theme="dark"] .tt__moon{display:block}
   .rv{opacity:1 !important;transform:none !important}
   .clip>span{transform:none !important}
   .mast__item{opacity:1 !important;transform:none !important}
-  .gal__pin{position:static;height:auto}
-  .gal__track{flex-direction:column;align-items:stretch;transform:none !important;padding-block:40px}
-  .card{width:100%;height:auto;min-height:460px}
-  .gal__spacer{display:none}
   .plate__figure{transform:none}
   .holo__sweep,.holo__lines i{animation:none}
 }
@@ -1462,8 +1414,8 @@ html[data-theme="dark"] .tt__moon{display:block}
   <div class="mission" id="mission">
     <span class="mission__label">Mission</span>
     <p class="mission__text">Help <b>100</b> businesses build million-dollar workflows</p>
-    <div class="mission__bar" id="missionBar" data-done="6" aria-hidden="true"><i></i></div>
-    <span class="mission__count"><b>06</b> underway <i>/</i> 100</span>
+    <div class="mission__bar" id="missionBar" data-done="0" aria-hidden="true"><i></i></div>
+    <span class="mission__count"><b>Pending</b> <i>/</i> 100</span>
   </div>
 
   <div class="cue" aria-hidden="true"><i></i>Scroll</div>
@@ -1658,92 +1610,30 @@ html[data-theme="dark"] .tt__moon{display:block}
   </p>
 </section>
 
-<!-- ═══════════ WORK — horizontal gallery ═══════════ -->
-<section class="gal" id="work">
-  <div class="gal__pin">
-    <div class="gal__bar">
-      <h2>Selected <em>work</em></h2>
-      <div class="gal__prog">
-        <span><b id="galI">01</b> / <span id="galOf">03</span></span>
-        <span class="gal__line"><i id="galBar"></i></span>
-      </div>
-    </div>
-
-    <div class="gal__track" id="galTrack">
-
-      <!-- 01 -->
-      <article class="card">
-        <div class="card__top"><span class="card__n">01</span><span class="card__st">Live · Execution OS</span></div>
-        <div class="card__media">
-          <img src="images/opt/kazi.webp" alt="Kazi Orchestrate interface" loading="lazy" decoding="async" width="1800" height="980">
-        </div>
-        <div class="card__foot">
-          <h3>Kazi Orchestrate</h3>
-          <p>Orchestration platform for team-coordinated AI agents, with a 24/7 RAG assistant. One place where your agents work, and you approve.</p>
-          <div class="card__meta">
-            <div class="card__stack"><span>React</span><span>FastAPI</span><span>ChromaDB</span><span>AWS</span></div>
-            <a class="ul" href="projects/kazi">Case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-          </div>
-        </div>
-      </article>
-
-      
-
-      <!-- 02 -->
-      <article class="card">
-        <div class="card__top"><span class="card__n">02</span><span class="card__st">Live · AI faith tech</span></div>
-        <div class="card__media">
-          <img src="images/opt/rhema.webp" alt="Rhema interface" loading="lazy" decoding="async" width="1800" height="979">
-        </div>
-        <div class="card__foot">
-          <h3>Rhema</h3>
-          <p>AI biblical guidance platform. Converse with scriptural characters, each with distinct voice and theology, on production architecture.</p>
-          <div class="card__meta">
-            <div class="card__stack"><span>React</span><span>Claude API</span><span>FastAPI</span></div>
-            <a class="ul" href="projects/rhema">Case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-          </div>
-        </div>
-      </article>
-
-      <!-- 03 -->
-      <article class="card">
-        <div class="card__top"><span class="card__n">03</span><span class="card__st">Live · AI career coach</span></div>
-        <div class="card__media">
-          <div class="pane">
-            <div class="pane__h"><b>Live coaching</b><span>LiveKit · 08:31</span></div>
-            <div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div>
-            <div class="tr">
-              <div><b>EV</b><p>Your resume leads with tooling. Lead with the outcome.</p></div>
-              <div><b>YOU</b><p>So open with the migration I ran?</p></div>
-              <div><b>EV</b><p>Yes. Name the scale, then the result.</p></div>
-            </div>
-            <div class="kpi"><div><b>4</b><span>Rewrites</span></div><div><b>92</b><span>Match</span></div><div><b>08:31</b><span>Session</span></div></div>
-          </div>
-        </div>
-        <div class="card__foot">
-          <h3>Everon</h3>
-          <p>AI career assistant with resume analysis, coaching chat, and real-time LiveKit voice. Rebuilt from prototype into production architecture.</p>
-          <div class="card__meta">
-            <div class="card__stack"><span>LiveKit</span><span>Firebase</span><span>React</span><span>Claude</span></div>
-            <a class="ul" href="projects/everon">Case study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-          </div>
-        </div>
-      </article>
-
-      
-
-      <!-- end card -->
-      <article class="card card--end">
-        <a href="#contact">
-          <span class="mono">Next</span>
-          <span class="h2">Build<br>yours</span>
-          <span class="mono">Start a project →</span>
-        </a>
-      </article>
-
-    </div>
+<!-- ═══════════ LIVE DEMO ═══════════ -->
+<section class="sec demo wrap" id="work">
+  <div class="sec__head">
+    <span class="tag sec__num rv">§ 03</span>
+    <h2 class="h2 sec__ttl rv" data-d="1">Run one<br>of my <em>pipelines</em></h2>
+    <p class="lede sec__note rv" data-d="2">A real support pipeline, live. Four model calls in sequence, each one schema-constrained so the next step can depend on it.</p>
   </div>
-  <div class="gal__spacer" id="galSpacer" aria-hidden="true"></div>
+
+  <div class="demo__grid rv">
+    <div class="demo__in">
+      <label class="demo__lab" for="demoInput">Inbound ticket</label>
+      <textarea id="demoInput" class="demo__ta" rows="7" spellcheck="false"></textarea>
+      <div class="demo__presets" id="demoPresets"></div>
+      <div class="demo__act">
+        <button class="btn btn--sig" type="button" id="demoRun">Run pipeline
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <span class="demo__meta" id="demoMeta"></span>
+      </div>
+      <p class="demo__note" id="demoNote"></p>
+    </div>
+
+    <ol class="demo__steps" id="demoSteps"></ol>
+  </div>
 </section>
 
 <!-- ═══════════ CONTACT — inverted plate, resources rail ═══════════ -->
@@ -2219,8 +2109,10 @@ html[data-theme="dark"] .tt__moon{display:block}
   /* ── mission progress: single source of truth is data-done ── */
   var mBar = $('#missionBar');
   if(mBar){
+    /* 0 means genuinely nothing yet: show an empty rail rather than flooring
+       to a sliver that would read as progress that hasn't happened. */
     var done = Math.max(0, Math.min(100, parseInt(mBar.getAttribute('data-done'), 10) || 0));
-    mBar.style.setProperty('--fill', Math.max(done, 2) + '%');
+    mBar.style.setProperty('--fill', done === 0 ? '0%' : Math.max(done, 2) + '%');
   }
 
   /* ── masthead CTA menu ──
@@ -2290,6 +2182,10 @@ html[data-theme="dark"] .tt__moon{display:block}
      Only used when GSAP never arrives. With GSAP present, initReveals()
      owns the reveals instead (see below) and this never runs. */
   function revealFallback(){
+    /* The fallback's CSS `rise` animation also starts at opacity 0, so it can
+       strand content the same way a stalled tween can. The watchdog belongs on
+       this path too, not only the GSAP one. */
+    revealWatchdog();
     var rvs = document.querySelectorAll('.rv');
     if('IntersectionObserver' in window && !RM){
       var io = new IntersectionObserver(function(es){
@@ -2313,7 +2209,10 @@ html[data-theme="dark"] .tt__moon{display:block}
      GSAP involvement — and force-clears the hidden state if an element has
      been on screen and is still invisible. When animation runs normally the
      element is already visible by the time this fires and it does nothing. */
+  var watchdogStarted = false;
   function revealWatchdog(){
+    if(watchdogStarted) return;
+    watchdogStarted = true;
     function sweep(){
       document.querySelectorAll(REVEAL_SEL).forEach(function(el){
         if(el.closest('.mast__menu')) return;   /* that menu is hidden on purpose */
@@ -2378,10 +2277,10 @@ html[data-theme="dark"] .tt__moon{display:block}
     if(!window.ScrollTrigger){ revealFallback(); return; }
     revealWatchdog();
 
-    document.querySelectorAll('.sec, .cta, .gal').forEach(function(sec){
+    document.querySelectorAll('.sec, .cta').forEach(function(sec){
       var head  = sec.querySelector('.sec__head') || sec.querySelector('.wrap') || sec;
       var num   = sec.querySelector('.sec__num, .tag');
-      var ttl   = sec.querySelector('.sec__ttl, .h2, .gal__bar h2');
+      var ttl   = sec.querySelector('.sec__ttl, .h2');
       var note  = sec.querySelector('.sec__note');
       var lines = splitLines(ttl);
 
@@ -2567,56 +2466,6 @@ html[data-theme="dark"] .tt__moon{display:block}
   if(window.gsap) heroMotion();
   else addEventListener('load', heroMotion);
 
-  /* ══ HORIZONTAL PINNED GALLERY ══ */
-  var gal = $('#work'), track = $('#galTrack'), spacer = $('#galSpacer');
-  var galI = $('#galI'), galBar = $('#galBar');
-  var CARDS = track ? track.querySelectorAll('.card:not(.card--end)').length : 0;
-  var galOf = $('#galOf');
-  if(galOf) galOf.textContent = String(CARDS).padStart(2, '0');
-  var span = 0, horiz = false;
-
-  function measure(){
-    horiz = innerWidth > 820 && !RM;
-    if(!horiz){
-      if(spacer) spacer.style.height = '';
-      track.style.transform = '';
-      gal.style.height = '';
-      return;
-    }
-    var gut = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gut')) || 24;
-    span = Math.max(0, track.scrollWidth - innerWidth + gut * 2);
-    spacer.style.height = span + 'px';
-  }
-
-  function drive(){
-    if(!horiz || span <= 0) return;
-    var top = gal.offsetTop;
-    var p = (scrollY - top) / span;
-    p = Math.max(0, Math.min(1, p));
-    track.style.transform = 'translate3d(' + (-p * span).toFixed(1) + 'px,0,0)';
-    if(galBar) galBar.style.transform = 'scaleX(' + p.toFixed(3) + ')';
-    if(galI && CARDS){
-      var n = Math.min(CARDS, Math.max(1, Math.round(p * (CARDS - 1)) + 1));
-      galI.textContent = String(n).padStart(2, '0');
-    }
-  }
-
-  /* ══ scroll driver — the hero is GSAP's now; this only drives the gallery ══ */
-  var ticking = false;
-
-  function frame(){
-    ticking = false;
-    drive();
-  }
-  function req(){ if(!ticking){ ticking = true; requestAnimationFrame(frame); } }
-
-  if(!RM) addEventListener('scroll', req, {passive:true});
-
-  measure();
-  addEventListener('resize', function(){ measure(); req(); }, {passive:true});
-  addEventListener('load', function(){ measure(); req(); });
-  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ measure(); req(); }); }
-
   /* ── scroll spy ── */
   var links = {};
   document.querySelectorAll('.nav__l').forEach(function(a){
@@ -2637,6 +2486,147 @@ html[data-theme="dark"] .tt__moon{display:block}
       var s = document.getElementById(id); if(s) sio.observe(s);
     });
   }
+
+  /* ══ LIVE PIPELINE DEMO ══
+     Calls /api/run once per stage and feeds each result into the next, so the
+     sequence on screen is genuinely four model calls rather than one response
+     revealed slowly. Degrades to a clear "not configured" state when the
+     backend has no key, rather than pretending to run. */
+  (function demo(){
+    var ta = $('#demoInput'), runBtn = $('#demoRun'), stepsEl = $('#demoSteps');
+    var metaEl = $('#demoMeta'), noteEl = $('#demoNote'), presetsEl = $('#demoPresets');
+    if(!ta || !runBtn || !stepsEl) return;
+
+    var STAGES = [
+      { id:'classify', label:'Classify intent' },
+      { id:'extract',  label:'Extract entities' },
+      { id:'decide',   label:'Route and gate' },
+      { id:'draft',    label:'Draft reply' }
+    ];
+
+    var PRESETS = [
+      { name:'Angry cancellation',
+        text:"I've been charged twice for order #4417 and nobody has replied in four days. That's $240 you've taken. Cancel my subscription today and refund both charges or I'm disputing it with my bank." },
+      { name:'Technical issue',
+        text:"Since the update on Tuesday the export button does nothing on the reports page. I've tried Chrome and Safari. I need to get the Q3 numbers out before Friday." },
+      { name:'Billing question',
+        text:"Hi, could you tell me why my invoice this month is higher than last month? I think we added two seats but I want to check before I approve it." }
+    ];
+
+    ta.value = PRESETS[0].text;
+
+    PRESETS.forEach(function(p){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'demo__preset'; b.textContent = p.name;
+      b.addEventListener('click', function(){ ta.value = p.text; reset(); });
+      presetsEl.appendChild(b);
+    });
+
+    function reset(){
+      stepsEl.innerHTML = '';
+      metaEl.textContent = '';
+      STAGES.forEach(function(s, i){
+        var li = document.createElement('li');
+        li.className = 'demo__step';
+        li.setAttribute('data-state','idle');
+        li.setAttribute('data-stage', s.id);
+        li.innerHTML =
+          '<div class="demo__head">' +
+            '<span class="demo__dot"></span>' +
+            '<span class="demo__n">' + String(i+1).padStart(2,'0') + '</span>' +
+            '<span class="demo__name"></span>' +
+            '<span class="demo__time"></span>' +
+          '</div>';
+        li.querySelector('.demo__name').textContent = s.label;
+        stepsEl.appendChild(li);
+      });
+    }
+
+    function esc(v){
+      return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function render(li, stage, out){
+      var body = document.createElement(stage === 'draft' ? 'div' : 'pre');
+      body.className = 'demo__body';
+      if(stage === 'draft'){
+        body.innerHTML = '<span class="demo__reply">' + esc(out.reply) + '</span>';
+      } else {
+        body.innerHTML = Object.keys(out).map(function(k){
+          var v = out[k];
+          return '<b>' + esc(k) + '</b>: ' + esc(v === null ? 'null' : v);
+        }).join('\\n');
+      }
+      li.appendChild(body);
+    }
+
+    function fail(li, text){
+      li.setAttribute('data-state','error');
+      var p = document.createElement('pre');
+      p.className = 'demo__body';
+      p.textContent = text;
+      li.appendChild(p);
+    }
+
+    var running = false;
+
+    runBtn.addEventListener('click', async function(){
+      if(running) return;
+      var input = ta.value.trim();
+      if(!input){ ta.focus(); return; }
+
+      running = true;
+      runBtn.disabled = true;
+      noteEl.textContent = '';
+      reset();
+
+      var prior = {}, totalMs = 0, totalOut = 0;
+
+      for(var i = 0; i < STAGES.length; i++){
+        var stage = STAGES[i];
+        var li = stepsEl.children[i];
+        li.setAttribute('data-state','running');
+
+        try {
+          var r = await fetch('/api/run', {
+            method:'POST',
+            headers:{ 'Content-Type':'application/json' },
+            body: JSON.stringify({ stage: stage.id, input: input, prior: prior })
+          });
+          var data = await r.json();
+
+          if(!r.ok){
+            if(data.error === 'not_configured'){
+              li.setAttribute('data-state','idle');
+              noteEl.innerHTML = 'The demo backend has no API key configured yet, so this is not running live. ' +
+                                 'The pipeline code is in <code>api/run.js</code>.';
+            } else if(data.error === 'rate_limited' || data.error === 'upstream_rate_limited'){
+              fail(li, 'Rate limited. Give it a minute and try again.');
+            } else {
+              fail(li, 'This stage failed (' + (data.error || r.status) + ').');
+            }
+            break;
+          }
+
+          prior[stage.id] = data.output;
+          totalMs += data.ms || 0;
+          totalOut += (data.usage && data.usage.output) || 0;
+          li.setAttribute('data-state','done');
+          li.querySelector('.demo__time').textContent = (data.ms || 0) + 'ms';
+          render(li, stage.id, data.output);
+          metaEl.textContent = totalMs + 'ms · ' + totalOut + ' output tokens';
+        } catch (e) {
+          fail(li, 'Could not reach the demo backend.');
+          break;
+        }
+      }
+
+      running = false;
+      runBtn.disabled = false;
+    });
+
+    reset();
+  })();
 
   /* ══ STAGED INTAKE FLOW ══ */
   var form = $('#form'), msg = $('#formMsg'), submit = $('#submit');
