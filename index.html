@@ -1004,11 +1004,42 @@ html[data-theme="dark"] .tt__moon{display:block}
 .demo__step[data-state="done"] .demo__dot{background:var(--ok)}
 .demo__body{
   border-top:1px solid var(--hair);padding:var(--sp-5);
-  font-family:var(--code);font-size:11.5px;line-height:1.65;
-  color:var(--muted);white-space:pre-wrap;word-break:break-word;
   margin:0;
 }
-.demo__body b{color:var(--ink);font-weight:600}
+/* Structured output as a designed field list rather than a console dump:
+   one row per field, label left, typed value right. */
+.demo__fields{display:flex;flex-direction:column;gap:var(--sp-3)}
+.demo__f{
+  display:grid;grid-template-columns:minmax(96px,.4fr) 1fr;
+  gap:var(--sp-4);align-items:baseline;
+}
+.demo__f dt{
+  font-family:var(--sans);font-size:9.5px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);
+}
+.demo__f dd{
+  margin:0;font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--ink);
+}
+.demo__f dd.is-null{color:var(--muted-2);font-style:italic}
+/* enum values read as pills, which is what they are */
+.demo__pill{
+  display:inline-block;padding:3px var(--sp-3);border-radius:var(--r-full);
+  border:1px solid var(--hair-2);background:var(--surface-2);
+  font-size:11.5px;font-weight:600;letter-spacing:.02em;
+}
+.demo__pill.is-on{border-color:var(--accent);color:var(--accent);background:transparent}
+.demo__pill.is-off{color:var(--muted-2)}
+/* a 0-1 confidence reads better as a bar than a decimal */
+.demo__conf{display:flex;align-items:center;gap:var(--sp-3)}
+.demo__conf i{
+  display:block;height:3px;flex:1;max-width:140px;border-radius:var(--r-full);
+  background:var(--hair-2);position:relative;overflow:hidden;
+}
+.demo__conf i::after{
+  content:'';position:absolute;inset:0 auto 0 0;width:var(--w,0%);
+  border-radius:var(--r-full);background:var(--accent);
+}
+.demo__conf b{font-weight:600;font-variant-numeric:tabular-nums;font-size:12.5px}
 .demo__reply{
   font-family:var(--sans);font-size:13.5px;line-height:1.6;color:var(--ink);
   white-space:pre-wrap;
@@ -1666,7 +1697,7 @@ html[data-theme="dark"] .tt__moon{display:block}
 <!-- ═══════════ CONTACT — inverted plate, resources rail ═══════════ -->
 <section class="cta" id="contact">
   <div class="wrap">
-    <span class="tag rv">§ 03 — Contact</span>
+    <span class="tag rv">§ 04 — Contact</span>
     <h2 class="h2 rv" data-d="1" style="margin-top:22px">Let's build<br><em>something</em></h2>
 
     <div class="cta__g">
@@ -2649,17 +2680,45 @@ html[data-theme="dark"] .tt__moon{display:block}
       });
     }
 
+    /* Render each field by what it actually is, rather than stringifying
+       everything: enums become pills, booleans read yes/no, a 0-1 confidence
+       becomes a bar, and nulls say "not stated" instead of printing null. */
+    function valueHtml(key, v){
+      if(v === null || v === undefined || v === '') {
+        return '<dd class="is-null">not stated</dd>';
+      }
+      if(typeof v === 'boolean'){
+        return '<dd><span class="demo__pill ' + (v ? 'is-on' : 'is-off') + '">' +
+               (v ? 'yes' : 'no') + '</span></dd>';
+      }
+      if(typeof v === 'number' && v >= 0 && v <= 1 && /conf|score/.test(key)){
+        var pct = Math.round(v * 100);
+        return '<dd><span class="demo__conf"><i style="--w:' + pct + '%"></i>' +
+               '<b>' + pct + '%</b></span></dd>';
+      }
+      if(Array.isArray(v)){
+        if(!v.length) return '<dd class="is-null">none</dd>';
+        return '<dd>' + v.map(function(x){
+          return '<span class="demo__pill">' + esc(x) + '</span>';
+        }).join(' ') + '</dd>';
+      }
+      /* short snake_case strings are enum values from the schema */
+      if(typeof v === 'string' && /^[a-z][a-z0-9_]{0,28}$/.test(v)){
+        return '<dd><span class="demo__pill">' + esc(v.replace(/_/g,' ')) + '</span></dd>';
+      }
+      return '<dd>' + esc(v) + '</dd>';
+    }
+
     function render(li, out, isProse){
-      var body = document.createElement(isProse ? 'div' : 'pre');
+      var body = document.createElement('div');
       body.className = 'demo__body';
       if(isProse){
         body.innerHTML = '<span class="demo__reply">' + esc(out) + '</span>';
       } else {
-        body.innerHTML = Object.keys(out).map(function(k){
-          var v = out[k];
-          if(Array.isArray(v)) v = v.length ? v.join(', ') : 'none';
-          return '<b>' + esc(k) + '</b>: ' + esc(v === null ? 'null' : v);
-        }).join('\n');
+        body.innerHTML = '<dl class="demo__fields">' + Object.keys(out).map(function(k){
+          return '<div class="demo__f"><dt>' + esc(k.replace(/_/g,' ')) + '</dt>' +
+                 valueHtml(k, out[k]) + '</div>';
+        }).join('') + '</dl>';
       }
       li.appendChild(body);
     }
