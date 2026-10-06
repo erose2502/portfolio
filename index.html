@@ -975,7 +975,14 @@ html[data-theme="dark"] .tt__moon{display:block}
   font-family:var(--sans);font-size:9.5px;font-weight:700;
   letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);
 }
-.demo__lab{display:block;margin-bottom:var(--sp-4)}
+.demo__lab{display:inline-block;margin-bottom:var(--sp-4)}
+.demo__tag{
+  display:inline-block;margin-left:var(--sp-3);
+  font-family:var(--sans);font-size:9px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);
+  padding:2px var(--sp-3);border:1px solid var(--hair-2);border-radius:var(--r-full);
+}
+.demo__ta[readonly]{cursor:default}
 /* Composer: one rounded surface holding the field and its send control,
    the way a chat input reads, rather than a box with a button under it. */
 .demo__composer{
@@ -1037,10 +1044,6 @@ html[data-theme="dark"] .tt__moon{display:block}
   color:var(--muted-2);font-variant-numeric:tabular-nums;
 }
 .demo__name{font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);flex:1}
-.demo__time{
-  font-family:var(--sans);font-size:10px;letter-spacing:.08em;color:var(--muted-2);
-  font-variant-numeric:tabular-nums;
-}
 .demo__dot{
   width:6px;height:6px;border-radius:var(--r-full);flex:none;
   background:var(--hair-3);
@@ -1713,8 +1716,8 @@ html[data-theme="dark"] .tt__moon{display:block}
 <section class="sec demo wrap" id="work">
   <div class="sec__head">
     <span class="tag sec__num rv">§ 03</span>
-    <h2 class="h2 sec__ttl rv" data-d="1">Pipelines you<br>can <em>run</em></h2>
-    <p class="lede sec__note rv" data-d="2">Pick a use case and run it against your own input. Each stage is a separate model call, schema-constrained so the next stage can depend on what it returns.</p>
+    <h2 class="h2 sec__ttl rv" data-d="1">How I build<br>a <em>pipeline</em></h2>
+    <p class="lede sec__note rv" data-d="2">Four worked examples. Step through one to see what each stage returns, and why the next stage can depend on it. Every stage is schema-constrained, so the output is a contract rather than prose to parse.</p>
   </div>
 
   <div class="demo__grid rv">
@@ -1724,11 +1727,12 @@ html[data-theme="dark"] .tt__moon{display:block}
       <div class="demo__flow" id="demoFlow" aria-hidden="true"></div>
 
       <label class="demo__lab" for="demoInput" id="demoLab">Input</label>
+      <span class="demo__tag">Example</span>
       <div class="demo__composer">
-        <textarea id="demoInput" class="demo__ta" rows="2" spellcheck="false"></textarea>
+        <textarea id="demoInput" class="demo__ta" rows="2" spellcheck="false" readonly></textarea>
         <div class="demo__bar">
-          <span class="demo__meta" id="demoMeta"></span>
-          <button class="demo__send" type="button" id="demoRun" aria-label="Run pipeline">
+          <span class="demo__meta">Step through</span>
+          <button class="demo__send" type="button" id="demoRun" aria-label="Step through this pipeline">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
           </button>
         </div>
@@ -2597,67 +2601,100 @@ html[data-theme="dark"] .tt__moon{display:block}
     });
   }
 
-  /* ══ USE CASES — runnable pipelines ══
-     Calls /api/run once per stage and feeds each result into the next, so the
-     sequence on screen is genuinely N model calls rather than one response
-     revealed slowly. Stage ids here are the contract with the backend.
-     The list and pipeline shape render fine with no backend at all; only
-     Run needs one, and it says so plainly when there isn't one. */
+  /* ══ USE CASES — pipeline walkthroughs ══
+     A scripted walkthrough, not a live model call. Stages reveal in sequence
+     with the structured output each one would return, which is the thing
+     worth showing: the shape of the contract between stages. Deliberately
+     no fabricated latency or token counts - inventing performance numbers
+     would be claiming something that was never measured. */
   (function pipelines(){
     var casesEl = $('#demoCases'), ta = $('#demoInput'), runBtn = $('#demoRun');
-    var stepsEl = $('#demoSteps'), metaEl = $('#demoMeta'), noteEl = $('#demoNote');
+    var stepsEl = $('#demoSteps'), noteEl = $('#demoNote');
     var flowEl = $('#demoFlow'), labEl = $('#demoLab');
     if(!casesEl || !ta || !runBtn || !stepsEl) return;
 
     var CASES = [
       {
-        id:'restaurant-voice', placeholder:'Paste a caller transcript…',
+        id:'restaurant-voice',
         name:'Restaurant voice agent',
         blurb:'Answers the phone, takes the booking, hands off when it should.',
         inputLabel:'Caller transcript',
+        placeholder:'Paste a caller transcript…',
         sample:"Hi, I'd like a table for four on Friday around seven. Last time we sat near the kitchen and it was really loud, could we be somewhere quieter? It's under Dana.",
         stages:[
-          {id:'understand', label:'Understand the call'},
-          {id:'slot',       label:'Resolve the slot'},
-          {id:'check',      label:'Check and decide'},
-          {id:'speak',      label:'Speak the reply'}
+          {id:'understand', label:'Understand the call', out:{
+            request:'new_booking', party_size:4, caller_name:'Dana',
+            special_request:'Quieter table, away from the kitchen'}},
+          {id:'slot', label:'Resolve the slot', out:{
+            day:'Friday', time_window:'19:00-19:30', is_ambiguous:true,
+            needs_confirming:'Friday at 7pm for four, is that right?'}},
+          {id:'check', label:'Check and decide', out:{
+            action:'confirm', hand_to_human:false, confidence:0.88,
+            reason:'Party of four is within limits and the slot is open.'}},
+          {id:'speak', label:'Speak the reply', out:{
+            say:"Lovely, that's a table for four this Friday at seven, under Dana. I've noted you'd like somewhere quieter, away from the kitchen.",
+            then:'await_confirmation'}}
         ]
       },
       {
-        id:'support-triage', placeholder:'Paste an inbound ticket…',
+        id:'support-triage',
         name:'Support triage',
         blurb:'Classifies, extracts, applies policy, drafts the reply.',
         inputLabel:'Inbound ticket',
+        placeholder:'Paste an inbound ticket…',
         sample:"I've been charged twice for order #4417 and nobody has replied in four days. That's $240 you've taken. Cancel my subscription today and refund both charges or I'm disputing it with my bank.",
         stages:[
-          {id:'classify', label:'Classify intent'},
-          {id:'extract',  label:'Extract entities'},
-          {id:'decide',   label:'Route and gate'},
-          {id:'draft',    label:'Draft reply'}
+          {id:'classify', label:'Classify intent', out:{
+            intent:'cancellation', urgency:'high', sentiment:'angry',
+            reasoning:'Duplicate charge, four days without a reply, chargeback threatened.'}},
+          {id:'extract', label:'Extract entities', out:{
+            customer_name:null, order_id:'#4417', amount:'$240', deadline_mentioned:'today'}},
+          {id:'decide', label:'Route and gate', out:{
+            action:'escalate', escalate_to_human:true, confidence:0.82,
+            policy_basis:'Refund is over $200 and this is an angry cancellation.'}},
+          {id:'draft', label:'Draft reply', out:{
+            reply:"I'm sorry about the double charge on #4417, and that we left you waiting four days. I've passed this to a colleague who can refund both charges today, and they'll come back to you before the end of the day.",
+            tone:'apologetic'}}
         ]
       },
       {
-        id:'lead-qualify', placeholder:'Paste an inbound enquiry…',
+        id:'lead-qualify',
         name:'Lead qualification',
         blurb:'Reads an enquiry, scores the fit, picks the next move.',
         inputLabel:'Inbound enquiry',
+        placeholder:'Paste an inbound enquiry…',
         sample:"Hi, we run a mid-size logistics firm and we're drowning in manual quote requests, maybe 200 a week over email. We'd want something live before our Q1 peak. I run ops and I sign off on tooling.",
         stages:[
-          {id:'read',  label:'Read the enquiry'},
-          {id:'score', label:'Score the fit'},
-          {id:'next',  label:'Pick next action'}
+          {id:'read', label:'Read the enquiry', out:{
+            company:'Mid-size logistics firm',
+            need:'Automate roughly 200 inbound quote requests a week.',
+            timeline:'Before Q1 peak', budget_signal:'Signs off on tooling'}},
+          {id:'score', label:'Score the fit', out:{
+            score:84, tier:'hot',
+            missing:'Current quoting tools and whether data is accessible.',
+            rationale:'Real volume, named deadline, and the sender owns the budget.'}},
+          {id:'next', label:'Pick next action', out:{
+            action:'book_call',
+            question_to_ask:'Where do the quote requests land today, and can we read them programmatically?',
+            priority:'now'}}
         ]
       },
       {
-        id:'doc-extract', placeholder:'Paste invoice text…',
+        id:'doc-extract',
         name:'Invoice extraction',
         blurb:'Pulls fields, validates them, routes for approval.',
         inputLabel:'Invoice text',
+        placeholder:'Paste invoice text…',
         sample:"NORTHBRIDGE SUPPLY LTD\nInvoice NB-2291\nBill to: Vector Logistics\nDate: 03/11/2026   Terms: Net 30\n2x Pallet racking    4,200.00\nDelivery                180.00\nTotal due: GBP 4,380.00",
         stages:[
-          {id:'parse',    label:'Parse the document'},
-          {id:'validate', label:'Validate and flag'},
-          {id:'route',    label:'Route for approval'}
+          {id:'parse', label:'Parse the document', out:{
+            supplier:'Northbridge Supply Ltd', invoice_number:'NB-2291',
+            total:'4,380.00', currency:'GBP', due_date:'03/12/2026'}},
+          {id:'validate', label:'Validate and flag', out:{
+            is_valid:true, problems:[], needs_human:true}},
+          {id:'route', label:'Route for approval', out:{
+            destination:'approval_queue', approver_required:true,
+            note:'Over the 5,000 auto-post threshold once VAT is applied.'}}
         ]
       }
     ];
@@ -2668,8 +2705,7 @@ html[data-theme="dark"] .tt__moon{display:block}
       return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    /* Samples vary from two lines to eight, so grow the field to its content
-       rather than leaving the longer ones scrolled and clipped. */
+    /* Samples run from two lines to eight, so grow the field to its content. */
     function fit(){
       ta.style.height = 'auto';
       ta.style.height = Math.min(ta.scrollHeight + 2, 300) + 'px';
@@ -2700,8 +2736,6 @@ html[data-theme="dark"] .tt__moon{display:block}
       flowEl.innerHTML = c.stages.map(function(s){ return '<i>' + esc(s.label) + '</i>'; })
                                  .join('<s>&rarr;</s>');
       reset();
-      noteEl.textContent = '';
-      metaEl.textContent = '';
     }
 
     function reset(){
@@ -2715,28 +2749,21 @@ html[data-theme="dark"] .tt__moon{display:block}
             '<span class="demo__dot"></span>' +
             '<span class="demo__n">' + String(i+1).padStart(2,'0') + '</span>' +
             '<span class="demo__name"></span>' +
-            '<span class="demo__time"></span>' +
           '</div>';
         li.querySelector('.demo__name').textContent = s.label;
         stepsEl.appendChild(li);
       });
     }
 
-    /* Render each field by what it actually is, rather than stringifying
-       everything: enums become pills, booleans read yes/no, a 0-1 confidence
-       becomes a bar, and nulls say "not stated" instead of printing null. */
     function valueHtml(key, v){
-      if(v === null || v === undefined || v === '') {
-        return '<dd class="is-null">not stated</dd>';
-      }
+      if(v === null || v === undefined || v === '') return '<dd class="is-null">not stated</dd>';
       if(typeof v === 'boolean'){
         return '<dd><span class="demo__pill ' + (v ? 'is-on' : 'is-off') + '">' +
                (v ? 'yes' : 'no') + '</span></dd>';
       }
-      if(typeof v === 'number' && v >= 0 && v <= 1 && /conf|score/.test(key)){
-        var pct = Math.round(v * 100);
-        return '<dd><span class="demo__conf"><i style="--w:' + pct + '%"></i>' +
-               '<b>' + pct + '%</b></span></dd>';
+      if(typeof v === 'number' && /conf|score/.test(key)){
+        var pct = v <= 1 ? Math.round(v * 100) : Math.round(v);
+        return '<dd><span class="demo__conf"><i style="--w:' + pct + '%"></i><b>' + pct + '%</b></span></dd>';
       }
       if(Array.isArray(v)){
         if(!v.length) return '<dd class="is-null">none</dd>';
@@ -2744,18 +2771,18 @@ html[data-theme="dark"] .tt__moon{display:block}
           return '<span class="demo__pill">' + esc(x) + '</span>';
         }).join(' ') + '</dd>';
       }
-      /* short snake_case strings are enum values from the schema */
       if(typeof v === 'string' && /^[a-z][a-z0-9_]{0,28}$/.test(v)){
         return '<dd><span class="demo__pill">' + esc(v.replace(/_/g,' ')) + '</span></dd>';
       }
       return '<dd>' + esc(v) + '</dd>';
     }
 
-    function render(li, out, isProse){
+    function render(li, out){
+      var prose = out.reply || out.say;
       var body = document.createElement('div');
       body.className = 'demo__body';
-      if(isProse){
-        body.innerHTML = '<span class="demo__reply">' + esc(out) + '</span>';
+      if(prose){
+        body.innerHTML = '<span class="demo__reply">' + esc(prose) + '</span>';
       } else {
         body.innerHTML = '<dl class="demo__fields">' + Object.keys(out).map(function(k){
           return '<div class="demo__f"><dt>' + esc(k.replace(/_/g,' ')) + '</dt>' +
@@ -2765,67 +2792,22 @@ html[data-theme="dark"] .tt__moon{display:block}
       li.appendChild(body);
     }
 
-    function fail(li, text){
-      li.setAttribute('data-state','error');
-      var p = document.createElement('pre');
-      p.className = 'demo__body';
-      p.textContent = text;
-      li.appendChild(p);
-    }
+    var wait = function(ms){ return new Promise(function(r){ setTimeout(r, ms); }); };
 
     runBtn.addEventListener('click', async function(){
       if(running) return;
-      var input = ta.value.trim();
-      if(!input){ ta.focus(); return; }
-
       running = true;
       runBtn.disabled = true;
-      noteEl.textContent = '';
       reset();
-
-      var prior = {}, totalMs = 0, totalOut = 0;
 
       for(var i = 0; i < active.stages.length; i++){
         var stage = active.stages[i];
         var li = stepsEl.children[i];
         li.setAttribute('data-state','running');
-
-        try {
-          var r = await fetch('/api/run', {
-            method:'POST',
-            headers:{ 'Content-Type':'application/json' },
-            body: JSON.stringify({ useCase: active.id, stage: stage.id, input: input, prior: prior })
-          });
-          var data = await r.json();
-
-          if(!r.ok){
-            li.setAttribute('data-state','idle');
-            if(data.error === 'not_configured'){
-              noteEl.textContent = 'Live runs are not switched on yet, so this pipeline is showing its shape only. The stage definitions are in api/run.js.';
-            } else if(data.error === 'rate_limited' || data.error === 'upstream_rate_limited'){
-              fail(li, 'Rate limited. Give it a minute and try again.');
-            } else {
-              fail(li, 'This stage failed (' + (data.error || r.status) + ').');
-            }
-            break;
-          }
-
-          prior[stage.id] = data.output;
-          totalMs += data.ms || 0;
-          totalOut += (data.usage && data.usage.output) || 0;
-          li.setAttribute('data-state','done');
-          li.querySelector('.demo__time').textContent = (data.ms || 0) + 'ms';
-
-          /* the last stage of a conversational pipeline reads better as prose */
-          var prose = data.output.reply || data.output.say;
-          render(li, prose || data.output, !!prose);
-
-          metaEl.textContent = totalMs + 'ms · ' + totalOut + ' output tokens';
-        } catch (e) {
-          li.setAttribute('data-state','idle');
-          noteEl.textContent = 'Could not reach the demo backend, so this pipeline is showing its shape only.';
-          break;
-        }
+        await wait(RM ? 0 : 420 + Math.random() * 360);
+        li.setAttribute('data-state','done');
+        render(li, stage.out);
+        await wait(RM ? 0 : 140);
       }
 
       running = false;
