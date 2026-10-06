@@ -918,6 +918,20 @@ html[data-theme="dark"] .tt__moon{display:block}
 }
 
 /* ═══════════ USE CASES — runnable pipelines ═══════════ */
+/* Glass needs something behind it to refract. This ambient wash gives the
+   surfaces below something to pick up, otherwise a blur over flat paper is
+   indistinguishable from a plain tint. */
+.demo{position:relative;isolation:isolate}
+.demo::before{
+  content:'';position:absolute;z-index:-1;pointer-events:none;
+  inset:clamp(30px,5vw,80px) -6% auto -6%;height:min(780px,78%);
+  background:
+    radial-gradient(40% 50% at 16% 26%, rgba(27,59,255,.14), transparent 70%),
+    radial-gradient(36% 46% at 84% 58%, rgba(44,168,216,.17), transparent 72%),
+    radial-gradient(30% 38% at 52% 86%, rgba(27,59,255,.09), transparent 70%);
+  filter:blur(30px);
+}
+
 .demo__grid{
   display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1.38fr);
   gap:clamp(28px,4vw,64px);align-items:start;
@@ -929,12 +943,16 @@ html[data-theme="dark"] .tt__moon{display:block}
 .demo__cases{display:flex;flex-direction:column;gap:var(--sp-3)}
 .demo__case{
   display:flex;flex-direction:column;gap:5px;text-align:left;
-  padding:var(--sp-5);border-radius:var(--r-lg);
-  border:1px solid var(--hair);background:transparent;
-  transition:border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease);
+  padding:var(--sp-5);border-radius:var(--r-xl);
+  border:1px solid var(--glass-border);
+  background:var(--glass-tint);
+  backdrop-filter:blur(var(--glass-blur)) saturate(165%);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(165%);
+  box-shadow:inset 0 1px 0 var(--glass-border), 0 10px 30px -18px rgb(var(--shadow-c)/.5);
+  transition:border-color var(--t-micro) var(--ease),box-shadow var(--t-micro) var(--ease);
 }
-.demo__case:hover{border-color:var(--hair-2);background:var(--card)}
-.demo__case[aria-pressed="true"]{border-color:var(--accent);background:var(--card)}
+.demo__case:hover{border-color:var(--hair-2);box-shadow:inset 0 1px 0 var(--glass-border), 0 14px 34px -16px rgb(var(--shadow-c)/.6)}
+.demo__case[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 1px 0 var(--glass-border), 0 0 0 1px var(--accent), 0 14px 34px -16px rgb(var(--shadow-c)/.55)}
 .demo__case b{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink)}
 .demo__case span{font-family:var(--sans);font-size:11.5px;line-height:1.45;color:var(--muted-2)}
 .demo__case em{
@@ -951,7 +969,10 @@ html[data-theme="dark"] .tt__moon{display:block}
 .demo__flow i{
   font-style:normal;font-family:var(--sans);font-size:10px;font-weight:600;
   letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
-  padding:var(--sp-2) var(--sp-3);border:1px solid var(--hair-2);border-radius:var(--r-full);
+  padding:var(--sp-2) var(--sp-4);border:1px solid var(--glass-border);border-radius:var(--r-full);
+  background:var(--glass-tint);
+  backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(160%);
 }
 .demo__flow s{text-decoration:none;color:var(--hair-3);font-size:11px}
 
@@ -962,8 +983,11 @@ html[data-theme="dark"] .tt__moon{display:block}
 .demo__lab{display:block;margin-bottom:var(--sp-4)}
 .demo__ta{
   width:100%;resize:vertical;min-height:210px;
-  padding:var(--sp-4);border:1px solid var(--hair-2);border-radius:var(--r-lg);
-  background:var(--card);color:var(--ink);
+  padding:var(--sp-5);border:1px solid var(--glass-border);border-radius:var(--r-xl);
+  background:var(--glass-tint);color:var(--ink);
+  backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(160%);
+  box-shadow:inset 0 1px 0 var(--glass-border);
   font-family:var(--sans);font-size:14px;line-height:1.55;
 }
 .demo__ta:focus{outline:2px solid var(--accent);outline-offset:2px;border-color:transparent}
@@ -976,12 +1000,16 @@ html[data-theme="dark"] .tt__moon{display:block}
 
 .demo__steps{list-style:none;margin:var(--sp-8) 0 0;padding:0;display:flex;flex-direction:column;gap:var(--sp-3)}
 .demo__step{
-  border:1px solid var(--hair);border-radius:var(--r-xl);
-  background:var(--card);overflow:hidden;
-  transition:border-color var(--t-micro) var(--ease),opacity var(--t-micro) var(--ease);
+  border:1px solid var(--glass-border);border-radius:var(--r-xl);
+  overflow:hidden;
+  background:var(--glass-tint);
+  backdrop-filter:blur(var(--glass-blur)) saturate(165%);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(165%);
+  box-shadow:inset 0 1px 0 var(--glass-border), 0 10px 30px -18px rgb(var(--shadow-c)/.5);
+  transition:border-color var(--t-micro) var(--ease),opacity var(--t-micro) var(--ease),box-shadow var(--t-micro) var(--ease);
 }
 .demo__step[data-state="idle"]{opacity:.5}
-.demo__step[data-state="running"]{border-color:var(--accent)}
+.demo__step[data-state="running"]{border-color:var(--accent);box-shadow:inset 0 1px 0 var(--glass-border), 0 0 0 1px var(--accent), 0 14px 36px -16px rgb(var(--shadow-c)/.55)}
 .demo__step[data-state="error"]{border-color:var(--hair-3)}
 .demo__head{
   display:flex;align-items:center;gap:var(--sp-3);
@@ -1003,7 +1031,7 @@ html[data-theme="dark"] .tt__moon{display:block}
 .demo__step[data-state="running"] .demo__dot{background:var(--accent);animation:pulse 1.1s ease-in-out infinite}
 .demo__step[data-state="done"] .demo__dot{background:var(--ok)}
 .demo__body{
-  border-top:1px solid var(--hair);padding:var(--sp-5);
+  border-top:1px solid var(--glass-border);padding:var(--sp-5);
   margin:0;
 }
 /* Structured output as a designed field list rather than a console dump:
@@ -1023,8 +1051,8 @@ html[data-theme="dark"] .tt__moon{display:block}
 .demo__f dd.is-null{color:var(--muted-2);font-style:italic}
 /* enum values read as pills, which is what they are */
 .demo__pill{
-  display:inline-block;padding:3px var(--sp-3);border-radius:var(--r-full);
-  border:1px solid var(--hair-2);background:var(--surface-2);
+  display:inline-block;padding:4px var(--sp-3);border-radius:var(--r-full);
+  border:1px solid var(--glass-border);background:var(--glass-tint);
   font-size:11.5px;font-weight:600;letter-spacing:.02em;
 }
 .demo__pill.is-on{border-color:var(--accent);color:var(--accent);background:transparent}
