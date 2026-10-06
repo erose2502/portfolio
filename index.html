@@ -955,11 +955,6 @@ html[data-theme="dark"] .tt__moon{display:block}
 .demo__case[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 1px 0 var(--glass-border), 0 0 0 1px var(--accent), 0 14px 34px -16px rgb(var(--shadow-c)/.55)}
 .demo__case b{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink)}
 .demo__case span{font-family:var(--sans);font-size:11.5px;line-height:1.45;color:var(--muted-2)}
-.demo__case em{
-  font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--muted-2);margin-top:4px;
-}
-.demo__case[aria-pressed="true"] em{color:var(--accent)}
 
 /* the pipeline shape, before you run it */
 .demo__flow{
@@ -981,17 +976,39 @@ html[data-theme="dark"] .tt__moon{display:block}
   letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);
 }
 .demo__lab{display:block;margin-bottom:var(--sp-4)}
-.demo__ta{
-  width:100%;resize:vertical;min-height:210px;
-  padding:var(--sp-5);border:1px solid var(--glass-border);border-radius:var(--r-xl);
-  background:var(--glass-tint);color:var(--ink);
+/* Composer: one rounded surface holding the field and its send control,
+   the way a chat input reads, rather than a box with a button under it. */
+.demo__composer{
+  display:flex;flex-direction:column;gap:var(--sp-3);
+  padding:var(--sp-4) var(--sp-4) var(--sp-3);
+  border:1px solid var(--glass-border);border-radius:var(--r-2xl);
+  background:var(--glass-tint);
   backdrop-filter:blur(var(--glass-blur)) saturate(160%);
   -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(160%);
-  box-shadow:inset 0 1px 0 var(--glass-border);
-  font-family:var(--sans);font-size:14px;line-height:1.55;
+  box-shadow:inset 0 1px 0 var(--glass-border), 0 10px 30px -18px rgb(var(--shadow-c)/.45);
+  transition:border-color var(--t-micro) var(--ease),box-shadow var(--t-micro) var(--ease);
 }
-.demo__ta:focus{outline:2px solid var(--accent);outline-offset:2px;border-color:transparent}
-.demo__act{display:flex;align-items:center;gap:var(--sp-5);margin-top:var(--sp-6);flex-wrap:wrap}
+.demo__composer:focus-within{
+  border-color:var(--hair-2);
+  box-shadow:inset 0 1px 0 var(--glass-border), 0 14px 36px -16px rgb(var(--shadow-c)/.55);
+}
+.demo__ta{
+  width:100%;resize:none;min-height:52px;max-height:300px;
+  padding:var(--sp-2) var(--sp-2) 0;border:0;background:transparent;color:var(--ink);
+  font-family:var(--sans);font-size:14.5px;line-height:1.6;
+}
+.demo__ta:focus{outline:none}
+.demo__ta::placeholder{color:var(--muted-2)}
+.demo__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-4)}
+.demo__send{
+  width:36px;height:36px;flex:none;margin-left:auto;
+  display:grid;place-items:center;border-radius:var(--r-full);
+  background:var(--ink);color:var(--surface);
+  transition:opacity var(--t-micro) var(--ease),transform var(--t-micro) var(--ease);
+}
+.demo__send svg{width:17px;height:17px}
+.demo__send:hover{transform:translateY(-1px)}
+.demo__send:disabled{opacity:.3;transform:none;cursor:default}
 .demo__note{
   margin-top:var(--sp-4);font-family:var(--sans);font-size:12px;line-height:1.5;
   color:var(--muted-2);max-width:46ch;
@@ -1707,13 +1724,14 @@ html[data-theme="dark"] .tt__moon{display:block}
       <div class="demo__flow" id="demoFlow" aria-hidden="true"></div>
 
       <label class="demo__lab" for="demoInput" id="demoLab">Input</label>
-      <textarea id="demoInput" class="demo__ta" rows="5" spellcheck="false"></textarea>
-
-      <div class="demo__act">
-        <button class="btn btn--sig" type="button" id="demoRun">Run pipeline
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </button>
-        <span class="demo__meta" id="demoMeta"></span>
+      <div class="demo__composer">
+        <textarea id="demoInput" class="demo__ta" rows="2" spellcheck="false"></textarea>
+        <div class="demo__bar">
+          <span class="demo__meta" id="demoMeta"></span>
+          <button class="demo__send" type="button" id="demoRun" aria-label="Run pipeline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </button>
+        </div>
       </div>
 
       <ol class="demo__steps" id="demoSteps"></ol>
@@ -2593,10 +2611,9 @@ html[data-theme="dark"] .tt__moon{display:block}
 
     var CASES = [
       {
-        id:'restaurant-voice',
+        id:'restaurant-voice', placeholder:'Paste a caller transcript…',
         name:'Restaurant voice agent',
         blurb:'Answers the phone, takes the booking, hands off when it should.',
-        stack:'LiveKit · Twilio · Claude',
         inputLabel:'Caller transcript',
         sample:"Hi, I'd like a table for four on Friday around seven. Last time we sat near the kitchen and it was really loud, could we be somewhere quieter? It's under Dana.",
         stages:[
@@ -2607,10 +2624,9 @@ html[data-theme="dark"] .tt__moon{display:block}
         ]
       },
       {
-        id:'support-triage',
+        id:'support-triage', placeholder:'Paste an inbound ticket…',
         name:'Support triage',
         blurb:'Classifies, extracts, applies policy, drafts the reply.',
-        stack:'Claude · structured output',
         inputLabel:'Inbound ticket',
         sample:"I've been charged twice for order #4417 and nobody has replied in four days. That's $240 you've taken. Cancel my subscription today and refund both charges or I'm disputing it with my bank.",
         stages:[
@@ -2621,10 +2637,9 @@ html[data-theme="dark"] .tt__moon{display:block}
         ]
       },
       {
-        id:'lead-qualify',
+        id:'lead-qualify', placeholder:'Paste an inbound enquiry…',
         name:'Lead qualification',
         blurb:'Reads an enquiry, scores the fit, picks the next move.',
-        stack:'Claude · CRM webhook',
         inputLabel:'Inbound enquiry',
         sample:"Hi, we run a mid-size logistics firm and we're drowning in manual quote requests, maybe 200 a week over email. We'd want something live before our Q1 peak. I run ops and I sign off on tooling.",
         stages:[
@@ -2634,10 +2649,9 @@ html[data-theme="dark"] .tt__moon{display:block}
         ]
       },
       {
-        id:'doc-extract',
+        id:'doc-extract', placeholder:'Paste invoice text…',
         name:'Invoice extraction',
         blurb:'Pulls fields, validates them, routes for approval.',
-        stack:'Claude · finance queue',
         inputLabel:'Invoice text',
         sample:"NORTHBRIDGE SUPPLY LTD\nInvoice NB-2291\nBill to: Vector Logistics\nDate: 03/11/2026   Terms: Net 30\n2x Pallet racking    4,200.00\nDelivery                180.00\nTotal due: GBP 4,380.00",
         stages:[
@@ -2658,7 +2672,7 @@ html[data-theme="dark"] .tt__moon{display:block}
        rather than leaving the longer ones scrolled and clipped. */
     function fit(){
       ta.style.height = 'auto';
-      ta.style.height = Math.min(ta.scrollHeight + 2, 420) + 'px';
+      ta.style.height = Math.min(ta.scrollHeight + 2, 300) + 'px';
     }
     ta.addEventListener('input', fit);
 
@@ -2667,10 +2681,9 @@ html[data-theme="dark"] .tt__moon{display:block}
       b.type = 'button';
       b.className = 'demo__case';
       b.setAttribute('aria-pressed', String(c === active));
-      b.innerHTML = '<b></b><span></span><em></em>';
+      b.innerHTML = '<b></b><span></span>';
       b.querySelector('b').textContent = c.name;
       b.querySelector('span').textContent = c.blurb;
-      b.querySelector('em').textContent = c.stack;
       b.addEventListener('click', function(){ select(c); });
       c.el = b;
       casesEl.appendChild(b);
@@ -2681,6 +2694,7 @@ html[data-theme="dark"] .tt__moon{display:block}
       active = c;
       CASES.forEach(function(x){ x.el.setAttribute('aria-pressed', String(x === c)); });
       labEl.textContent = c.inputLabel;
+      ta.placeholder = c.placeholder;
       ta.value = c.sample;
       fit();
       flowEl.innerHTML = c.stages.map(function(s){ return '<i>' + esc(s.label) + '</i>'; })
