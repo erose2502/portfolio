@@ -663,7 +663,7 @@ html[data-theme="dark"] .tt__moon{display:block}
 .plate__inner{
   position:relative;z-index:4;width:100%;
   display:flex;flex-direction:column;align-items:center;text-align:center;
-  padding-top:clamp(92px,11svh,136px);
+  padding-top:clamp(120px,17svh,220px);
   will-change:transform,opacity;
 }
 
@@ -820,13 +820,21 @@ html[data-theme="dark"] .tt__moon{display:block}
 }
 
 /* scroll cue */
+/* "scroll for more": centred at the foot of the hero so first-time
+   visitors know the page keeps going; clicking it jumps to the next card */
 .cue{
-  position:absolute;z-index:4;right:var(--gut);bottom:var(--sp-5);
+  position:absolute;z-index:5;left:50%;bottom:var(--sp-5);transform:translateX(-50%);
   display:flex;flex-direction:column;align-items:center;gap:var(--sp-2);
-  font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+  padding:var(--sp-2) var(--sp-3);
+  font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;
 }
+.cue:hover{color:var(--hero-ink, var(--ink))}
 .cue i{display:block;width:1px;height:34px;background:linear-gradient(var(--hair-3),transparent);position:relative;overflow:hidden}
 .cue i::after{content:'';position:absolute;inset:0;background:var(--ink);animation:drop 2s var(--ease) infinite}
+.cue svg{width:16px;height:16px;animation:cueBob 1.8s ease-in-out infinite}
+@keyframes cueBob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@media(prefers-reduced-motion:reduce){ .cue svg{animation:none} }
 
 /* Hero secondary action: the original filled pill, centred in the hero
    column under the audit input, for visitors who'd rather talk first. */
@@ -882,8 +890,11 @@ html[data-theme="dark"] .tt__moon{display:block}
 .px{translate:0 var(--py,0px)}
 @keyframes drop{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
 
-@media(max-width:900px){
-  .cue{display:none}
+/* phones: the mission card drops into the flow, so the cue follows it
+   instead of floating over it */
+@media(max-width:760px){
+  .cue{position:relative;left:auto;bottom:auto;transform:none;margin:var(--sp-4) auto var(--sp-5)}
+  .cue i{display:none}
 }
 /* Phones: the figure gives up height so the name keeps its own air. */
 @media(max-width:620px){
@@ -1166,6 +1177,30 @@ html[data-theme="dark"] .plate .aud__go{background:#647AFF;color:#080810}
 .plan__fine{font-size:11px !important;color:var(--hero-ink-3)}
 .plan__cta{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2)}
 .plan__cta .btn{flex:1 1 auto;justify-content:center}
+
+/* lead capture: sits right under the score, where interest peaks */
+.lead{
+  margin-top:clamp(16px,2vw,28px);padding:var(--sp-5);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:var(--sp-4) clamp(16px,3vw,40px);align-items:center;
+  border-radius:var(--r-xl);border:1px solid var(--aud-bd);background:var(--aud-glass);
+}
+.lead__k{display:block;margin-bottom:var(--sp-2);font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--holo)}
+.lead__h{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.2vw,28px);line-height:1.15;color:var(--hero-ink)}
+.lead__p{margin:var(--sp-2) 0 0;font-size:13px;line-height:1.55;color:var(--hero-ink-2)}
+.lead__f{display:flex;gap:var(--sp-2);flex-wrap:wrap}
+.lead__f input[type=email]{
+  flex:1 1 220px;min-height:48px;padding:0 var(--sp-4);border-radius:var(--r-full);
+  border:1px solid rgba(244,243,239,.22);background:rgba(0,0,0,.35);color:var(--hero-ink);
+  font:inherit;font-size:15px;
+}
+.lead__f input[type=email]:focus-visible{outline:2px solid var(--holo);outline-offset:2px}
+.lead__f .btn{min-height:48px;justify-content:center}
+.lead__hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.lead__msg{flex-basis:100%;margin:0;font-size:12.5px;color:var(--hero-ink-2)}
+.lead__msg[data-s="err"]{color:var(--bad)}
+.lead.is-sent .lead__f input,.lead.is-sent .lead__f .btn{display:none}
+.lead.is-sent .lead__msg{font-size:15px;color:var(--good)}
+@media(max-width:760px){ .lead{grid-template-columns:1fr} }
 
 /* sample ads */
 .ads{margin-top:clamp(16px,2vw,28px)}
@@ -1896,6 +1931,9 @@ html.stack .card--gone *{animation-play-state:paused !important}
 /* ScrollTrigger measures in plain flow: sticky offset and scale off */
 html.stack-measure .card{position:relative !important;top:auto !important;transform:none !important}
 </style>
+<!-- Vercel Web Analytics: page views, plus the custom events sent by track() -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -2041,7 +2079,7 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
     <span class="mission__count"><b>Pending</b> <i>/</i> 100</span>
   </div>
 
-  <div class="cue" aria-hidden="true"><i></i>Scroll</div>
+  <a class="cue" href="#projects"><span>Scroll for more</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
 </section>
 
 <!-- ═══════════ SELECTED WORK ═══════════ -->
@@ -2480,6 +2518,21 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script>
+/* analytics: one helper, and click tracking for every booking/brief/checkout
+   link by URL, so new buttons are counted without extra markup */
+function track(name, props){ try{ window.va && window.va('event', { name:name, data:props }); }catch(e){} }
+document.addEventListener('click', function(e){
+  var a = e.target.closest && e.target.closest('a[href]');
+  if(!a) return;
+  var h = a.getAttribute('href'), sec = a.closest('section[id], header, footer, .dock, .sheet');
+  var from = sec ? (sec.id || sec.className.split(' ')[0]) : 'page';
+  if(/calendly\.com/.test(h)) track('Book call click', { from:from });
+  else if(h === '#contact') track('Brief click', { from:from });
+  else if(/wa\.me\//.test(h)) track('WhatsApp click', { from:from });
+  else if(/buy\.stripe\.com/.test(h)) track('Checkout click', { from:from });
+}, true);
+</script>
 
 <script>
 (function(){
@@ -2668,6 +2721,8 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
       if(note || state === 'run') li.querySelector('small').textContent = note || 'Working';
     }
 
+    function scoreBand(n){ return n >= 80 ? '80-100' : n >= 60 ? '60-79' : n >= 40 ? '40-59' : '0-39'; }
+
     /* hero timeline follows the real audit: 1 page, 2 pulling ads, 3 scoring, 4 results */
     var tl = $('#audTl'), SCORING = /^(freshness|mix|testing|placements|conversion|score)$/;
     function tlAt(n){
@@ -2708,6 +2763,7 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
     function run(handle){
       busy = true; go.disabled = true;
       tlAt(2);
+      track('Audit started');
       paintSteps();
       rep.innerHTML = '';
       title.textContent = 'Auditing ' + handle.replace(/^https?:\/\/(www\.)?/, '');
@@ -2770,6 +2826,7 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
       if(!busy) return;
       busy = false; go.disabled = false; ctrl = null;
       tlAt(1);
+      track('Audit failed');
       panel.hidden = true;
       plate.classList.remove('is-audit');
       refreshST();
@@ -2785,6 +2842,7 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
     function done(d){
       busy = false; go.disabled = false; ctrl = null;
       tlAt(4);
+      track('Audit finished', { score:scoreBand(d.score), ads:d.empty ? 'none' : d.adsFound >= 10 ? '10+' : '1-9' });
       var L = d.links || {};
       var name = d.page.name || input.value.trim();
       var byPct = d.checks.slice().sort(function(a, b){ return a.pts / a.max - b.pts / b.max; });
@@ -2839,6 +2897,22 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
         '</li>';
       }).join('') + '</ol>';
       h += '</div>';
+
+      var weakLabel = (weak[0] || byPct[0] || {}).label || '';
+      h += '<form class="lead" id="audLead" novalidate' +
+          ' data-score="' + d.score + '" data-ads="' + d.adsFound + '" data-grade="' + esc(d.grade || '') + '"' +
+          ' data-weakest="' + esc(weakLabel) + '" data-page="' + esc(name) + '">' +
+        '<div><span class="lead__k">Free fix plan</span>' +
+          '<p class="lead__h">Want the plan to fix ' + (d.empty ? 'this' : esc(weakLabel.toLowerCase() || 'this')) + '?</p>' +
+          '<p class="lead__p">I\'ll look at ' + esc(name) + ' myself and send you a short written plan within one business day. No call needed.</p></div>' +
+        '<div class="lead__f">' +
+          '<label class="sr" for="leadEmail">Your email</label>' +
+          '<input id="leadEmail" name="email" type="email" autocomplete="email" placeholder="you@business.com" required maxlength="254">' +
+          '<span class="lead__hp" aria-hidden="true"><input name="company_url" tabindex="-1" autocomplete="off"></span>' +
+          '<button class="btn btn--sig" type="submit">Send me the plan</button>' +
+          '<p class="lead__msg" role="status" aria-live="polite"></p>' +
+        '</div>' +
+      '</form>';
 
       /* boost / save: both are always available, the score picks which opens */
       var boostList = [
@@ -2911,6 +2985,11 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
         '</nav></div>';
 
       rep.innerHTML = h;
+      /* only offer the fix plan when leads can actually be saved */
+      fetch('/api/lead').then(function(r){ return r.json(); }).then(function(j){
+        var f = document.getElementById('audLead');
+        if(f && !j.ready){ f.remove(); refreshST(); }
+      }).catch(function(){ var f = document.getElementById('audLead'); if(f) f.remove(); });
       panel.classList.add('is-done');
       title.textContent = 'Your Meta ads audit';
       title.focus({ preventScroll:true });
@@ -2946,6 +3025,40 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
       }
       var t = e.target.closest('.bs__tab');
       if(t) selectTab(t);
+    });
+    rep.addEventListener('submit', function(e){
+      var f = e.target.closest('#audLead');
+      if(!f) return;
+      e.preventDefault();
+      var btn = f.querySelector('button[type=submit]'), msg = f.querySelector('.lead__msg');
+      var email = f.email.value.trim();
+      if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)){
+        msg.dataset.s = 'err'; msg.textContent = 'That email doesn\'t look right.'; f.email.focus(); return;
+      }
+      var raw = input.value.trim();
+      var site = /facebook\.com\//i.test(raw) ? (/^https?:/i.test(raw) ? raw : 'https://' + raw).replace(/^http:/i, 'https:').replace('://facebook.', '://www.facebook.')
+               : 'https://www.facebook.com/' + raw.replace(/^@/, '');
+      btn.disabled = true; msg.dataset.s = ''; msg.textContent = 'Sending...';
+      fetch('/api/lead', {
+        method:'POST', headers:{ 'content-type':'application/json' },
+        body:JSON.stringify({ email:email, handle:raw, page:f.dataset.page, website:site,
+          score:+f.dataset.score, ads:+f.dataset.ads, grade:f.dataset.grade, weakest:f.dataset.weakest,
+          company_url:f.company_url.value })
+      }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return { ok:r.ok && j.ok, j:j }; }); })
+        .then(function(res){
+          if(res.ok){
+            f.classList.add('is-sent');
+            msg.textContent = 'Got it. Your plan is on its way within one business day.';
+            track('Lead saved', { score:scoreBand(+f.dataset.score) });
+          }else{
+            btn.disabled = false; msg.dataset.s = 'err';
+            msg.textContent = res.j.message || 'Couldn\'t send that. Try again in a minute.';
+            track('Lead failed');
+          }
+        }).catch(function(){
+          btn.disabled = false; msg.dataset.s = 'err';
+          msg.textContent = 'Couldn\'t reach the server. Check your connection and try again.';
+        });
     });
     rep.addEventListener('keydown', function(e){
       var t = e.target.closest('.bs__tab');
