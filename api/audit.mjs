@@ -107,8 +107,10 @@ export async function POST(request){
 
         const data = scoreAds(items, Date.now());
         if(!data.page.name && data.adsFound === 0){
-          step('library', 'done', 'Page not found');
-          send({ type:'error', message:'Meta has no page under "' + target.handle + '". Check the spelling, or paste the full facebook.com link.' });
+          /* Apify returns the same empty row for a missing page and for one
+             Facebook refused to load, so don't claim the page doesn't exist */
+          step('library', 'done', 'Couldn\'t open the page');
+          send({ type:'error', message:'Couldn\'t open "' + target.handle + '" in the Ad Library. Check the spelling, paste the full facebook.com link, or try again in a minute.' });
           return end();
         }
         step('library', 'done', data.adsFound === 0 ? 'No active ads' : (data.capped ? MAX_ADS + '+ active ads' : data.adsFound + (data.adsFound === 1 ? ' active ad' : ' active ads')) + ' pulled');

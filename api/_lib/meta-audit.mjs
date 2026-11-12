@@ -41,12 +41,13 @@ export function normalizeHandle(raw){
     const id = u.searchParams.get('id') || u.searchParams.get('view_all_page_id');
     if(id && /^\d{5,20}$/.test(id)) return { handle:id, url:'https://www.facebook.com/profile.php?id=' + id };
     const seg = u.pathname.split('/').filter(Boolean);
-    if(seg[0] === 'pages' && seg.length >= 3 && /^\d+$/.test(seg[2])) s = seg[2];
+    /* /pages/Name/123 and /people/Name/123 both carry the numeric page id last */
+    if((seg[0] === 'pages' || seg[0] === 'people') && seg.length >= 3 && /^\d+$/.test(seg[2])) s = seg[2];
     else s = seg[0] || '';
   }
   if(/^\d{5,20}$/.test(s)) return { handle:s, url:'https://www.facebook.com/profile.php?id=' + s };
   if(!/^[A-Za-z0-9.\-_]{2,80}$/.test(s)) return null;
-  if(/^(profile\.php|pages|ads|groups|events|watch|marketplace|login|home\.php)$/i.test(s)) return null;
+  if(/^(profile\.php|pages|people|ads|groups|events|watch|marketplace|login|home\.php)$/i.test(s)) return null;
   return { handle:s, url:'https://www.facebook.com/' + s };
 }
 
