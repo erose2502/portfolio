@@ -75,7 +75,11 @@ export async function POST(request){
           `${API}/acts/${ACTOR}/runs?timeout=${RUN_TIMEOUT_S}&maxTotalChargeUsd=${COST_CAP_USD}`,
           { method:'POST', headers:Object.assign({ 'content-type':'application/json' }, auth),
             body:JSON.stringify({
-              startUrls:[{ url:target.url }],
+              /* With a numeric page id, go straight to the Ad Library: the
+                 facebook.com page fetch is the step Facebook blocks. */
+              startUrls:[{ url: /^\d+$/.test(target.handle)
+                ? 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&search_type=page&view_all_page_id=' + target.handle
+                : target.url }],
               resultsLimit:MAX_ADS,
               activeStatus:'active',
               includeAboutPage:false,
@@ -106,7 +110,9 @@ export async function POST(request){
           { headers:auth }).then(r => r.json());
 
         const data = scoreAds(items, Date.now());
-        if(!data.page.name && data.adsFound === 0){
+        /* A numeric id is a real page, and the Ad Library route returns an
+           empty row when it has nothing running, so that's "no ads", not an error */
+        if(!data.page.name && data.adsFound === 0 && !/^\d+$/.test(target.handle)){
           /* Apify returns the same empty row for a missing page and for one
              Facebook refused to load, so don't claim the page doesn't exist */
           step('library', 'done', 'Couldn\'t open the page');
