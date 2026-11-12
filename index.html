@@ -547,69 +547,62 @@ html[data-theme="dark"] .tt__moon{display:block}
 }
 .holo{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;color:var(--holo)}
 
-/* faint instrument grid */
-.holo__grid{
-  position:absolute;inset:-10%;
-  background-image:
-    linear-gradient(to right, rgba(127,233,255,.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(127,233,255,.055) 1px, transparent 1px);
-  background-size:clamp(46px,5vw,74px) clamp(46px,5vw,74px);
-  mask-image:radial-gradient(68% 58% at 50% 56%, #000 0%, rgba(0,0,0,.45) 52%, transparent 82%);
-  -webkit-mask-image:radial-gradient(68% 58% at 50% 56%, #000 0%, rgba(0,0,0,.45) 52%, transparent 82%);
+/* ── Ad Library wall ──
+   Columns of ad cards in the Meta Ad Library layout, each column drifting at
+   its own speed. Muted and masked toward the centre so it reads as texture
+   behind the audit, never as content competing with it. */
+.lib{
+  position:absolute;inset:-4% -2%;
+  display:flex;justify-content:center;gap:14px;
+  opacity:.62;
+  mask-image:radial-gradient(120% 90% at 50% 40%, rgba(0,0,0,.35) 0%, #000 55%, rgba(0,0,0,.65) 100%);
+  -webkit-mask-image:radial-gradient(120% 90% at 50% 40%, rgba(0,0,0,.35) 0%, #000 55%, rgba(0,0,0,.65) 100%);
 }
-/* ── workflow layer: in front of the figure ── */
-.wf{position:absolute;inset:0;z-index:2;pointer-events:none}
-.wf__wires{position:absolute;inset:0;width:100%;height:100%;opacity:.95;transition:opacity .42s var(--ease)}
-.wf__nodes{position:absolute;inset:0;transition:opacity .42s var(--ease)}
-.wf.swapping .wf__wires,
-.wf.swapping .wf__nodes,
-.wf.swapping .wf__flow{opacity:0}
-
-/* Task card: a real element, so backdrop-filter can actually sample the
-   figure and console behind it. Canvas has no equivalent. */
-.wf__n{
-  position:absolute;transform:translate(-50%,-50%);
-  padding:6px 11px;border-radius:8px;
-  font-family:var(--sans);font-size:9.5px;font-weight:600;line-height:1;
-  letter-spacing:.02em;white-space:nowrap;
-  color:rgba(170,240,255,.72);
-  background:linear-gradient(145deg, rgba(127,233,255,.12), rgba(44,168,216,.05));
-  border:1px solid rgba(127,233,255,.22);
-  backdrop-filter:blur(10px) saturate(165%);
-  -webkit-backdrop-filter:blur(10px) saturate(165%);
-  box-shadow:inset 0 1px 0 rgba(214,248,255,.22), 0 8px 22px -10px rgba(0,0,0,.75);
-  transition:color var(--t-micro) var(--ease),background var(--t-micro) var(--ease),
-             border-color var(--t-micro) var(--ease),box-shadow var(--t-micro) var(--ease);
+/* a scrim behind the headline and input so the hero copy keeps its contrast */
+.lib::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(60% 46% at 50% 30%, rgba(0,0,0,.86) 0%, rgba(0,0,0,.6) 46%, transparent 78%),
+    linear-gradient(to bottom, rgba(0,0,0,.55), transparent 22%, transparent 72%, rgba(0,0,0,.8));
 }
-.wf__n.on{
-  color:#EDFCFF;
-  background:linear-gradient(145deg, rgba(127,233,255,.30), rgba(44,168,216,.14));
-  border-color:rgba(127,233,255,.72);
-  box-shadow:inset 0 1px 0 rgba(214,248,255,.45), 0 0 26px -3px rgba(127,233,255,.55);
+.lib__col{
+  flex:none;width:236px;display:flex;flex-direction:column;gap:14px;
+  animation:libUp var(--dur,90s) linear infinite;
+  animation-play-state:var(--play,running);
+  will-change:transform;
 }
-/* running indicator */
-.wf__n::after{
-  content:'';position:absolute;top:4px;right:5px;
-  width:3.5px;height:3.5px;border-radius:var(--r-full);
-  background:var(--holo-hi);opacity:0;transition:opacity var(--t-micro) var(--ease);
+.lib__col:nth-child(even){animation-direction:reverse}
+@keyframes libUp{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,-50%,0)}}
+.lc{
+  flex:none;padding:12px;border-radius:var(--r-xl);
+  background:rgba(18,22,30,.78);border:1px solid rgba(127,233,255,.12);
+  font-family:var(--sans);color:rgba(214,248,255,.62);font-size:9.5px;line-height:1.45;
 }
-.wf__n.busy::after{opacity:1}
-
-/* name of the pipeline currently executing */
-.wf__flow{
-  position:absolute;left:var(--gut);
-  top:calc(clamp(74px,9vh,108px) + clamp(24px,3vw,48px) + 16px);
-  display:flex;align-items:center;gap:var(--sp-2);
-  font-family:var(--sans);font-size:9px;font-weight:700;
-  letter-spacing:.2em;text-transform:uppercase;
-  color:var(--holo);opacity:.78;white-space:nowrap;
-  transition:opacity .42s var(--ease);
+.lc__st{display:inline-flex;align-items:center;gap:5px;font-weight:700;color:#7EE2A8}
+.lc__st i{width:6px;height:6px;border-radius:var(--r-full);background:#3ED37A}
+.lc__meta{display:block;margin-top:3px;color:rgba(214,248,255,.42)}
+.lc__pf{display:flex;gap:5px;margin:6px 0 9px;color:rgba(214,248,255,.5)}
+.lc__pf svg{width:11px;height:11px}
+.lc__rule{height:1px;background:rgba(127,233,255,.1);margin:0 -12px 9px}
+.lc__h{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.lc__av{width:22px;height:22px;border-radius:var(--r-full);flex:none;background:var(--a)}
+.lc__h b{display:block;font-size:10.5px;font-weight:600;color:rgba(237,252,255,.82)}
+.lc__h small{font-size:8.5px;color:rgba(214,248,255,.42)}
+.lc__body{margin:0 0 8px;color:rgba(214,248,255,.6);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.lc__cr{
+  position:relative;aspect-ratio:var(--ar,1);border-radius:var(--r-md);overflow:hidden;
+  display:flex;align-items:flex-end;padding:10px;
+  background:radial-gradient(120% 90% at 20% 10%, var(--a) 0%, transparent 60%), linear-gradient(150deg, var(--b), #0B0E14 90%);
 }
-.wf__flow::before{
-  content:'';width:5px;height:5px;border-radius:var(--r-full);
-  background:var(--holo);animation:pulse 2.6s ease-in-out infinite;
-}
-@media(max-width:700px){ .wf__flow{display:none} }
+.lc__cr svg{position:absolute;right:10px;top:10px;width:30px;height:30px;color:rgba(255,255,255,.55)}
+.lc__cr span{font-family:var(--serif);font-size:17px;line-height:1.05;color:rgba(255,255,255,.88);text-wrap:balance}
+.lc__cr em{position:absolute;left:10px;top:10px;padding:3px 7px;border-radius:var(--r-full);background:rgba(0,0,0,.45);font-style:normal;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.lc__cta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.lc__cta span{min-width:0}
+.lc__cta small{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:rgba(214,248,255,.4)}
+.lc__cta b{display:block;font-size:10px;font-weight:600;color:rgba(237,252,255,.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc__cta em{flex:none;font-style:normal;font-weight:700;font-size:9px;padding:5px 10px;border-radius:var(--r-full);background:rgba(127,233,255,.12);color:rgba(214,248,255,.8)}
+@media(max-width:620px){ .lib__col{width:180px} .lib{gap:10px;opacity:.5} }
 /* projection bloom pooling behind the subject */
 .holo__bloom{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
@@ -620,21 +613,6 @@ html[data-theme="dark"] .tt__moon{display:block}
     rgba(44,168,216,.03) 56%,
     transparent 72%);
 }
-/* rotating instrument rings, centred on the subject */
-.holo__rings{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:min(104vh,1040px);aspect-ratio:1;
-  color:var(--holo);opacity:.62;
-}
-/* a slow light sweep crossing the console */
-.holo__sweep{
-  position:absolute;inset:-20% -40%;
-  background:linear-gradient(104deg,
-    transparent 38%, rgba(127,233,255,.065) 47%,
-    rgba(214,248,255,.10) 50%, rgba(127,233,255,.065) 53%, transparent 62%);
-  animation:holoSweep 9s linear infinite;
-}
-@keyframes holoSweep{from{transform:translate3d(-26%,0,0)}to{transform:translate3d(26%,0,0)}}
 /* CRT scanlines over the whole console */
 .holo__scan{
   position:absolute;inset:0;opacity:.5;
@@ -654,59 +632,6 @@ html[data-theme="dark"] .tt__moon{display:block}
 .holo__br--bl{bottom:var(--br-y-bot);left:var(--gut);border-bottom:1px solid var(--holo);border-left:1px solid var(--holo)}
 .holo__br--br{bottom:var(--br-y-bot);right:var(--gut);border-bottom:1px solid var(--holo);border-right:1px solid var(--holo)}
 
-/* The figure sits in its own wrapper so the load-in tween (on the stack) and
-   the scroll-scrub tween (on the wrapper) never write to the same transform. */
-.plate__figure{
-  position:absolute;z-index:1;
-  left:0;right:0;bottom:0;
-  height:min(68svh,720px);
-  display:flex;align-items:flex-end;justify-content:center;
-  pointer-events:none;
-  will-change:transform;
-}
-/* Fixed to the asset's own ratio, so every masked FX layer lines up with
-   the rendered image exactly without measuring it at runtime. */
-.plate__stack{position:relative;height:100%;aspect-ratio:520/693;max-width:86vw}
-.plate__img{
-  display:block;
-  height:100%;width:100%;
-  object-fit:contain;object-position:bottom center;
-  filter:grayscale(1) contrast(1.06) brightness(1.04);
-}
-
-/* ── subject as a projection ──
-   Each layer is masked by the cutout itself, so the treatment lands on the
-   silhouette and never paints a rectangle into the scene. */
-.holo__tint,.holo__lines,.holo__rim{
-  position:absolute;inset:0;
-  -webkit-mask:url(images/opt/portrait-cutout.webp) bottom center / contain no-repeat;
-  mask:url(images/opt/portrait-cutout.webp) bottom center / contain no-repeat;
-}
-.holo__tint{
-  background:linear-gradient(180deg,
-    rgba(214,248,255,.60) 0%,
-    rgba(127,233,255,.52) 38%,
-    rgba(44,168,216,.46) 100%);
-  mix-blend-mode:color;
-}
-/* The mask stays on the parent while an oversized child does the drifting,
-   so the scanlines animate on transform (compositor) rather than
-   background-position, which would repaint the masked layer every frame. */
-.holo__lines{mix-blend-mode:screen;opacity:.8;overflow:hidden}
-.holo__lines i{
-  position:absolute;left:0;right:0;top:-12px;bottom:-12px;display:block;
-  background:repeating-linear-gradient(to bottom,
-    rgba(214,248,255,.20) 0 1px, transparent 1px 5px);
-  animation:holoDrift 5.5s linear infinite;
-  will-change:transform;
-}
-@keyframes holoDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,5px,0)}}
-/* rim bloom so the projection separates from the console behind it */
-.holo__rim{
-  background:linear-gradient(180deg, rgba(127,233,255,.5), rgba(44,168,216,.28));
-  mix-blend-mode:screen;opacity:.42;
-  filter:blur(7px);
-}
 .plate__veil{
   display:none;
 }
@@ -941,11 +866,303 @@ html[data-theme="dark"] .tt__moon{display:block}
 }
 /* Phones: the figure gives up height so the name keeps its own air. */
 @media(max-width:620px){
-  .plate__figure{height:min(56svh,500px)}
-  .plate__stack{max-width:92vw}
   .holo__br{display:none}
   .plate__inner{padding-top:clamp(84px,11svh,116px)}
 }
+
+/* ═══════════ META ADS AUDIT (hero) ═══════════
+   Lives on the always-dark plate, so it uses the hero ink and dark glass
+   rather than the page tokens. Status colours are fixed for the same reason. */
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.plate{ --good:#3ED37A; --warn:#F5B544; --bad:#FF7A6B;
+        --aud-glass:rgba(12,14,20,.62); --aud-bd:rgba(127,233,255,.22); }
+
+.aud{
+  width:min(640px,100%);margin:clamp(18px,3svh,30px) auto 0;
+  display:flex;flex-direction:column;align-items:center;gap:var(--sp-3);
+}
+.aud__h{
+  font-family:var(--serif);font-weight:400;margin:0;
+  font-size:clamp(28px,4.2vw,54px);line-height:1.04;letter-spacing:-.01em;
+  color:var(--hero-ink);text-wrap:balance;
+}
+.aud__h em{font-style:italic;color:var(--holo-hi)}
+/* audit timeline: a track fills left to right and each step lights as it
+   passes, then the loop resets. CSS only; reduced motion shows it complete. */
+.tl{
+  --tl-d:9s;
+  position:relative;list-style:none;margin:var(--sp-2) 0 0;padding:0;width:100%;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-3);
+}
+.tl::before,.tl::after{
+  content:'';position:absolute;top:13px;left:12.5%;height:2px;border-radius:var(--r-full);
+}
+.tl::before{width:75%;background:rgba(244,243,239,.14)}
+.tl::after{
+  width:75%;background:linear-gradient(90deg,var(--holo-deep),var(--holo));
+  box-shadow:0 0 12px rgba(127,233,255,.55);
+  transform-origin:left center;transform:scaleX(0);
+  animation:tlFill var(--tl-d) linear infinite;
+}
+.tl li{
+  position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;
+  gap:2px;text-align:center;
+}
+.tl i{
+  display:grid;place-items:center;width:28px;height:28px;margin-bottom:var(--sp-2);
+  border-radius:var(--r-full);font-style:normal;font-family:var(--sans);font-size:11px;font-weight:700;
+  color:var(--hero-ink-3);background:#0b0d12;border:1px solid rgba(244,243,239,.22);
+  animation:var(--tl-a) var(--tl-d) linear infinite;
+}
+.tl li:nth-child(1){--tl-a:tlN1}
+.tl li:nth-child(2){--tl-a:tlN2}
+.tl li:nth-child(3){--tl-a:tlN3}
+.tl li:nth-child(4){--tl-a:tlN4}
+.tl b{font-family:var(--sans);font-size:12.5px;font-weight:600;line-height:1.3;color:var(--hero-ink)}
+.tl small{font-family:var(--sans);font-size:11px;line-height:1.4;color:var(--hero-ink-3);text-wrap:balance}
+@keyframes tlFill{0%{transform:scaleX(0);opacity:1}78%{transform:scaleX(1);opacity:1}92%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@keyframes tlN1{0%,3%{color:var(--hero-ink-3);background:#0b0d12;border-color:rgba(244,243,239,.22);box-shadow:none}6%,92%{color:#06222b;background:var(--holo);border-color:var(--holo);box-shadow:0 0 14px rgba(127,233,255,.6)}100%{color:var(--hero-ink-3);background:#0b0d12;border-color:rgba(244,243,239,.22);box-shadow:none}}
+@keyframes tlN2{0%,22%{color:var(--hero-ink-3);background:#0b0d12;border-color:rgba(244,243,239,.22);box-shadow:none}26%,92%{color:#06222b;background:var(--holo);border-color:var(--holo);box-shadow:0 0 14px rgba(127,233,255,.6)}100%{color:var(--hero-ink-3);background:#0b0d12;border-color:rgba(244,243,239,.22);box-shadow:none}}
+@keyframes tlN3{0%,48%{color:var(--hero-ink-3);background:#0b0d12;border-color:rgba(244,243,239,.22);box-shadow:none}52%,92%{color:#06222b;background:var(--holo);border-color:var(--holo);box-shadow:0 0 14px rgba(127,233,255,.6)}100%{color:var(--hero-ink-3);background:#0b0d12;border-color:rgba(244,243,239,.22);box-shadow:none}}
+@keyframes tlN4{0%,74%{color:var(--hero-ink-3);background:#0b0d12;border-color:rgba(244,243,239,.22);box-shadow:none}78%,92%{color:#06222b;background:var(--holo);border-color:var(--holo);box-shadow:0 0 14px rgba(127,233,255,.6)}100%{color:var(--hero-ink-3);background:#0b0d12;border-color:rgba(244,243,239,.22);box-shadow:none}}
+@media(max-width:560px){
+  .tl{gap:var(--sp-2)}
+  .tl small{display:none}
+  .tl b{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+  .tl::after{animation:none;transform:scaleX(1)}
+  .tl i{animation:none;color:#06222b;background:var(--holo);border-color:var(--holo)}
+}
+.aud__bar{
+  position:relative;width:100%;margin-top:var(--sp-3);
+  display:flex;align-items:center;gap:var(--sp-2);
+  padding:6px 6px 6px 22px;border-radius:var(--r-full);
+  background:var(--aud-glass);border:1px solid var(--aud-bd);
+  backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(214,248,255,.16), 0 18px 50px -20px rgba(0,0,0,.9), 0 0 0 0 rgba(127,233,255,0);
+  transition:border-color var(--t-micro) var(--ease),box-shadow var(--t-enter) var(--ease);
+}
+.aud__bar:focus-within{
+  border-color:rgba(127,233,255,.7);
+  box-shadow:inset 0 1px 0 rgba(214,248,255,.2), 0 18px 50px -20px rgba(0,0,0,.9), 0 0 0 4px rgba(127,233,255,.14);
+}
+.aud__ico{width:18px;height:18px;flex:none;color:var(--holo)}
+.aud__pre{font-family:var(--sans);font-size:15px;color:var(--hero-ink-3);white-space:nowrap}
+.aud__in{
+  flex:1;min-width:0;height:48px;border:0;background:transparent;
+  font-family:var(--sans);font-size:16px;color:var(--hero-ink);
+}
+.aud__in:focus{outline:none}
+.aud__in::placeholder{color:var(--hero-ink-3);opacity:1}
+.aud__go{
+  flex:none;display:inline-flex;align-items:center;gap:var(--sp-2);
+  height:48px;padding:0 var(--sp-6);border-radius:var(--r-full);
+  font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.02em;
+  background:var(--accent-plate);color:var(--on-accent-plate);
+  box-shadow:0 10px 34px -10px rgba(100,122,255,.8);
+  transition:transform var(--t-micro) var(--ease),opacity var(--t-micro) var(--ease);
+}
+html[data-theme="dark"] .plate .aud__go{background:#647AFF;color:#080810}
+.aud__go svg{width:14px;height:14px;transition:transform var(--t-micro) var(--ease)}
+.aud__go:hover svg{transform:translateX(3px)}
+.aud__go:disabled{opacity:.55;cursor:progress}
+.aud__go:focus-visible,.audr a:focus-visible,.audr button:focus-visible{outline:2px solid var(--holo-hi);outline-offset:3px}
+.aud__hint{
+  margin:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px var(--sp-4);
+  font-family:var(--sans);font-size:11.5px;color:var(--hero-ink-3);
+}
+.aud__hint span{display:inline-flex;align-items:center;gap:6px}
+.aud__hint svg{width:13px;height:13px;color:var(--holo)}
+.aud__err{
+  margin:0;padding:var(--sp-2) var(--sp-4);border-radius:var(--r-full);
+  font-family:var(--sans);font-size:12.5px;color:#FFD9D4;
+  background:rgba(255,122,107,.12);border:1px solid rgba(255,122,107,.35);
+}
+.aud__err a{color:#fff;text-decoration:underline}
+@media(max-width:520px){
+  .aud__pre{display:none}
+  .aud__bar{padding-left:16px}
+  .aud__go{padding:0 var(--sp-4)}
+  .aud__go b{display:none}
+}
+
+/* ── live run + report ── */
+.audr{
+  position:relative;z-index:4;
+  width:min(1040px,calc(100% - 2 * var(--gut)));
+  margin:clamp(20px,3svh,32px) auto clamp(72px,10svh,120px);
+  padding:clamp(18px,2.4vw,32px);
+  border-radius:var(--r-3xl);
+  background:var(--aud-glass);border:1px solid var(--aud-bd);
+  backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(214,248,255,.14), 0 40px 90px -40px rgba(0,0,0,.95);
+  color:var(--hero-ink-2);font-family:var(--sans);text-align:left;
+}
+.audr[hidden]{display:none}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .aud__bar,.audr{background:rgba(12,14,20,.94)}
+}
+@media(prefers-reduced-transparency:reduce){
+  .aud__bar,.audr{background:rgba(12,14,20,.96);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+/* in audit mode the console steps back so the report reads first */
+.plate.is-audit .mission,.plate.is-audit #plateCta,.plate.is-audit .cue{display:none}
+
+.audr__eyebrow{
+  display:flex;align-items:center;gap:var(--sp-2);margin:0 0 var(--sp-4);
+  font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--holo);
+}
+.audr__eyebrow::before{content:'';width:6px;height:6px;border-radius:var(--r-full);background:var(--holo);animation:pulse 1.4s ease-in-out infinite}
+.audr.is-done .audr__eyebrow::before{animation:none;background:var(--good)}
+
+/* live step list */
+.run{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:var(--sp-2)}
+.run li{
+  display:flex;align-items:center;gap:var(--sp-3);min-height:52px;
+  padding:var(--sp-2) var(--sp-4);border-radius:var(--r-full);
+  border:1px solid rgba(244,243,239,.10);background:rgba(244,243,239,.03);
+  transition:border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease),opacity var(--t-micro) var(--ease);
+}
+.run li[data-s="idle"]{opacity:.45}
+.run li[data-s="run"]{border-color:rgba(127,233,255,.55);background:rgba(127,233,255,.08)}
+.run__i{width:20px;height:20px;flex:none;display:grid;place-items:center;border-radius:var(--r-full);border:1.5px solid rgba(244,243,239,.3)}
+.run li[data-s="run"] .run__i{border-color:var(--holo);border-right-color:transparent;animation:spin .8s linear infinite}
+.run li[data-s="done"] .run__i{border-color:var(--good);background:rgba(62,211,122,.16)}
+.run__i svg{width:11px;height:11px;color:var(--good);opacity:0}
+.run li[data-s="done"] .run__i svg{opacity:1}
+.run__t{display:flex;flex-direction:column;min-width:0}
+.run__t b{font-size:12.5px;font-weight:600;color:var(--hero-ink)}
+.run__t small{font-size:11px;color:var(--hero-ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@keyframes spin{to{transform:rotate(360deg)}}
+.audr.is-done .run{display:none}
+
+/* report */
+.rep{display:none}
+.audr.is-done .rep{display:block}
+.rep__top{display:flex;align-items:center;gap:var(--sp-4);flex-wrap:wrap;margin-bottom:var(--sp-6)}
+.rep__av{width:44px;height:44px;border-radius:var(--r-full);object-fit:cover;border:1px solid var(--aud-bd);background:rgba(127,233,255,.08)}
+.rep__who{flex:1;min-width:180px}
+.rep__who b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.4vw,30px);line-height:1.1;color:var(--hero-ink)}
+.rep__who small{font-size:12px;color:var(--hero-ink-3)}
+.rep__again{
+  display:inline-flex;align-items:center;gap:var(--sp-2);min-height:44px;padding:0 var(--sp-4);
+  border-radius:var(--r-full);border:1px solid rgba(244,243,239,.22);
+  font-size:12px;font-weight:600;color:var(--hero-ink);
+}
+.rep__again:hover{background:rgba(244,243,239,.08)}
+.rep__again svg{width:14px;height:14px}
+
+.rep__grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:clamp(16px,2vw,28px);align-items:start}
+@media(max-width:860px){ .rep__grid{grid-template-columns:1fr} }
+
+.score{
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--sp-3);
+  padding:var(--sp-6) var(--sp-5);border-radius:var(--r-2xl);
+  background:rgba(244,243,239,.035);border:1px solid rgba(244,243,239,.08);
+}
+.score__ring{position:relative;width:min(200px,60vw);aspect-ratio:1}
+.score__ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score__ring circle{fill:none;stroke-width:9}
+.score__track{stroke:rgba(244,243,239,.08)}
+.score__arc{stroke:var(--sc,var(--holo));stroke-linecap:round;transition:stroke-dashoffset 1.4s var(--ease);filter:drop-shadow(0 0 10px var(--sc,var(--holo)))}
+.score__num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score__num b{font-family:var(--serif);font-weight:400;font-size:clamp(54px,6vw,72px);line-height:1;color:var(--hero-ink);font-variant-numeric:tabular-nums}
+.score__num small{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--hero-ink-3)}
+.score__grade{font-family:var(--serif);font-size:24px;color:var(--sc,var(--hero-ink));margin:0}
+.score__sum{margin:0;font-size:13px;line-height:1.55;max-width:34ch}
+.score__mode{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-full);
+  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--sc);border:1px solid currentColor;
+}
+.score__mode svg{width:12px;height:12px}
+
+.chk{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sp-2)}
+.chk__i{border-radius:var(--r-xl);border:1px solid rgba(244,243,239,.09);background:rgba(244,243,239,.025);overflow:hidden;transition:border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease)}
+.chk__i.is-open{border-color:rgba(127,233,255,.35);background:rgba(127,233,255,.05)}
+.chk__b{
+  width:100%;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:var(--sp-3);
+  min-height:56px;padding:var(--sp-3) var(--sp-4);text-align:left;color:inherit;
+}
+.chk__dot{width:10px;height:10px;border-radius:var(--r-full);background:var(--st);box-shadow:0 0 0 4px color-mix(in srgb,var(--st) 18%,transparent)}
+.chk__l{display:flex;flex-direction:column;gap:6px;min-width:0}
+.chk__l b{font-size:13.5px;font-weight:600;color:var(--hero-ink)}
+.chk__bar{height:3px;border-radius:var(--r-full);background:rgba(244,243,239,.08);overflow:hidden;max-width:220px}
+.chk__bar i{display:block;height:100%;width:0;border-radius:var(--r-full);background:var(--st);transition:width 1s var(--ease)}
+.chk__m{font-size:12px;color:var(--hero-ink-2);text-align:right;font-variant-numeric:tabular-nums}
+.chk__m em{display:block;font-style:normal;font-size:10.5px;color:var(--hero-ink-3)}
+.chk__c{width:16px;height:16px;color:var(--hero-ink-3);transition:transform var(--t-micro) var(--ease)}
+.chk__i.is-open .chk__c{transform:rotate(180deg)}
+.chk__p{padding:0 var(--sp-4) var(--sp-4) calc(var(--sp-4) + 10px + var(--sp-3))}
+.chk__p[hidden]{display:none}
+.chk__p p{margin:0 0 var(--sp-3);font-size:13px;line-height:1.6}
+.chk__fix{
+  display:flex;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);margin-bottom:var(--sp-3);
+  border-radius:var(--r-lg);background:rgba(127,233,255,.07);border:1px solid rgba(127,233,255,.16);
+  font-size:12.5px;line-height:1.55;color:var(--hero-ink);
+}
+.chk__fix svg{width:16px;height:16px;flex:none;color:var(--holo);margin-top:2px}
+.lnk{
+  display:inline-flex;align-items:center;gap:var(--sp-2);min-height:40px;padding:0 var(--sp-4);
+  border-radius:var(--r-full);font-size:12px;font-weight:600;
+  color:var(--hero-ink);border:1px solid rgba(127,233,255,.35);
+  transition:background var(--t-micro) var(--ease),border-color var(--t-micro) var(--ease);
+}
+.lnk:hover{background:rgba(127,233,255,.10);border-color:rgba(127,233,255,.6)}
+.lnk svg{width:13px;height:13px}
+
+/* boost / save */
+.bs{margin-top:clamp(16px,2vw,28px);border-radius:var(--r-2xl);border:1px solid rgba(244,243,239,.08);background:rgba(244,243,239,.025);padding:clamp(16px,2vw,24px)}
+.bs__tabs{display:inline-flex;padding:4px;gap:4px;border-radius:var(--r-full);background:rgba(244,243,239,.06);margin-bottom:var(--sp-5)}
+.bs__tab{
+  display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 var(--sp-4);border-radius:var(--r-full);
+  font-size:12.5px;font-weight:600;color:var(--hero-ink-2);
+  transition:background var(--t-micro) var(--ease),color var(--t-micro) var(--ease);
+}
+.bs__tab svg{width:14px;height:14px}
+.bs__tab[aria-selected="true"]{background:var(--hero-ink);color:#0B0B10}
+.bs__pane{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:clamp(16px,2vw,28px)}
+.bs__pane[hidden]{display:none}
+@media(max-width:860px){ .bs__pane{grid-template-columns:1fr} }
+.bs__h{margin:0 0 var(--sp-3);font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.2vw,28px);line-height:1.15;color:var(--hero-ink)}
+.bs__list{list-style:none;margin:0 0 var(--sp-4);padding:0;display:flex;flex-direction:column;gap:var(--sp-2)}
+.bs__list li{display:flex;gap:var(--sp-3);font-size:13px;line-height:1.55}
+.bs__list svg{width:16px;height:16px;flex:none;color:var(--holo);margin-top:2px}
+.bs__links{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+
+.plan{
+  display:flex;flex-direction:column;gap:var(--sp-3);padding:var(--sp-5);
+  border-radius:var(--r-xl);border:1px solid rgba(100,122,255,.45);
+  background:linear-gradient(160deg,rgba(100,122,255,.16),rgba(100,122,255,.04));
+}
+.plan__k{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#AEB9FF}
+.plan__n{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);flex-wrap:wrap}
+.plan__n b{font-family:var(--serif);font-weight:400;font-size:30px;color:var(--hero-ink)}
+.plan__n span{font-size:13px;font-weight:600;color:var(--hero-ink)}
+.plan p{margin:0;font-size:12.5px;line-height:1.55}
+.plan__fine{font-size:11px !important;color:var(--hero-ink-3)}
+.plan__cta{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2)}
+.plan__cta .btn{flex:1 1 auto;justify-content:center}
+
+/* sample ads */
+.ads{margin-top:clamp(16px,2vw,28px)}
+.ads__h{margin:0 0 var(--sp-3);font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--hero-ink-3)}
+.ads__g{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:var(--sp-2)}
+.ad{display:flex;gap:var(--sp-3);align-items:center;padding:var(--sp-2);border-radius:var(--r-lg);border:1px solid rgba(244,243,239,.08);background:rgba(244,243,239,.025)}
+.ad__img{width:52px;height:52px;flex:none;border-radius:var(--r-md);object-fit:cover;background:rgba(127,233,255,.08)}
+.ad__t{min-width:0;display:flex;flex-direction:column;gap:2px}
+.ad__t b{font-size:12.5px;font-weight:600;color:var(--hero-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad__t small{font-size:11px;color:var(--hero-ink-3)}
+
+.rep__foot{
+  margin-top:clamp(16px,2vw,28px);padding-top:var(--sp-4);border-top:1px solid rgba(244,243,239,.08);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-3);
+}
+.rep__foot p{margin:0;font-size:11px;line-height:1.55;color:var(--hero-ink-3);max-width:62ch}
+.rep__foot nav{display:flex;flex-wrap:wrap;gap:var(--sp-1) var(--sp-4)}
+.rep__foot nav a{font-size:12px;font-weight:600;color:var(--hero-ink-2);min-height:32px;display:inline-flex;align-items:center}
+.rep__foot nav a:hover{color:var(--hero-ink)}
 
 /* ═══════════ SECTION FRAME ═══════════ */
 .sec{padding-block:var(--sect-lg);position:relative}
@@ -1606,8 +1823,7 @@ html[data-theme="dark"] .tt__moon{display:block}
   .rv{opacity:1 !important;transform:none !important}
   .clip>span{transform:none !important}
   .mast__item{opacity:1 !important;transform:none !important}
-  .plate__figure{transform:none}
-  .holo__sweep,.holo__lines i{animation:none}
+  .lib__col{animation:none}
 }
 </style>
 </head>
@@ -1626,7 +1842,7 @@ html[data-theme="dark"] .tt__moon{display:block}
       <div class="mast__panel" role="menu" aria-labelledby="mastTrigger">
         <span class="mast__eyebrow">Start a project</span>
 
-        <a class="mast__item" role="menuitem" href="#contact" data-intent="paid-social">
+        <a class="mast__item" role="menuitem" href="https://plaith.ai/en/elijahrose" target="_blank" rel="noopener" data-intent="paid-social">
           <span class="mast__ico">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4M3 5h4M19 17v4M17 19h4"/></svg>
           </span>
@@ -1691,31 +1907,12 @@ html[data-theme="dark"] .tt__moon{display:block}
 
 <!-- ═══════════ HERO PLATE ═══════════ -->
 <section class="plate" id="plate">
-  <!-- holographic console: grid, bloom, rotating instrument rings -->
+  <!-- console: ad library wall, bloom, scanlines -->
   <div class="holo" aria-hidden="true">
-    <div class="holo__grid"></div>
+    <!-- Ad Library wall: columns of ad cards drifting past, built in JS.
+         Every business on it is made up. -->
+    <div class="lib" id="adLib"></div>
     <div class="holo__bloom"></div>
-    <svg class="holo__rings" id="holoRings" viewBox="0 0 600 600" fill="none" preserveAspectRatio="xMidYMid meet">
-      <g class="holo__r1">
-        <circle cx="300" cy="300" r="268" stroke="currentColor" stroke-width="1" stroke-dasharray="2 10" opacity=".5"/>
-      </g>
-      <g class="holo__r2">
-        <circle cx="300" cy="300" r="232" stroke="currentColor" stroke-width="1" opacity=".18"/>
-        <path d="M300 68a232 232 0 0 1 164 396" stroke="currentColor" stroke-width="1.6" opacity=".75" stroke-linecap="round"/>
-        <path d="M136 464a232 232 0 0 1-48-258" stroke="currentColor" stroke-width="1.6" opacity=".55" stroke-linecap="round"/>
-      </g>
-      <g class="holo__r3">
-        <circle cx="300" cy="300" r="186" stroke="currentColor" stroke-width="1" stroke-dasharray="1 7" opacity=".4"/>
-        <path d="M300 114a186 186 0 0 1 131 55" stroke="currentColor" stroke-width="2" opacity=".85" stroke-linecap="round"/>
-        <path d="M169 431a186 186 0 0 1-40-80" stroke="currentColor" stroke-width="2" opacity=".6" stroke-linecap="round"/>
-      </g>
-      <g class="holo__r4" opacity=".55">
-        <circle cx="300" cy="300" r="142" stroke="currentColor" stroke-width="1" opacity=".25"/>
-        <path d="M158 300a142 142 0 0 1 71-123" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M442 300a142 142 0 0 1-71 123" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-      </g>
-    </svg>
-    <div class="holo__sweep"></div>
     <div class="holo__scan"></div>
     <span class="holo__br holo__br--tl"></span>
     <span class="holo__br holo__br--tr"></span>
@@ -1723,27 +1920,43 @@ html[data-theme="dark"] .tt__moon{display:block}
     <span class="holo__br holo__br--br"></span>
   </div>
 
-  <div class="plate__figure" id="plateFigure">
-    <div class="plate__stack" id="plateStack">
-      <img class="plate__img" id="plateImg" src="images/opt/portrait-cutout.webp" alt="Elijah Rose" fetchpriority="high" decoding="async" width="520" height="693">
-      <span class="holo__tint" aria-hidden="true"></span>
-      <span class="holo__lines" aria-hidden="true"><i></i></span>
-      <span class="holo__rim" aria-hidden="true"></span>
-    </div>
-  </div>
-
-  <!-- workflow layer sits ABOVE the figure: connectors on canvas, task cards
-       as real elements so they can carry a true backdrop blur -->
-  <div class="wf" aria-hidden="true">
-    <canvas class="wf__wires" id="holoNet"></canvas>
-    <div class="wf__nodes" id="wfNodes"></div>
-    <span class="wf__flow" id="holoFlow"></span>
-  </div>
-
   <div class="plate__inner wrap" id="plateInner">
     <p class="plate__role">AI Marketing Developer</p>
     <p class="plate__status"><i></i>Available Now</p>
+
+    <form class="aud" id="aud" novalidate>
+      <h2 class="aud__h">How hard are your <em>Meta ads</em> working?</h2>
+      <ol class="tl" aria-label="How the audit works">
+        <li style="--n:1"><i aria-hidden="true">1</i><b>Enter your page</b><small>Just the name after facebook.com/</small></li>
+        <li style="--n:2"><i aria-hidden="true">2</i><b>I pull your ads</b><small>Live from Meta's Ad Library</small></li>
+        <li style="--n:3"><i aria-hidden="true">3</i><b>Scored out of 100</b><small>Freshness, mix, testing, placements</small></li>
+        <li style="--n:4"><i aria-hidden="true">4</i><b>See where to boost</b><small>Or where Plaith would stop the waste</small></li>
+      </ol>
+      <div class="aud__bar">
+        <svg class="aud__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        <span class="aud__pre" aria-hidden="true">facebook.com/</span>
+        <label class="sr" for="audIn">Your Facebook page name or link</label>
+        <input class="aud__in" id="audIn" name="handle" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="yourbusiness" maxlength="200" required>
+        <button class="aud__go" id="audGo" type="submit">
+          <b>Run audit</b>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <span class="sr">Run audit</span>
+        </button>
+      </div>
+      <p class="aud__err" id="audErr" role="alert" hidden></p>
+      <p class="aud__hint">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Public data only, no login</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>About 30 seconds</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Free</span>
+      </p>
+    </form>
   </div>
+
+  <section class="audr" id="audR" aria-labelledby="audRT" hidden>
+    <p class="audr__eyebrow" id="audRT" tabindex="-1">Auditing</p>
+    <ol class="run" id="audRun" aria-live="polite"></ol>
+    <div class="rep" id="audRep"></div>
+  </section>
 
   <div class="mission" id="mission">
     <span class="mission__label">Mission</span>
@@ -1755,8 +1968,8 @@ html[data-theme="dark"] .tt__moon{display:block}
   <div class="plate__cta" id="plateCta">
     <small>Free, no pitch deck</small>
     <a class="btn btn--sig" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">
-      Book a numbers call
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      Boost my Meta Ads Performance Today
+
     </a>
     <a class="ul" href="#contact">or send a short brief</a>
   </div>
@@ -2235,294 +2448,437 @@ html[data-theme="dark"] .tt__moon{display:block}
     });
   }
 
-  /* ══ workflow field ══
-     A staged DAG — task nodes wired left to right with elbow connectors —
-     with runs that execute step by step, branching and merging as they go.
-     The point is legible computation: you can follow a single run moving
-     through the chain. Decorative only: it hides no content, and if rAF
-     never runs it just holds a static frame. */
-  (function workflowField(){
-    var cv = $('#holoNet');
-    var host = $('#wfNodes');
-    if(!cv || RM) return;
-    var ctx = cv.getContext('2d', { alpha:true });
-    if(!ctx) return;
-
-    var W = 0, H = 0, nodes = [], edges = [], tokens = [], raf = 0, last = 0;
-    var VISIBLE = true, ONSCREEN = true;
-    var flowIx = 0, swapping = false;
-    /* Timing runs on accumulated animation time, not wall clock: when frames
-       are sparse, a now-based timer fires every frame and the pipeline would
-       swap continuously instead of once every 17 seconds. */
-    var tNow = 0, nextRun = 1.2, nextSwap = 17;
-
-    /* Real pipelines, so the field reads as work rather than decoration.
-       Each inner array is one stage; parallel steps sit in the same stage. */
-    var FLOWS = [
-      { name:'Paid social', stages:[
-        ['Business brief'],
-        ['Research audience', 'Scan competitor ads'],
-        ['Write hooks', 'Generate creative'],
-        ['Owner approval'],
-        ['Launch on Meta'],
-        ['Weekly report', 'Shift budget']
-      ]},
-      { name:'Cold outreach', stages:[
-        ['Target list'],
-        ['Find a real signal', 'Check fit'],
-        ['Write three variants'],
-        ['Quality gate'],
-        ['Send', 'Follow up']
-      ]},
-      { name:'Website redesign', stages:[
-        ['Current site'],
-        ['Audit the UX', 'Audit the copy'],
-        ['Design concept'],
-        ['Coded preview'],
-        ['Pitch email', 'Book a call']
-      ]},
-      { name:'Brand video', stages:[
-        ['Brand data'],
-        ['Pull reviews', 'Pull top posts'],
-        ['Pick the story'],
-        ['Script and shots'],
-        ['Cut for Reels', 'Cut for Stories']
-      ]}
+  /* ══ Ad Library wall ══
+     Decorative backdrop in the Meta Ad Library card layout. Every business,
+     ad and Library ID is invented; nothing here depicts a real advertiser.
+     Each column holds its cards twice so the drift loops without a seam. */
+  (function adWall(){
+    var host = $('#adLib');
+    if(!host) return;
+    var IC = {
+      cut:'<circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12M20 4 8.12 15.88M14.8 14.8 20 20"/><circle cx="6" cy="18" r="3"/>',
+      pulse:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+      tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+      cup:'<path d="M10 2v2M14 2v2M6 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/>',
+      home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+      sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+      car:'<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
+      heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+      fb:'<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+      ig:'<rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37zM17.5 6.5h.01"/>'
+    };
+    var svg = function(k){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + IC[k] + '</svg>'; };
+    var ADS = [
+      ['Northside Barber Co.', 'Walk-ins welcome until 8pm. Fresh fade, hot towel, no wait on weekdays.', 'Look sharp by Friday', 'northsidebarber.co', 'Book now', 'cut', '#E0A458', '#3A2412', 'Image'],
+      ['Lumen Yoga Studio', 'First class free. Small groups, real teachers, and a studio that actually stays warm.', 'Your first class is on us', 'lumenyoga.studio', 'Sign up', 'sun', '#9CC8B4', '#14332A', 'Video'],
+      ['Brightwell Plumbing', 'Leak at 2am? We pick up. Flat-rate pricing before we start any job.', 'Same-day repairs', 'brightwellplumbing.com', 'Call now', 'tool', '#6FA8FF', '#122347', 'Image'],
+      ['Copper Kettle Bakery', 'Sourdough out of the oven at 7. Pre-order and skip the Saturday line.', 'Warm bread, no line', 'copperkettle.bakery', 'Order now', 'cup', '#F2B880', '#3B2414', 'Carousel'],
+      ['Tidewater Homes', 'Thinking of selling this spring? Get a free valuation in 48 hours.', 'What is your home worth?', 'tidewaterhomes.com', 'Learn more', 'home', '#7FD1E3', '#11303A', 'Video'],
+      ['Fernbrook Auto Care', 'Brakes, oil, inspection. Book online and watch the work on video.', 'Honest repairs, on camera', 'fernbrookauto.com', 'Get quote', 'car', '#B7C4D6', '#1B2433', 'Image'],
+      ['Moxie Strength Club', '6 weeks, 3 sessions a week, one coach who knows your name.', '6 weeks to stronger', 'moxiestrength.club', 'Sign up', 'pulse', '#FF8A6B', '#3A1710', 'Video'],
+      ['Willow Lane Flowers', 'Same-day delivery across the city. Order by noon, delivered by six.', 'Flowers by six tonight', 'willowlaneflowers.com', 'Shop now', 'heart', '#F4A6C0', '#3A1626', 'Carousel'],
+      ['Summit Roofing', 'Storm damage? Free inspection and we handle the insurance paperwork.', 'Free roof inspection', 'summitroofing.co', 'Learn more', 'home', '#FFC86B', '#3A2A0E', 'Image'],
+      ['Saltline Coffee', 'New winter blend is in. Buy two bags, the third ships free.', 'Meet the winter blend', 'saltline.coffee', 'Shop now', 'cup', '#D9A47A', '#2E1C12', 'Video'],
+      ['Harbor Smile Dental', 'New patients: exam, cleaning and X-rays for one price. Evenings available.', 'New patient special', 'harborsmile.dental', 'Book now', 'heart', '#8FD3FF', '#10304A', 'Image'],
+      ['Ironleaf Landscaping', 'Spring cleanups are booking fast. Get on the calendar before March.', 'Spring slots are filling', 'ironleaf.land', 'Get quote', 'sun', '#A5D97F', '#1E3314', 'Carousel'],
+      ['Velvet Room Salon', 'Colour correction specialists. Book a free 15-minute consult.', 'Fix the colour, keep the hair', 'velvetroom.salon', 'Book now', 'cut', '#C9A5FF', '#261A3F', 'Video'],
+      ['Bluecrest Mortgage', 'Self-employed? We read your accounts the way lenders do.', 'Approved, even self-employed', 'bluecrestmortgage.com', 'Learn more', 'home', '#7FA8FF', '#121F42', 'Image'],
+      ['Little Orbit Daycare', 'Two spots open for January. Tour this week and meet the team.', 'Two spots left for January', 'littleorbit.care', 'Learn more', 'heart', '#FFD27F', '#3A2C10', 'Image'],
+      ['Pinecrest Physio', 'Back pain that won\'t quit? Assessment and plan in your first visit.', 'Move without the ache', 'pinecrestphysio.com', 'Book now', 'pulse', '#7FE3C1', '#10332A', 'Video']
     ];
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var esc = function(v){ return String(v).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); };
+    var seed = 7;
+    var rnd = function(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
 
+    function card(a){
+      var d = new Date(Date.now() - (2 + Math.floor(rnd() * 80)) * 864e5);
+      var id = String(1e15 + Math.floor(rnd() * 8.9e15)).slice(0, 16);
+      var ar = a[8] === 'Video' ? '4/5' : a[8] === 'Carousel' ? '1' : '1.91/1';
+      return '<div class="lc" style="--a:' + a[6] + ';--b:' + a[7] + ';--ar:' + ar + '">' +
+        '<span class="lc__st"><i></i>Active</span>' +
+        '<span class="lc__meta">Library ID: ' + id + '</span>' +
+        '<span class="lc__meta">Started running on ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + '</span>' +
+        '<span class="lc__pf">' + svg('fb') + svg('ig') + '</span>' +
+        '<div class="lc__rule"></div>' +
+        '<div class="lc__h"><span class="lc__av"></span><span><b>' + esc(a[0]) + '</b><small>Sponsored</small></span></div>' +
+        '<p class="lc__body">' + esc(a[1]) + '</p>' +
+        '<div class="lc__cr"><em>' + a[8] + '</em>' + svg(a[5]) + '<span>' + esc(a[2]) + '</span></div>' +
+        '<div class="lc__cta"><span><small>' + esc(a[3]) + '</small><b>' + esc(a[2]) + '</b></span><em>' + esc(a[4]) + '</em></div>' +
+      '</div>';
+    }
+
+    var built = 0;
     function build(){
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      var r = cv.getBoundingClientRect();
-      W = r.width; H = r.height;
-      if(!W || !H) return;
-      cv.width = Math.round(W * dpr);
-      cv.height = Math.round(H * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      nodes = []; edges = []; tokens = [];
-      var flow = FLOWS[flowIx % FLOWS.length];
-      var label = $('#holoFlow');
-      if(label) label.textContent = flow.name;
-
-      /* narrow viewports show a prefix of the pipeline rather than cramming it */
-      var maxStages = W < 760 ? 3 : (W < 1200 ? 4 : flow.stages.length);
-      var stageDefs = flow.stages.slice(0, maxStages);
-      var stages = stageDefs.length;
-
-      /* Cards are real elements, so measure the rendered box instead of
-         guessing from canvas text metrics. */
-      if(host) host.textContent = '';
-      var byStage = [];
-      for(var s = 0; s < stages; s++){
-        var col = stageDefs[s];
-        var list = [];
-        for(var i = 0; i < col.length; i++){
-          var el = document.createElement('span');
-          el.className = 'wf__n';
-          el.textContent = col[i];
-          if(host) host.appendChild(el);
-          /* On phones the mission readout sits in flow near the top, so the
-             pipeline drops into the lower band instead of landing on it. */
-          var bandTop = W < 700 ? 0.56 : 0.17;
-          var bandH   = W < 700 ? 0.36 : 0.66;
-          var y = H * (bandTop + bandH * ((i + 0.5) / col.length)) + (Math.random() - 0.5) * H * 0.04;
-          list.push(nodes.length);
-          nodes.push({ el:el, x:0, y:y, w:0, h:0, act:0, busy:0, lit:false, bz:false, stage:s, out:[] });
-        }
-        byStage.push(list);
+      var cols = Math.max(3, Math.ceil(window.innerWidth / 236) + 2);
+      if(cols === built) return;
+      built = cols; seed = 7;
+      var html = '';
+      for(var c = 0; c < cols; c++){
+        var set = '';
+        for(var k = 0; k < 5; k++) set += card(ADS[(c * 5 + k * 3) % ADS.length]);
+        html += '<div class="lib__col" style="--dur:' + (80 + (c * 17) % 50) + 's;margin-top:' + (-((c * 97) % 260)) + 'px">' + set + set + '</div>';
       }
-      nodes.forEach(function(n){
-        var r = n.el.getBoundingClientRect();
-        n.w = r.width || 92;
-        n.h = r.height || 22;
-      });
-
-      /* lay the columns out so the widest card in each stage still fits */
-      var widths = byStage.map(function(list){
-        return Math.max.apply(null, list.map(function(ix){ return nodes[ix].w; }));
-      });
-      var totalW = widths.reduce(function(a,b){ return a + b; }, 0);
-      var gap = Math.max(26, (W - totalW - 48) / Math.max(1, stages - 1));
-      var cx = 24;
-      byStage.forEach(function(list, si){
-        var half = widths[si] / 2;
-        list.forEach(function(ix){ nodes[ix].x = cx + half; });
-        cx += widths[si] + gap;
-      });
-      nodes.forEach(function(n){
-        n.el.style.left = n.x + 'px';
-        n.el.style.top  = n.y + 'px';
-      });
-
-      for(var s2 = 0; s2 < byStage.length - 1; s2++){
-        var cur = byStage[s2], nxt = byStage[s2 + 1];
-        cur.forEach(function(ai){
-          var fan = 1 + (Math.random() < .35 ? 1 : 0);
-          var picks = nxt.slice().sort(function(){ return Math.random() - .5; }).slice(0, fan);
-          picks.forEach(function(bi){
-            nodes[ai].out.push(edges.length);
-            edges.push({ a:ai, b:bi, pts:null, len:0 });
-          });
-        });
-        nxt.forEach(function(bi){
-          var fed = edges.some(function(e){ return e.b === bi; });
-          if(!fed){
-            var ai2 = cur[(Math.random() * cur.length) | 0];
-            nodes[ai2].out.push(edges.length);
-            edges.push({ a:ai2, b:bi, pts:null, len:0 });
-          }
-        });
-      }
-
-      edges.forEach(function(e){
-        var A = nodes[e.a], B = nodes[e.b];
-        var ax = A.x + A.w/2, ay = A.y, bx = B.x - B.w/2, by = B.y;
-        var mx = (ax + bx) / 2;
-        e.pts = [[ax,ay],[mx,ay],[mx,by],[bx,by]];
-        e.len = 0;
-        for(var i = 1; i < e.pts.length; i++){
-          e.len += Math.hypot(e.pts[i][0]-e.pts[i-1][0], e.pts[i][1]-e.pts[i-1][1]);
-        }
-      });
-      entry = byStage.length ? byStage[0] : [];
+      host.innerHTML = html;
     }
-
-    var entry = [];
-
-    function pointAt(e, t){
-      var want = e.len * t, acc = 0;
-      for(var i = 1; i < e.pts.length; i++){
-        var seg = Math.hypot(e.pts[i][0]-e.pts[i-1][0], e.pts[i][1]-e.pts[i-1][1]);
-        if(acc + seg >= want){
-          var k = seg ? (want - acc) / seg : 0;
-          return [ e.pts[i-1][0] + (e.pts[i][0]-e.pts[i-1][0]) * k,
-                   e.pts[i-1][1] + (e.pts[i][1]-e.pts[i-1][1]) * k ];
-        }
-        acc += seg;
-      }
-      var L = e.pts[e.pts.length-1];
-      return [L[0], L[1]];
-    }
-
-    function fire(ni){
-      var n = nodes[ni];
-      if(!n) return;
-      n.act = 1; n.busy = 0.42;                  /* brief "processing" dwell */
-      if(tokens.length > 20) return;
-      n.out.forEach(function(ei, idx){
-        if(idx > 0 && Math.random() > .55) return;
-        tokens.push({ e:ei, t:0, sp:.5 + Math.random()*.35, delay:n.busy });
-      });
-    }
-
-    function draw(now){
-      raf = 0;
-      var dt = Math.min((now - last) / 1000 || 0, .05);
-      last = now;
-      if(!W || !H){ schedule(); return; }
-      ctx.clearRect(0, 0, W, H);
-
-      for(var i = 0; i < nodes.length; i++){
-        var n = nodes[i];
-        if(n.busy > 0) n.busy = Math.max(0, n.busy - dt);
-        if(n.act  > 0) n.act  = Math.max(0, n.act  - dt * 0.85);
-      }
-
-      /* connectors */
-      ctx.lineWidth = 1;
-      for(var j = 0; j < edges.length; j++){
-        var e = edges[j], heat = Math.max(nodes[e.a].act, nodes[e.b].act);
-        ctx.strokeStyle = 'rgba(127,233,255,' + (0.07 + heat * 0.2).toFixed(3) + ')';
-        ctx.beginPath();
-        ctx.moveTo(e.pts[0][0], e.pts[0][1]);
-        for(var q = 1; q < e.pts.length; q++) ctx.lineTo(e.pts[q][0], e.pts[q][1]);
-        ctx.stroke();
-        var tip = e.pts[e.pts.length-1];
-        ctx.beginPath();
-        ctx.moveTo(tip[0]-5, tip[1]-3.2); ctx.lineTo(tip[0], tip[1]); ctx.lineTo(tip[0]-5, tip[1]+3.2);
-        ctx.stroke();
-      }
-
-      /* tokens stepping through the chain */
-      for(var p = tokens.length - 1; p >= 0; p--){
-        var tk = tokens[p], ed = edges[tk.e];
-        if(!ed){ tokens.splice(p,1); continue; }
-        if(tk.delay > 0){ tk.delay -= dt; continue; }
-        tk.t += dt * tk.sp;
-        if(tk.t >= 1){ fire(ed.b); tokens.splice(p,1); continue; }
-        var pt = pointAt(ed, tk.t);
-        var gl = ctx.createRadialGradient(pt[0], pt[1], 0, pt[0], pt[1], 10);
-        gl.addColorStop(0, 'rgba(214,248,255,.9)');
-        gl.addColorStop(1, 'rgba(127,233,255,0)');
-        ctx.fillStyle = gl;
-        ctx.beginPath(); ctx.arc(pt[0], pt[1], 10, 0, 6.283); ctx.fill();
-      }
-
-      /* task cards are DOM, so only their state is synced here */
-      for(var k = 0; k < nodes.length; k++){
-        var nd = nodes[k];
-        var lit = nd.act > .05, bz = nd.busy > 0;
-        if(lit !== nd.lit){ nd.lit = lit; nd.el.classList.toggle('on', lit); }
-        if(bz !== nd.bz){ nd.bz = bz; nd.el.classList.toggle('busy', bz); }
-      }
-
-      tNow += dt;
-      if(tNow > nextRun && entry.length){
-        nextRun = tNow + 1.5 + Math.random() * 1.7;
-        fire(entry[(Math.random() * entry.length) | 0]);
-      }
-      /* move on to the next pipeline once the current one has had a few runs,
-         crossfading so the layout never snaps from one graph to the next */
-      if(tNow > nextSwap && !swapping){
-        swapping = true;
-        var holo = document.querySelector('.wf');
-        if(holo) holo.classList.add('swapping');
-        setTimeout(function(){
-          flowIx++;
-          build();
-          draw(performance.now());
-          if(holo) holo.classList.remove('swapping');
-          nextSwap = tNow + 17;
-          swapping = false;
-          schedule();
-        }, 430);
-      }
-      schedule();
-    }
-
-    function schedule(){
-      if(raf || !VISIBLE || !ONSCREEN) return;
-      raf = requestAnimationFrame(draw);
-    }
-    function stop(){ if(raf){ cancelAnimationFrame(raf); raf = 0; } }
-
     build();
-    last = performance.now();
-    draw(last);          /* paint one frame synchronously, so the field is
-                            present even where rAF never runs */
-    schedule();
+    var rt = 0;
+    addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(build, 200); }, { passive:true });
 
-    /* Boxes are sized from measured label widths, so remeasure once the real
-       face is available — otherwise every box keeps the fallback's metrics. */
-    if(document.fonts && document.fonts.ready){
-      document.fonts.ready.then(function(){
-        build(); draw(performance.now()); schedule();
+    /* pause the drift while the hero is off screen */
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        host.style.setProperty('--play', es[0].isIntersecting ? 'running' : 'paused');
+      }).observe(host);
+    }
+  })();
+
+  /* ══ Meta ads audit ══
+     The form posts to /api/audit, which runs a live Ad Library pull and
+     streams NDJSON events. Steps light up as the server reports them; the
+     report is built from the scored result. All server text goes in through
+     esc() and every link is checked against the hosts we expect. */
+  (function metaAudit(){
+    var form = $('#aud'), input = $('#audIn'), go = $('#audGo'), err = $('#audErr');
+    var panel = $('#audR'), runList = $('#audRun'), rep = $('#audRep'), title = $('#audRT');
+    var plate = $('#plate');
+    if(!form || !panel) return;
+
+    var STEPS = [
+      { id:'resolve',    t:'Find the page',           st:0 },
+      { id:'library',    t:'Pull live ads from Meta' },
+      { id:'freshness',  t:'Creative freshness',      st:2 },
+      { id:'mix',        t:'Creative mix',            st:2 },
+      { id:'testing',    t:'Message testing',         st:3 },
+      { id:'placements', t:'Placements',              st:3 },
+      { id:'conversion', t:'Conversion and tracking' },
+      { id:'score',      t:'Score out of 100',        st:5 }
+    ];
+    var P = 'https://plaith.ai/en/elijahrose';
+    var I = {
+      check:'<path d="M20 6 9 17l-5-5"/>',
+      arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+      down:'<path d="m6 9 6 6 6-6"/>',
+      spark:'<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>',
+      up:'<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+      save:'<path d="M22 17 13.5 8.5 8.5 13.5 2 7"/><path d="M16 17h6v-6"/>',
+      again:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+      chat:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'
+    };
+    function ic(k, cls){
+      return '<svg' + (cls ? ' class="' + cls + '"' : '') + ' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[k] + '</svg>';
+    }
+    function esc(v){
+      return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){
+        return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
       });
     }
+    function safe(u){
+      return /^https:\/\/(plaith\.ai\/|buy\.stripe\.com\/|wa\.me\/)/.test(u || '') ? u : P;
+    }
+    function img(u){ return /^https:\/\/[\w.-]+\.fbcdn\.net\//.test(u || '') ? u : ''; }
+    function ext(href, label, cls, icon){
+      return '<a class="' + cls + '" href="' + esc(safe(href)) + '" target="_blank" rel="noopener">' +
+        label + (icon === false ? '' : ic('arrow')) + '</a>';
+    }
 
-    addEventListener('resize', function(){ build(); draw(performance.now()); schedule(); }, { passive:true });
-    document.addEventListener('visibilitychange', function(){
-      VISIBLE = !document.hidden;
-      if(VISIBLE){ last = performance.now(); schedule(); } else stop();
+    var ctrl = null, busy = false;
+
+    function showErr(msg){
+      err.innerHTML = esc(msg) + ' <a href="https://wa.me/12232401771" target="_blank" rel="noopener">Message Elijah</a>';
+      err.hidden = false;
+    }
+
+    function paintSteps(){
+      runList.innerHTML = STEPS.map(function(s){
+        return '<li data-step="' + s.id + '" data-s="idle"><span class="run__i">' + ic('check') + '</span>' +
+               '<span class="run__t"><b>' + esc(s.t) + '</b><small>Waiting</small></span></li>';
+      }).join('');
+    }
+    function setStep(id, state, note){
+      var li = runList.querySelector('[data-step="' + id + '"]');
+      if(!li) return;
+      li.setAttribute('data-s', state);
+      if(note || state === 'run') li.querySelector('small').textContent = note || 'Working';
+    }
+
+    function scrollTo(el){
+      if(window.__lenis) window.__lenis.scrollTo(el, { offset:-96, duration:1.1 });
+      else el.scrollIntoView({ behavior:RM ? 'auto' : 'smooth', block:'start' });
+    }
+    function refreshST(){ if(window.ScrollTrigger) setTimeout(function(){ window.ScrollTrigger.refresh(); }, 60); }
+
+    function reset(){
+      if(ctrl){ ctrl.abort(); ctrl = null; }
+      busy = false; go.disabled = false;
+      panel.hidden = true; panel.classList.remove('is-done');
+      plate.classList.remove('is-audit');
+      refreshST();
+      scrollTo(plate);
+      input.focus({ preventScroll:true });
+      input.select();
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(busy) return;
+      var handle = input.value.trim();
+      err.hidden = true;
+      if(!handle){ showErr('Type your Facebook page name first.'); input.focus(); return; }
+      run(handle);
     });
-    if('IntersectionObserver' in window){
-      var plate = $('#plate');
-      if(plate){
-        new IntersectionObserver(function(es){
-          ONSCREEN = es[0].isIntersecting;
-          if(ONSCREEN){ last = performance.now(); schedule(); } else stop();
-        }, { threshold:0 }).observe(plate);
+
+    function run(handle){
+      busy = true; go.disabled = true;
+      paintSteps();
+      rep.innerHTML = '';
+      title.textContent = 'Auditing ' + handle.replace(/^https?:\/\/(www\.)?/, '');
+      panel.classList.remove('is-done');
+      panel.hidden = false;
+      plate.classList.add('is-audit');
+      refreshST();
+      scrollTo(panel);
+
+      ctrl = 'AbortController' in window ? new AbortController() : null;
+      var gotResult = false;
+
+      fetch('/api/audit', {
+        method:'POST',
+        headers:{ 'content-type':'application/json' },
+        body:JSON.stringify({ handle:handle }),
+        signal:ctrl ? ctrl.signal : undefined
+      }).then(function(res){
+        var type = res.headers.get('content-type') || '';
+        if(!res.ok || type.indexOf('ndjson') < 0){
+          return res.json().catch(function(){ return {}; }).then(function(j){
+            fail(j.message || 'The audit service is unavailable right now.');
+          });
+        }
+        if(!res.body || !res.body.getReader){
+          return res.text().then(function(t){ t.split('\n').forEach(handleLine); });
+        }
+        var reader = res.body.getReader(), dec = new TextDecoder(), buf = '';
+        return (function pump(){
+          return reader.read().then(function(r){
+            if(r.done){ if(buf) handleLine(buf); return; }
+            buf += dec.decode(r.value, { stream:true });
+            var lines = buf.split('\n');
+            buf = lines.pop();
+            lines.forEach(handleLine);
+            return pump();
+          });
+        })();
+      }).then(function(){
+        if(busy && !gotResult) fail('The audit stopped before it finished. Try once more.');
+      }).catch(function(e){
+        if(e && e.name === 'AbortError') return;
+        fail('Couldn\'t reach the audit service. Check your connection and try again.');
+      });
+
+      function handleLine(line){
+        if(!line.trim()) return;
+        var ev;
+        try{ ev = JSON.parse(line); }catch(x){ return; }
+        if(ev.type === 'step') setStep(ev.id, ev.state, ev.note);
+        else if(ev.type === 'error') fail(ev.message);
+        else if(ev.type === 'result'){ gotResult = true; done(ev.data); }
       }
+    }
+
+    function fail(msg){
+      if(!busy) return;
+      busy = false; go.disabled = false; ctrl = null;
+      panel.hidden = true;
+      plate.classList.remove('is-audit');
+      refreshST();
+      showErr(msg);
+      scrollTo(plate);
+      input.focus({ preventScroll:true });
+    }
+
+    function color(score){
+      return score >= 80 ? 'var(--good)' : score >= 60 ? 'var(--holo)' : score >= 40 ? 'var(--warn)' : 'var(--bad)';
+    }
+
+    function done(d){
+      busy = false; go.disabled = false; ctrl = null;
+      var L = d.links || {};
+      var name = d.page.name || input.value.trim();
+      var byPct = d.checks.slice().sort(function(a, b){ return a.pts / a.max - b.pts / b.max; });
+      var weak = byPct.filter(function(c){ return c.status !== 'good'; });
+      var sc = color(d.score);
+
+      var summary = d.empty
+        ? esc(name) + ' has no ads running on Facebook or Instagram right now. Customers scrolling today see someone else.'
+        : d.score >= 80 ? 'This account is well run. The upside now is scale: more budget behind what already works.'
+        : d.score >= 60 ? 'The basics are in place, but ' + esc((weak[0] || byPct[0]).label.toLowerCase()) + ' is costing you results.'
+        : d.score >= 40 ? 'Budget is going out, but ' + esc(byPct[0].label.toLowerCase()) + ' and ' + esc(byPct[1].label.toLowerCase()) + ' are holding it back.'
+        : 'Meta has too little to work with here. Fixing ' + esc(byPct[0].label.toLowerCase()) + ' comes first.';
+
+      var C = 2 * Math.PI * 88;
+      var h = '';
+
+      h += '<div class="rep__top">' +
+        (img(d.page.avatar) ? '<img class="rep__av" src="' + esc(img(d.page.avatar)) + '" alt="" width="44" height="44" referrerpolicy="no-referrer" onerror="this.remove()">' : '') +
+        '<div class="rep__who"><b>' + esc(name) + '</b><small>' +
+          (d.empty ? 'No active ads' : (d.capped ? '40+' : d.adsFound) + ' active ad' + (d.adsFound === 1 ? '' : 's')) +
+          ' &middot; audited ' + esc(new Date(d.auditedAt).toLocaleString([], { dateStyle:'medium', timeStyle:'short' })) +
+        '</small></div>' +
+        '<button class="rep__again" type="button" data-again>' + ic('again') + 'Audit another page</button>' +
+      '</div>';
+
+      h += '<div class="rep__grid">';
+      h += '<div class="score" style="--sc:' + sc + '">' +
+        '<div class="score__ring"><svg viewBox="0 0 200 200" aria-hidden="true">' +
+          '<circle class="score__track" cx="100" cy="100" r="88"/>' +
+          '<circle class="score__arc" cx="100" cy="100" r="88" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + C.toFixed(1) + '" data-to="' + (C * (1 - d.score / 100)).toFixed(1) + '"/>' +
+        '</svg><div class="score__num"><b data-count="' + d.score + '">' + (RM ? d.score : 0) + '</b><small>out of 100</small></div></div>' +
+        '<p class="score__grade">' + esc(d.grade) + '</p>' +
+        '<span class="score__mode">' + (d.mode === 'boost' ? ic('up') + 'Boost mode' : ic('save') + 'Save mode') + '</span>' +
+        '<p class="score__sum">' + summary + '</p>' +
+      '</div>';
+
+      h += '<ol class="chk">' + d.checks.map(function(c, i){
+        var st = c.status === 'good' ? 'var(--good)' : c.status === 'warn' ? 'var(--warn)' : 'var(--bad)';
+        var open = c.id === d.weakest;
+        return '<li class="chk__i' + (open ? ' is-open' : '') + '" style="--st:' + st + '">' +
+          '<button class="chk__b" type="button" aria-expanded="' + open + '" aria-controls="chk-' + i + '">' +
+            '<span class="chk__dot" aria-hidden="true"></span>' +
+            '<span class="chk__l"><b>' + esc(c.label) + '</b><span class="chk__bar" aria-hidden="true"><i data-w="' + Math.round(c.pts / c.max * 100) + '"></i></span></span>' +
+            '<span class="chk__m">' + esc(c.metric) + '<em>' + c.pts + ' / ' + c.max + ' points</em></span>' +
+            ic('down', 'chk__c') +
+          '</button>' +
+          '<div class="chk__p" id="chk-' + i + '"' + (open ? '' : ' hidden') + '>' +
+            '<p>' + esc(c.detail) + '</p>' +
+            '<div class="chk__fix">' + ic('spark') + '<span><b>How Plaith fixes this.</b> ' + esc(c.fix) + '</span></div>' +
+            ext(c.cta && c.cta.href, esc(c.cta ? c.cta.label : 'See how Plaith works'), 'lnk') +
+          '</div>' +
+        '</li>';
+      }).join('') + '</ol>';
+      h += '</div>';
+
+      /* boost / save: both are always available, the score picks which opens */
+      var boostList = [
+        'Keep the winners running and get fresh variations of them every week, so good ads don\'t burn out.',
+        'Growth Hack: pay in $5,000 once and $12,000 goes to your ads over 24 months, $500 a month straight to Meta.',
+        'Run more campaign themes at the same time on the ' + esc(d.plan.name) + ' plan, each with its own tested creative.'
+      ];
+      var saveList = d.empty
+        ? [ 'You connect: give partner access to your ad account. The account and payment method stay yours.',
+            'Your team builds: videos, images and copy, checked and labelled as made with AI.',
+            'Test and keep: what works stays, the rest is replaced. Every week.' ]
+        : (weak.length ? weak : byPct).slice(0, 3).map(function(c){ return '<b>' + esc(c.label) + ':</b> ' + esc(c.fix); });
+      var li = function(arr){ return '<ul class="bs__list">' + arr.map(function(t){ return '<li>' + ic('check') + '<span>' + t + '</span></li>'; }).join('') + '</ul>'; };
+
+      var planCard =
+        '<div class="plan">' +
+          '<span class="plan__k">Recommended for ' + esc(name) + '</span>' +
+          '<div class="plan__n"><b>' + esc(d.plan.name) + '</b><span>' + esc(d.plan.price) + '</span></div>' +
+          '<p>' + esc(d.plan.why) + '</p>' +
+          '<p class="plan__fine">Plus one-time setup of $1,699. Your ad budget goes to Meta directly, not to Plaith. Cancel monthly. Prices net, plus VAT.</p>' +
+          '<div class="plan__cta">' +
+            ext(d.plan.checkout, 'Start with ' + esc(d.plan.name), 'btn btn--sig') +
+            ext(L.plans || P + '/booking#pakete', 'Compare plans', 'btn btn--line') +
+          '</div>' +
+          ext('https://wa.me/12232401771?text=' + encodeURIComponent('Hi Elijah, my Meta ads scored ' + d.score + '/100 on your audit (' + name + '). Can we talk about it?'),
+              ic('chat') + 'Send this score to Elijah', 'lnk', false) +
+        '</div>';
+
+      h += '<div class="bs">' +
+        '<div class="bs__tabs" role="tablist" aria-label="What Plaith would do">' +
+          '<button class="bs__tab" type="button" role="tab" id="bs-t-save" aria-controls="bs-save" aria-selected="' + (d.mode === 'save') + '"' + (d.mode === 'save' ? '' : ' tabindex="-1"') + '>' + ic('save') + 'Save wasted budget</button>' +
+          '<button class="bs__tab" type="button" role="tab" id="bs-t-boost" aria-controls="bs-boost" aria-selected="' + (d.mode === 'boost') + '"' + (d.mode === 'boost' ? '' : ' tabindex="-1"') + '>' + ic('up') + 'Boost what works</button>' +
+        '</div>' +
+        '<div class="bs__pane" role="tabpanel" id="bs-save" aria-labelledby="bs-t-save"' + (d.mode === 'save' ? '' : ' hidden') + '><div>' +
+          '<h3 class="bs__h">' + (d.empty ? 'Get back in the feed, without learning ads yourself.' : 'Stop paying for ads that stopped working.') + '</h3>' +
+          li(saveList) +
+          '<div class="bs__links">' +
+            ext(L.calculator || P + '#rechner', 'Calculate what a customer is worth', 'lnk') +
+            ext(L.how || P + '#ablauf', 'How Plaith works', 'lnk') +
+            ext(L.contact || P + '#kontakt', 'Request a call', 'lnk') +
+          '</div></div>' + planCard + '</div>' +
+        '<div class="bs__pane" role="tabpanel" id="bs-boost" aria-labelledby="bs-t-boost"' + (d.mode === 'boost' ? '' : ' hidden') + '><div>' +
+          '<h3 class="bs__h">Your ads work. Give them more room.</h3>' +
+          li(boostList) +
+          '<div class="bs__links">' +
+            ext(L.growthHack || P + '#booster', 'See the Growth Hack', 'lnk') +
+            ext(L.examples || P + '#beispiel', 'See a real example', 'lnk') +
+            ext(L.booking || P + '/booking', 'Book directly', 'lnk') +
+          '</div></div>' + planCard + '</div>' +
+      '</div>';
+
+      if(d.samples && d.samples.length){
+        h += '<div class="ads"><p class="ads__h">Ads we found running</p><div class="ads__g">' +
+          d.samples.map(function(a){
+            return '<div class="ad">' +
+              (img(a.thumb) ? '<img class="ad__img" src="' + esc(img(a.thumb)) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">' : '<span class="ad__img" aria-hidden="true"></span>') +
+              '<span class="ad__t"><b>' + esc(a.title) + '</b><small>' + esc(a.format) +
+                (a.days == null ? '' : ' &middot; live ' + (a.days === 0 ? 'since today' : a.days + ' day' + (a.days === 1 ? '' : 's'))) +
+              '</small></span></div>';
+          }).join('') + '</div></div>';
+      }
+
+      h += '<div class="rep__foot">' +
+        '<p>Scored from public Meta Ad Library data. Spend, clicks and return on ad spend live inside your ad account, which Plaith reviews in onboarding with partner access. Plaith commits to the weekly process, never to specific results.</p>' +
+        '<nav aria-label="Plaith pages">' +
+          ext(L.page || P, 'Plaith overview', '', false) +
+          ext(L.booking || P + '/booking', 'Plans and booking', '', false) +
+          ext(L.faq || P + '#fragen', 'Questions', '', false) +
+          ext(L.partner || P + '/partner', 'Become a partner', '', false) +
+        '</nav></div>';
+
+      rep.innerHTML = h;
+      panel.classList.add('is-done');
+      title.textContent = 'Your Meta ads audit';
+      title.focus({ preventScroll:true });
+      refreshST();
+
+      /* animate the ring, the count and the check bars in */
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        var arc = rep.querySelector('.score__arc');
+        if(arc) arc.style.strokeDashoffset = arc.getAttribute('data-to');
+        rep.querySelectorAll('.chk__bar i').forEach(function(b){ b.style.width = b.getAttribute('data-w') + '%'; });
+        var num = rep.querySelector('[data-count]');
+        if(num && !RM){
+          var to = +num.getAttribute('data-count'), t0 = performance.now();
+          (function tick(t){
+            var k = Math.min(1, (t - t0) / 1300), e = 1 - Math.pow(1 - k, 3);
+            num.textContent = Math.round(to * e);
+            if(k < 1) requestAnimationFrame(tick);
+          })(t0);
+        }
+      }); });
+    }
+
+    rep.addEventListener('click', function(e){
+      if(e.target.closest('[data-again]')){ reset(); return; }
+      var b = e.target.closest('.chk__b');
+      if(b){
+        var open = b.getAttribute('aria-expanded') !== 'true';
+        b.setAttribute('aria-expanded', open);
+        b.parentNode.classList.toggle('is-open', open);
+        document.getElementById(b.getAttribute('aria-controls')).hidden = !open;
+        refreshST();
+        return;
+      }
+      var t = e.target.closest('.bs__tab');
+      if(t) selectTab(t);
+    });
+    rep.addEventListener('keydown', function(e){
+      var t = e.target.closest('.bs__tab');
+      if(!t || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+      var tabs = [].slice.call(rep.querySelectorAll('.bs__tab'));
+      var n = tabs[(tabs.indexOf(t) + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+      selectTab(n); n.focus();
+    });
+    function selectTab(t){
+      rep.querySelectorAll('.bs__tab').forEach(function(x){
+        var on = x === t;
+        x.setAttribute('aria-selected', on);
+        x.tabIndex = on ? 0 : -1;
+        document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+      });
+      refreshST();
     }
   })();
 
@@ -2828,7 +3184,7 @@ html[data-theme="dark"] .tt__moon{display:block}
     /* lerp rather than a fixed duration: each frame closes a share of the
        gap, so a stream of wheel ticks blends into one glide instead of
        restarting an eased animation on every tick */
-    var lenis = new L({
+    var lenis = window.__lenis = new L({
       lerp: 0.085,
       wheelMultiplier: 0.95,
       smoothWheel: true
@@ -2858,25 +3214,18 @@ html[data-theme="dark"] .tt__moon{display:block}
     var intro = g.timeline({ defaults:{ ease:'expo.out' } })
       .from('#h1 .clip > span', { yPercent:115, duration:1.15 })
       .from('.nav__side > *',   { y:-14, autoAlpha:0, duration:.7, stagger:.06 }, '-=.95')
-      .from('.holo__grid',      { autoAlpha:0, duration:1.4 }, '-=.9')
+      .from('#adLib',           { autoAlpha:0, scale:1.04, duration:1.6 }, '-=.9')
       .from('.holo__bloom',     { autoAlpha:0, scale:.82, duration:1.6 }, '<')
-      .from('#holoRings',       { autoAlpha:0, scale:.88, rotate:-14, duration:1.8 }, '<.1')
       .from('.holo__br',        { autoAlpha:0, scale:.6, duration:.8, stagger:.07 }, '<.3')
-      .from('#plateStack',      { yPercent:9, scale:1.06, autoAlpha:0, duration:1.5 }, '-=1.5')
       .from('.plate__role',     { y:26, autoAlpha:0, duration:1 }, '-=1.2')
       .from('.plate__status',   { y:18, autoAlpha:0, duration:.9 }, '-=.82')
+      .from('#aud > *',         { y:18, autoAlpha:0, duration:.8, stagger:.07 }, '-=.7')
       .from('.mission > *',     { autoAlpha:0, y:16, duration:.75, stagger:.08 }, '-=.75')
       .from('#missionBar i',    { scaleX:0, transformOrigin:'0 50%', duration:.9 }, '-=.35')
       .from('#plateCta > *',    { autoAlpha:0, y:16, duration:.75, stagger:.08 }, '<-.4')
       .from('.cue',             { autoAlpha:0, duration:.7 }, '-=.55');
 
     initReveals(g);
-
-    /* instrument rings: each band drifts at its own rate and direction */
-    g.to('.holo__r1', { rotate:360, duration:150, repeat:-1, ease:'none', transformOrigin:'50% 50%' });
-    g.to('.holo__r2', { rotate:-360, duration:95, repeat:-1, ease:'none', transformOrigin:'50% 50%' });
-    g.to('.holo__r3', { rotate:360, duration:62, repeat:-1, ease:'none', transformOrigin:'50% 50%' });
-    g.to('.holo__r4', { rotate:-360, duration:40, repeat:-1, ease:'none', transformOrigin:'50% 50%' });
 
     /* Failsafe. A .from() tween holds its target hidden until it finishes, so
        a stalled timeline (backgrounded tab, throttled rAF, interrupted load)
@@ -2889,12 +3238,6 @@ html[data-theme="dark"] .tt__moon{display:block}
 
     if(!window.ScrollTrigger) return;
 
-    /* Scrubbed exit: the figure drifts and swells, the copy lifts away.
-       Wrapper vs. img split keeps this off the intro tween's transform. */
-    g.to('#plateFigure', {
-      yPercent:-7, scale:1.12, ease:'none',
-      scrollTrigger:{ trigger:'#plate', start:'top top', end:'bottom top', scrub:.6 }
-    });
     g.to('#plateInner', {
       y:-80, autoAlpha:0, ease:'none',
       scrollTrigger:{ trigger:'#plate', start:'top top', end:'72% top', scrub:.6 }
@@ -2906,10 +3249,8 @@ html[data-theme="dark"] .tt__moon{display:block}
        rotate and opacity on these same elements and a scrubbed tween would
        capture their mid-intro values. */
     var HERO = { trigger:'#plate', start:'top top', end:'bottom top', scrub:1 };
-    g.to('.holo__grid',  { yPercent:24, ease:'none', scrollTrigger:HERO });
+    g.to('#adLib',       { yPercent:10, ease:'none', scrollTrigger:HERO });
     g.to('.holo__bloom', { yPercent:34, ease:'none', scrollTrigger:HERO });
-    g.to('#holoRings',   { yPercent:14, ease:'none', scrollTrigger:HERO });
-    g.to('.wf',          { yPercent:-12, ease:'none', scrollTrigger:HERO });
     g.to(['.mission', '#plateCta', '.cue'], {
       y:-60, autoAlpha:0, ease:'none',
       scrollTrigger:{ trigger:'#plate', start:'top top', end:'45% top', scrub:.8 }
@@ -2921,7 +3262,7 @@ html[data-theme="dark"] .tt__moon{display:block}
     var plate = $('#plate');
     if(plate && matchMedia('(pointer: fine)').matches){
       var layers = [
-        ['#holoRings', 16], ['.holo__grid', -8], ['.wf', 24], ['#plateStack', -10]
+        ['#adLib', -10]
       ].map(function(l){
         var el = document.querySelector(l[0]);
         return el && { d:l[1],
