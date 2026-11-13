@@ -42,7 +42,7 @@ const ready = () => !!(process.env.SENDER_API_TOKEN && process.env.REPORT_FROM_E
 const SENDER = 'https://api.sender.net/v2';
 const senderHeaders = () => ({ authorization:'Bearer ' + process.env.SENDER_API_TOKEN, 'content-type':'application/json', accept:'application/json' });
 
-const FAIL = 'Couldn\'t send that right now. Message me on WhatsApp and I\'ll send the report there.';
+const FAIL = 'Couldn\'t send that right now. Email me at elijah@kazi-orchestrate.com and I\'ll send the report there.';
 
 export async function POST(request){
   let b = {};

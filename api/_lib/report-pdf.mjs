@@ -7,7 +7,7 @@
 import { PDFDocument, StandardFonts, rgb, PDFName, PDFString } from 'pdf-lib';
 
 const CAL = 'https://plaith.ai/elijahrose/booking';
-const WA  = 'https://wa.me/12232401771';
+const MAIL = 'mailto:elijah@kazi-orchestrate.com?subject=' + encodeURIComponent('My Meta ads audit');
 
 const W = 612, H = 792, M = 48;           /* US Letter, 48pt margins */
 const C = {
@@ -203,10 +203,10 @@ export async function buildReportPdf(d, opts = {}){
   need(90);
   y -= 30;
   text('Want me to walk you through it?', M, y - 16, FS, 18, C.ink); y -= 30;
-  para('Reply to this email, book a free call, or message me on WhatsApp. I\'ll go through ' + possessive(name) + ' ads with you and show what I\'d change first.', M, W - 2 * M, F, 10.5, C.ink2);
+  para('Reply to this email or book a free call. I\'ll go through ' + possessive(name) + ' ads with you and show what I\'d change first.', M, W - 2 * M, F, 10.5, C.ink2);
   y -= 8;
   const bw = button('Book a free call', M, y - 28, CAL);
-  button('Message on WhatsApp', M + bw + 10, y - 28, WA, C.good);
+  button('Email Elijah', M + bw + 10, y - 28, MAIL, C.ink);
   y -= 40;
 
   /* ── footer on every page ── */

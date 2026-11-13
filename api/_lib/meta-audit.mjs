@@ -17,7 +17,6 @@ export const PLAITH = {
   booking:    P + '/booking',
   plans:      P + '/booking#pakete',
   partner:    P + '/partner',
-  whatsapp:   'https://wa.me/12232401771',
   checkout: {
     start:  'https://buy.stripe.com/4gM5kFeAv0LK6Gb9L72wU0r?' + STRIPE,
     growth: 'https://buy.stripe.com/3cIdRb4ZVbqoe8D4qN2wU0w?' + STRIPE,

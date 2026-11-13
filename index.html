@@ -1301,7 +1301,6 @@ html[data-theme="dark"] .plate .aud__go{background:#647AFF;color:#080810}
 /* same 1px edge as the outlined buttons, so all three icon columns line up */
 .btn--sig.plan__b{border:1px solid transparent}
 .btn.plan__b:hover svg.plan__bi{transform:none}
-.plan__bi.is-wa{color:#25D366}
 .btn.plan__b:hover svg.plan__bo{transform:translate(2px,-2px)}
 
 /* lead capture: sits right under the score, where interest peaks */
@@ -2677,7 +2676,7 @@ document.addEventListener('click', function(e){
   var from = sec ? (sec.id || sec.className.split(' ')[0]) : 'page';
   if(/plaith\.ai\/(en\/)?elijahrose\/booking/.test(h)) track('Book call click', { from:from });
   else if(h === '#contact') track('Brief click', { from:from });
-  else if(/wa\.me\//.test(h)) track('WhatsApp click', { from:from });
+  else if(/^mailto:/.test(h)) track('Email click', { from:from });
   else if(/buy\.stripe\.com/.test(h)) track('Checkout click', { from:from });
 }, true);
 </script>
@@ -2822,8 +2821,8 @@ document.addEventListener('click', function(e){
       { id:'score',      t:'Score out of 100',        st:5 }
     ];
     var P = 'https://plaith.ai/en/elijahrose';
-    /* Icons are the exact SVGs react-icons ships: Phosphor (Bold) for UI,
-       Simple Icons for the WhatsApp mark. [viewBox, inner SVG]. */
+    /* Icons are the exact SVGs react-icons ships (Phosphor, Bold weight).
+       [viewBox, inner SVG]. */
     var I = {
       check:['0 0 256 256','<path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"></path>']  /* PiCheckBold */,
       arrow:['0 0 256 256','<path d="M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z"></path>']  /* PiArrowRightBold */,
@@ -2832,7 +2831,7 @@ document.addEventListener('click', function(e){
       up:['0 0 256 256','<path d="M244,56v64a12,12,0,0,1-24,0V85l-75.51,75.52a12,12,0,0,1-17,0L96,129,32.49,192.49a12,12,0,0,1-17-17l72-72a12,12,0,0,1,17,0L136,135l67-67H168a12,12,0,0,1,0-24h64A12,12,0,0,1,244,56Z"></path>']  /* PiTrendUpBold */,
       save:['0 0 256 256','<path d="M244,128v64a12,12,0,0,1-12,12H168a12,12,0,0,1,0-24h35l-67-67-31.51,31.52a12,12,0,0,1-17,0l-72-72a12,12,0,0,1,17-17L96,119l31.51-31.52a12,12,0,0,1,17,0L220,163V128a12,12,0,0,1,24,0Z"></path>']  /* PiTrendDownBold */,
       again:['0 0 256 256','<path d="M228,128a100,100,0,0,1-98.66,100H128a99.39,99.39,0,0,1-68.62-27.29,12,12,0,0,1,16.48-17.45,76,76,0,1,0-1.57-109c-.13.13-.25.25-.39.37L54.89,92H72a12,12,0,0,1,0,24H24a12,12,0,0,1-12-12V56a12,12,0,0,1,24,0V76.72L57.48,57.06A100,100,0,0,1,228,128Z"></path>']  /* PiArrowCounterClockwiseBold */,
-      chat:['0 0 24 24','<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path>']  /* SiWhatsapp */,
+      mail:['0 0 256 256','<path d="M224,44H32A12,12,0,0,0,20,56V192a20,20,0,0,0,20,20H216a20,20,0,0,0,20-20V56A12,12,0,0,0,224,44ZM193.15,68,128,127.72,62.85,68ZM44,188V83.28l75.89,69.57a12,12,0,0,0,16.22,0L212,83.28V188Z"></path>']  /* PiEnvelopeSimpleBold */,
       card:['0 0 256 256','<path d="M224,44H32A20,20,0,0,0,12,64V192a20,20,0,0,0,20,20H224a20,20,0,0,0,20-20V64A20,20,0,0,0,224,44Zm-4,24V88H36V68ZM36,188V112H220v76Zm172-24a12,12,0,0,1-12,12H164a12,12,0,0,1,0-24h32A12,12,0,0,1,208,164Zm-68,0a12,12,0,0,1-12,12H116a12,12,0,0,1,0-24h12A12,12,0,0,1,140,164Z"></path>']  /* PiCreditCardBold */,
       cols:['0 0 256 256','<path d="M243.14,131.54l-32-80h0a12,12,0,0,0-13.73-7.25L140,57V40a12,12,0,0,0-24,0V62.37L53.4,76.29a12,12,0,0,0-8.54,7.25h0l0,0v0l-32,79.92A12,12,0,0,0,12,168c0,12.13,6.2,22.43,17.45,29A55,55,0,0,0,56,204a55,55,0,0,0,26.55-7C93.8,190.43,100,180.13,100,168a12,12,0,0,0-.86-4.46L72.38,96.65,116,87V204H104a12,12,0,0,0,0,24h48a12,12,0,0,0,0-24H140V81.63l40.42-9-23.56,58.9A12,12,0,0,0,156,136c0,12.13,6.2,22.43,17.45,29a53.78,53.78,0,0,0,53.1,0C237.8,158.43,244,148.13,244,136A12,12,0,0,0,243.14,131.54ZM56,180c-3.71,0-18-1.87-19.81-10.18L56,120.31l19.81,49.51C74,178.13,59.71,180,56,180Zm144-32c-3.71,0-18-1.87-19.81-10.18L200,88.31l19.81,49.51C218,146.13,203.71,148,200,148Z"></path>']  /* PiScalesBold */,
       out:['0 0 256 256','<path d="M204,64V168a12,12,0,0,1-24,0V93L72.49,200.49a12,12,0,0,1-17-17L163,76H88a12,12,0,0,1,0-24H192A12,12,0,0,1,204,64Z"></path>']  /* PiArrowUpRightBold */
@@ -2840,8 +2839,9 @@ document.addEventListener('click', function(e){
     /* plan card actions: icon | label | arrow on one grid, so all three
        buttons share the same icon column, label centre and arrow column */
     function planBtn(href, icon, label, cls){
-      return '<a class="' + cls + ' plan__b" href="' + esc(safe(href)) + '" target="_blank" rel="noopener">' +
-        ic(icon, 'plan__bi' + (icon === 'chat' ? ' is-wa' : '')) + '<span>' + label + '</span>' + ic('out', 'plan__bo') + '</a>';
+      var mail = /^mailto:/.test(href);
+      return '<a class="' + cls + ' plan__b" href="' + esc(safe(href)) + '"' + (mail ? '' : ' target="_blank" rel="noopener"') + '>' +
+        ic(icon, 'plan__bi') + '<span>' + label + '</span>' + ic('out', 'plan__bo') + '</a>';
     }
     function ic(k, cls){
       var i = I[k];
@@ -2853,7 +2853,7 @@ document.addEventListener('click', function(e){
       });
     }
     function safe(u){
-      return /^https:\/\/(plaith\.ai\/|buy\.stripe\.com\/|wa\.me\/)/.test(u || '') ? u : P;
+      return /^(https:\/\/(plaith\.ai\/|buy\.stripe\.com\/)|mailto:elijah@kazi-orchestrate\.com\?)/.test(u || '') ? u : P;
     }
     function img(u){ return /^https:\/\/[\w.-]+\.fbcdn\.net\//.test(u || '') ? u : ''; }
     function ext(href, label, cls, icon){
@@ -2864,7 +2864,7 @@ document.addEventListener('click', function(e){
     var ctrl = null, busy = false, lastToken = null;
 
     function showErr(msg){
-      err.innerHTML = esc(msg) + ' <a href="https://wa.me/12232401771" target="_blank" rel="noopener">Message Elijah</a>';
+      err.innerHTML = esc(msg) + ' <a href="mailto:elijah@kazi-orchestrate.com?subject=' + encodeURIComponent('Meta ads audit') + '">Email Elijah</a>';
       err.hidden = false;
     }
 
@@ -3210,8 +3210,9 @@ document.addEventListener('click', function(e){
           '<div class="plan__cta">' +
             planBtn(d.plan.checkout, 'card', 'Start with ' + esc(d.plan.name), 'btn btn--sig') +
             planBtn(L.plans || P + '/booking#pakete', 'cols', 'Compare plans', 'btn btn--line') +
-            planBtn('https://wa.me/12232401771?text=' + encodeURIComponent('Hi Elijah, my Meta ads scored ' + d.score + '/100 on your audit (' + name + '). Can we talk about it?'),
-              'chat', 'Send my score to Elijah', 'btn btn--line') +
+            planBtn('mailto:elijah@kazi-orchestrate.com?subject=' + encodeURIComponent('My Meta ads audit: ' + name + ' scored ' + d.score + '/100') +
+                '&body=' + encodeURIComponent('Hi Elijah,\n\nMy Meta ads scored ' + d.score + '/100 on your audit (' + name + '). Can we talk about it?\n\n'),
+              'mail', 'Email my score to Elijah', 'btn btn--line') +
           '</div>' +
         '</div>';
 
