@@ -545,7 +545,7 @@ html[data-theme="dark"] .tt__moon{display:block}
 /* ── holographic console ──────────────────────────────────────────────
    One cyan family, used at low alpha. The figure reads as a projection
    on it, so nothing here goes brighter than the subject itself. */
-.plate{
+.plate,.mission{
   --holo:#7FE9FF;
   --holo-deep:#2CA8D8;
   --holo-hi:#D6F8FF;
@@ -673,7 +673,7 @@ html[data-theme="dark"] .tt__moon{display:block}
 }
 
 /* ── hero panel is always dark: scope light ink + dark glass inside it ── */
-.plate{ --hero-ink:#F4F3EF; --hero-ink-2:#B9B8B2; --hero-ink-3:#93938C;
+.plate,.mission{ --hero-ink:#F4F3EF; --hero-ink-2:#B9B8B2; --hero-ink-3:#93938C;
         --hero-glass:rgba(18,18,24,.52); --hero-glass-bd:rgba(244,243,239,.14);
         --scrim-top:rgba(0,0,0,.92); }
 .plate #h1,
@@ -816,12 +816,27 @@ html[data-theme="dark"] .tt__moon{display:block}
 .mission__count i{font-style:normal;opacity:.5;margin:0 2px}
 /* the mission readout owns the lower-left corner, so that bracket stands down */
 .holo__br--bl{display:none}
+/* phones: pinned to the screen bottom while the hero is on screen. JS moves
+   it to <body> (the hero card gets a scale transform, which would trap a
+   fixed child) and adds .is-off once the dock takes over or an audit runs. */
 @media(max-width:700px){
   .mission{
-    position:relative;bottom:auto;width:auto;max-width:300px;
-    margin:clamp(20px,3svh,32px) auto var(--sp-6);align-items:center;text-align:center;
+    position:fixed;z-index:55;
+    left:var(--gut);right:var(--gut);bottom:calc(12px + env(safe-area-inset-bottom,0px));
+    width:auto;max-width:420px;margin:0 auto;
+    padding:var(--sp-3) var(--sp-4);gap:6px;
+    background:rgba(10,12,18,.94);box-shadow:0 16px 40px -16px rgba(0,0,0,.7);
+    align-items:center;text-align:center;
+    transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s linear 0s;
   }
+  .mission.is-off{
+    opacity:0;visibility:hidden;transform:translateY(16px);
+    transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s linear .35s;
+  }
+  .mission__text{font-size:15px}
   .mission__bar{max-width:170px}
+  /* room so the hero's last item can scroll clear of the pinned card */
+  .plate{padding-bottom:150px}
 }
 
 /* scroll cue */
@@ -3833,6 +3848,28 @@ document.addEventListener('click', function(e){
      Plain IntersectionObserver, no GSAP, so it works even if the CDN
      scripts never load. Shown once the hero is gone, hidden while the
      contact section is on screen. */
+  /* ── mission card, phones: pinned to the viewport bottom ──
+     Lives in <body> on phones so the hero's card-stack transform can't trap
+     it; goes back into the hero on wider screens. Hidden past the hero (the
+     dock owns the bottom then) and while an audit runs. */
+  (function missionPin(){
+    var m = $('#mission'), plate = $('#plate');
+    if(!m || !plate || !window.matchMedia) return;
+    var mq = matchMedia('(max-width:700px)'), home = m.nextElementSibling, past = false;
+    function place(){
+      if(mq.matches){ if(m.parentNode !== document.body) document.body.appendChild(m); }
+      else if(m.parentNode !== plate){ plate.insertBefore(m, home); }
+      state();
+    }
+    function state(){
+      m.classList.toggle('is-off', mq.matches && (past || plate.classList.contains('is-audit')));
+    }
+    document.addEventListener('hero:past', function(e){ past = !!e.detail; state(); });
+    new MutationObserver(state).observe(plate, { attributes:true, attributeFilter:['class'] });
+    if(mq.addEventListener) mq.addEventListener('change', place); else mq.addListener(place);
+    place();
+  })();
+
   (function dock(){
     var d = $('#dock'), hero = $('#plate'), contact = $('#contact');
     if(!d || !hero || !contact || !('IntersectionObserver' in window)) return;
@@ -3887,6 +3924,7 @@ document.addEventListener('click', function(e){
     var pastHero = false, atContact = false;
     function sync(){
       var on = pastHero && !atContact;
+      document.dispatchEvent(new CustomEvent('hero:past', { detail:pastHero }));
       d.classList.toggle('is-on', on);
       d.setAttribute('aria-hidden', String(!on));
       d.querySelectorAll('a').forEach(function(a){ a.tabIndex = on ? 0 : -1; });
