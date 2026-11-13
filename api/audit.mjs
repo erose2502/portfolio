@@ -7,19 +7,21 @@
    Needs APIFY_TOKEN in the Vercel project env. */
 
 import { normalizeHandle, scoreAds, MAX_ADS } from './_lib/meta-audit.mjs';
+import { signReport } from './_lib/sign.mjs';
 
 const ACTOR = 'apify~facebook-ads-scraper';
+const PAGES_ACTOR = 'apify~facebook-pages-scraper';   /* ~$0.01 per lookup */
 const API = 'https://api.apify.com/v2';
 const COST_CAP_USD = 0.35;      /* ~40 ads at the free-tier rate, with headroom */
-const RUN_TIMEOUT_S = 75;
+const RUN_TIMEOUT_S = 120;     /* the Ad Library pull varies 25-90s; a cut-off run saves nothing */
 const CACHE_MS = 30 * 60 * 1000;
-const MAX_ATTEMPTS = 2;         /* one fresh retry when Facebook blocks the run */
 const BLOCK_LIMIT = 3;          /* refusals in the run log before we give up on it */
 const RATE = { windowMs: 10 * 60 * 1000, max: 4 };
 
 /* Per-instance memory. Fluid compute reuses instances, so this absorbs
    repeat audits and refresh-spamming; it is not a hard global limit. */
 const cache = new Map();
+const ids = new Map();          /* handle -> Ad Library page id, once resolved */
 const hits = new Map();
 
 function limited(ip, now){
@@ -52,7 +54,7 @@ export async function POST(request){
   }
 
   const enc = new TextEncoder();
-  let runId = null;
+  let runId = null, lookupRunId = null;
 
   const stream = new ReadableStream({
     async start(ctrl){
@@ -69,26 +71,40 @@ export async function POST(request){
           step('resolve', 'done', hit.data.page.name || target.handle);
           step('library', 'done', hit.data.adsFound + ' ads, from a run ' + Math.round((now - hit.at) / 60000) + ' min ago');
           await scoringSteps(step, hit.data);
-          send({ type:'result', data:hit.data });
+          send({ type:'result', data:hit.data, token:signReport(hit.data) });
           return end();
         }
 
-        /* Facebook intermittently blocks the scraper's page fetch, and the
-           actor then retries silently until our timeout. Watch the run log
-           and, once Facebook has refused it a few times, abort and start a
-           fresh run (new session and proxy) instead of making the visitor
-           wait 75 seconds for a failure. */
-        let state = null, blocked = false;
-        for(let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++){
+        /* Facebook often blocks the scraper when it opens facebook.com/<name>
+           to find the page. The Ad Library itself isn't blocked, so:
+           - a numeric id (or one we've resolved before) goes straight there;
+           - a name tries the page URL first while, in parallel, a separate
+             page lookup resolves the Ad Library id. If Facebook blocks the
+             first run, it's aborted and the second run uses that id. */
+        const isId = /^\d+$/.test(target.handle);
+        const knownId = isId ? target.handle : ids.get(key);
+        const lookupP = knownId ? null : startLookup(target.url, auth);
+        if(lookupP) lookupP.then(lk => { lookupRunId = lk.runId; });
+        const plan = knownId ? [libUrl(knownId), libUrl(knownId)] : [target.url, null];
+
+        let state = null, blocked = false, missing = false;
+        for(let attempt = 1; attempt <= plan.length; attempt++){
+          let url = plan[attempt - 1];
+          if(url === null){
+            step('library', 'run', 'Facebook blocked the page, finding it another way');
+            const lk = await lookupP;
+            const found = await lk.done;
+            if(found && found.missing){ missing = true; break; }
+            const id = found && found.id;
+            if(!id){ blocked = true; break; }
+            ids.set(key, id);
+            url = libUrl(id);
+          }
           const start = await fetch(
             `${API}/acts/${ACTOR}/runs?timeout=${RUN_TIMEOUT_S}&maxTotalChargeUsd=${COST_CAP_USD}`,
             { method:'POST', headers:Object.assign({ 'content-type':'application/json' }, auth),
               body:JSON.stringify({
-                /* With a numeric page id, go straight to the Ad Library: the
-                   facebook.com page fetch is the step Facebook blocks. */
-                startUrls:[{ url: /^\d+$/.test(target.handle)
-                  ? 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&search_type=page&view_all_page_id=' + target.handle
-                  : target.url }],
+                startUrls:[{ url }],
                 resultsLimit:MAX_ADS,
                 activeStatus:'active',
                 includeAboutPage:false,
@@ -100,8 +116,10 @@ export async function POST(request){
           if(attempt === 1){
             step('resolve', 'done', target.handle);
             step('library', 'run', 'Opening the Meta Ad Library');
-          }else{
+          }else if(plan[attempt - 1] !== null){
             step('library', 'run', 'Facebook was slow to answer, trying again');
+          }else{
+            step('library', 'run', 'Found it. Reading the Ad Library');
           }
 
           /* waitForFinish long-polls, so each loop is one cheap request that
@@ -133,6 +151,13 @@ export async function POST(request){
           if(!blocked) break;
           console.warn('[audit]', target.handle, 'blocked by Facebook, attempt', attempt);
         }
+        /* the lookup is only needed when the direct route was blocked */
+        if(lookupP) lookupP.then(lk => { if(lk.runId) abortRun(lk.runId, auth); });
+        if(missing){
+          step('library', 'done', 'Page isn\'t public');
+          send({ type:'error', message:'Facebook says "' + target.handle + '" isn\'t a public page, or doesn\'t exist. Check the name after facebook.com/ on your page, or paste the full link.' });
+          return end();
+        }
         if(blocked){
           step('library', 'done', 'Facebook didn\'t let us in');
           send({ type:'error', message:'Facebook wouldn\'t open "' + target.handle + '" just now. Try again in a minute, or paste your page\'s full link from the About section.' });
@@ -157,9 +182,10 @@ export async function POST(request){
         step('library', 'done', data.adsFound === 0 ? 'No active ads' : (data.capped ? MAX_ADS + '+ active ads' : data.adsFound + (data.adsFound === 1 ? ' active ad' : ' active ads')) + ' pulled');
         await scoringSteps(step, data);
 
+        if(data.page.id && /^\d+$/.test(String(data.page.id))) ids.set(key, String(data.page.id));
         cache.set(key, { at:Date.now(), data });
         if(cache.size > 500) cache.delete(cache.keys().next().value);
-        send({ type:'result', data });
+        send({ type:'result', data, token:signReport(data) });
       }catch(err){
         console.error('[audit]', target.handle, err && err.message);
         send({ type:'error', message:'The Ad Library didn\'t answer in time. Try again in a minute, or send me the page and I\'ll run it myself.' });
@@ -168,9 +194,9 @@ export async function POST(request){
     },
     async cancel(){
       /* visitor left mid-run: stop paying for it */
-      if(runId) fetch(`${API}/actor-runs/${runId}/abort`, {
-        method:'POST', headers:{ authorization:'Bearer ' + token }
-      }).catch(() => {});
+      const auth = { authorization:'Bearer ' + token };
+      if(runId) abortRun(runId, auth);
+      if(lookupRunId) abortRun(lookupRunId, auth);
     }
   });
 
@@ -200,6 +226,42 @@ async function scoringSteps(step, data){
   step('score', 'done', data.score + ' / 100');
 }
 
+const libUrl = id => 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&search_type=page&view_all_page_id=' + id;
+const abortRun = (id, auth) => fetch(`${API}/actor-runs/${id}/abort`, { method:'POST', headers:auth }).catch(() => {});
+
+/* Resolve a page name to its Ad Library id with the pages scraper, which
+   gets through where the ads scraper's own page fetch is blocked. Returns
+   { runId, done }: done resolves to { id }, { missing:true } when Facebook
+   says the page isn't public, or null when the lookup itself failed. */
+async function startLookup(url, auth){
+  try{
+    const r = await fetch(`${API}/acts/${PAGES_ACTOR}/runs?timeout=60&maxTotalChargeUsd=0.05`, {
+      method:'POST', headers:Object.assign({ 'content-type':'application/json' }, auth),
+      body:JSON.stringify({ startUrls:[{ url }] })
+    });
+    if(!r.ok) return { runId:null, done:Promise.resolve(null) };
+    const run = (await r.json()).data;
+    const done = (async () => {
+      let st = run;
+      const until = Date.now() + 70000;
+      while(!/SUCCEEDED|FAILED|ABORTED|TIMED-OUT/.test(st.status)){
+        if(Date.now() > until) return null;
+        const p = await fetch(`${API}/actor-runs/${run.id}?waitForFinish=10`, { headers:auth }).catch(() => null);
+        if(p && p.ok) st = (await p.json()).data;
+        else await new Promise(res => setTimeout(res, 1000));
+      }
+      if(st.status !== 'SUCCEEDED') return null;
+      const items = await fetch(`${API}/datasets/${st.defaultDatasetId}/items?clean=true&limit=1`, { headers:auth })
+        .then(x => x.json()).catch(() => []);
+      const it = (Array.isArray(items) && items[0]) || {};
+      if(it.error === 'not_available') return { missing:true };
+      const id = String((it.pageAdLibrary && it.pageAdLibrary.id) || '');
+      return /^\d{5,20}$/.test(id) ? { id } : null;
+    })().catch(() => null);
+    return { runId:run.id, done };
+  }catch(e){ return { runId:null, done:Promise.resolve(null) }; }
+}
+
 /* how many times Facebook has refused this run so far, from Apify's log */
 async function blockCount(runId, auth){
   try{
@@ -210,9 +272,14 @@ async function blockCount(runId, auth){
   }catch(e){ return 0; }
 }
 
+/* Apify's status lines are crawler jargon; translate the ones we know
+   into what's actually happening and drop anything we can't explain */
 function tidy(m){
   if(!m) return '';
   m = String(m).replace(/\s+/g, ' ').trim();
-  if(/^Finished!/i.test(m)) return 'Collecting results';
-  return m.length > 64 ? m.slice(0, 61) + '...' : m;
+  if(/^Finished!|Collecting results/i.test(m)) return 'Collecting the ads Meta returned';
+  if(/^Starting the crawler/i.test(m)) return 'Connecting to Meta\'s Ad Library';
+  const c = /^Crawled (\d+)\/(\d+) pages/i.exec(m);
+  if(c) return +c[1] === 0 ? 'Opening your page in the Ad Library' : 'Reading your ads, batch ' + c[1];
+  return '';
 }

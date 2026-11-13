@@ -235,7 +235,11 @@ html[data-theme="dark"]{
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-html:focus-within{scroll-behavior:smooth}
+/* No CSS smooth scrolling: ScrollTrigger jumps the page to the top to
+   measure on every refresh, and scroll-behavior:smooth turns that jump into
+   an animation, so every trigger was measured at the wrong place (the hero
+   shrank and dimmed whenever a focused control, like a report tab, caused a
+   refresh). In-page links scroll smoothly through goTo() instead. */
 body{
   background:var(--surface);color:var(--ink);
   font-family:var(--sans);font-size:16px;line-height:1.6;
@@ -428,7 +432,10 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 }
 .mast__item:hover .mast__go,
 .mast__item:focus-visible .mast__go{opacity:1;transform:none;color:var(--ink)}
-/* On the hero it floats on pure black, so its ink flips light. */
+/* On the hero it sits on solid hero black with a hairline, so content
+   scrolling under it (the audit, the stepper) never shows through, and
+   its ink flips light. */
+.nav:not(.stuck){background:#08090C;border-bottom-color:rgba(244,243,239,.12)}
 .nav:not(.stuck) a.nav__l,
 .nav:not(.stuck) .tt{color:rgba(244,243,239,.74)}
 .nav:not(.stuck) .nav__name{color:#F4F3EF}
@@ -437,9 +444,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .nav:not(.stuck) .burger span{background:#F4F3EF}
 /* Past the hero it crosses real content, so it takes on a surface again. */
 .nav.stuck{
-  background:var(--glass-solid);border-bottom-color:var(--hair);
-  backdrop-filter:blur(var(--glass-blur)) saturate(140%);
-  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(140%);
+  background:var(--surface);border-bottom-color:var(--hair-2);
   padding-block:var(--sp-2);
 }
 .nav.stuck .nav__name{font-size:clamp(18px,1.9vw,26px)}
@@ -871,7 +876,10 @@ html[data-theme="dark"] .tt__moon{display:block}
   display:flex;align-items:center;gap:8px;white-space:nowrap;
   font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--ink);
 }
-.dock__s i{width:7px;height:7px;border-radius:var(--r-full);background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb, var(--ok) 22%, transparent)}
+.dock__s > span{display:flex;align-items:baseline;gap:8px}
+.dock__s small{font-size:12px;font-weight:500;color:var(--muted)}
+.dock__s b{font-weight:600}
+.dock__s i{flex:none;width:7px;height:7px;border-radius:var(--r-full);background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb, var(--ok) 22%, transparent)}
 .dock__brief{
   font-family:var(--sans);font-size:12px;font-weight:600;color:var(--muted);
   padding:0 var(--sp-2);white-space:nowrap;
@@ -882,8 +890,53 @@ html[data-theme="dark"] .tt__moon{display:block}
   .dock,.dock.is-on{transform:none}
   .dock:not(.is-on){transform:translateY(140%)}
   .dock__brief{display:none}
+  .dock__s small{display:none}
+  .dock__s{font-size:12px;white-space:normal}
 }
 @media (prefers-reduced-motion:reduce){ .dock{transition:opacity .2s linear} }
+
+/* dock while an audit runs: live status and a progress line along its foot */
+.dock.is-run::after{
+  content:'';position:absolute;left:22px;right:22px;bottom:2px;height:2px;border-radius:var(--r-full);
+  background:linear-gradient(90deg,var(--accent),#7FE9FF);
+  transform-origin:left center;transform:scaleX(var(--p,0));transition:transform .4s var(--ease);
+}
+.dock.is-run .dock__s i{background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);animation:pulse 1.2s ease-in-out infinite}
+.dock.is-run .dock__s small{font-variant-numeric:tabular-nums}
+
+/* "look here": a bright arc that travels around the edge, plus a soft
+   ping outward. Used on the audit input and the dock's main button. */
+@property --edge-a{syntax:'<angle>';inherits:false;initial-value:0deg}
+.edge{position:relative}
+.edge::before{
+  content:'';position:absolute;inset:-2px;border-radius:inherit;padding:2px;pointer-events:none;
+  background:conic-gradient(from var(--edge-a),transparent 0 38%,var(--edge-c1,rgba(127,233,255,.35)) 52%,var(--edge-c2,#7FE9FF) 68%,var(--edge-c3,#B9A6FF) 82%,transparent 96%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  filter:drop-shadow(0 0 6px var(--edge-glow,rgba(127,233,255,.9)));
+  animation:edgeSpin 3s linear infinite;
+}
+/* on the light dock, cyan alone washes out: run the arc through the accent */
+.dock .edge{--edge-c1:rgba(27,59,255,.35);--edge-c2:#7FE9FF;--edge-c3:#8B5CFF;--edge-glow:rgba(27,59,255,.7)}
+.dock .edge::before{inset:-3px;padding:3px}
+.dock .edge{--edge-ping:rgba(27,59,255,.45)}
+.edge::after{
+  content:'';position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;
+  animation:edgePing 2.6s cubic-bezier(.2,.7,.3,1) infinite;
+}
+@keyframes edgeSpin{to{--edge-a:360deg}}
+@keyframes edgePing{
+  0%{box-shadow:0 0 0 0 var(--edge-ping,rgba(127,233,255,.5))}
+  70%,100%{box-shadow:0 0 0 14px rgba(127,233,255,0)}
+}
+/* once the visitor is typing or an audit is running, the input has done its job */
+.aud__bar.edge:focus-within::after,.plate.is-audit .aud__bar.edge::after{animation:none}
+.plate.is-audit .aud__bar.edge::before{opacity:.35}
+.dock.is-run .edge::after{animation:none}
+@media(prefers-reduced-motion:reduce){
+  .edge::before{animation:none;background:linear-gradient(90deg,rgba(127,233,255,.6),rgba(140,155,255,.6))}
+  .edge::after{animation:none}
+}
 
 /* scroll parallax runs on the independent translate property, so it can
    never fight the reveal tweens, which own transform */
@@ -1046,29 +1099,82 @@ html[data-theme="dark"] .plate .aud__go{background:#647AFF;color:#080810}
   display:flex;align-items:center;gap:var(--sp-2);margin:0 0 var(--sp-4);
   font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--holo);
 }
+.audr__eyebrow:focus:not(:focus-visible){outline:none}
 .audr__eyebrow::before{content:'';width:6px;height:6px;border-radius:var(--r-full);background:var(--holo);animation:pulse 1.4s ease-in-out infinite}
 .audr.is-done .audr__eyebrow::before{animation:none;background:var(--good)}
 
-/* live step list */
-.run{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:var(--sp-2)}
-.run li{
-  display:flex;align-items:center;gap:var(--sp-3);min-height:52px;
-  padding:var(--sp-2) var(--sp-4);border-radius:var(--r-full);
-  border:1px solid rgba(244,243,239,.10);background:rgba(244,243,239,.03);
-  transition:border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease),opacity var(--t-micro) var(--ease);
-}
-.run li[data-s="idle"]{opacity:.45}
-.run li[data-s="run"]{border-color:rgba(127,233,255,.55);background:rgba(127,233,255,.08)}
-.run__i{width:20px;height:20px;flex:none;display:grid;place-items:center;border-radius:var(--r-full);border:1.5px solid rgba(244,243,239,.3)}
+/* live scan console: ring + live status + ad counter + checklist + facts */
+.scan{display:grid;grid-template-columns:minmax(200px,280px) minmax(0,1fr);gap:clamp(20px,3vw,44px);align-items:center}
+.audr.is-done .scan{display:none}
+.scan__viz{position:relative;aspect-ratio:1;width:100%;max-width:280px;justify-self:center}
+.scan__ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.scan__track{fill:none;stroke:rgba(244,243,239,.08);stroke-width:6}
+.scan__arc{fill:none;stroke:url(#scanG);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.22,1,.36,1);filter:drop-shadow(0 0 8px rgba(127,233,255,.55))}
+/* radar sweep: a soft cone turning inside the ring */
+.scan__sweep{position:absolute;inset:9%;border-radius:50%;
+  background:conic-gradient(from 0deg,rgba(127,233,255,.28),rgba(127,233,255,0) 22%,transparent 100%);
+  -webkit-mask:radial-gradient(circle,#000 0 66%,transparent 67%);mask:radial-gradient(circle,#000 0 66%,transparent 67%);
+  animation:spin 2.4s linear infinite}
+.scan__viz::before{content:'';position:absolute;inset:9%;border-radius:50%;
+  background:repeating-radial-gradient(circle,rgba(127,233,255,.07) 0 1px,transparent 1px 22px)}
+/* blips: ads being "found" while the library pull runs */
+.scan__dots i{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--holo);box-shadow:0 0 10px var(--holo);opacity:0;animation:blip 2.4s ease-out infinite}
+.scan__dots i:nth-child(1){left:30%;top:28%;animation-delay:.2s}
+.scan__dots i:nth-child(2){left:66%;top:34%;animation-delay:.9s}
+.scan__dots i:nth-child(3){left:58%;top:68%;animation-delay:1.5s}
+.scan__dots i:nth-child(4){left:26%;top:60%;animation-delay:2s}
+.scan__dots i:nth-child(5){left:46%;top:22%;animation-delay:1.2s}
+.scan__mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
+.scan__mid b{font-family:var(--serif);font-weight:400;font-size:clamp(40px,5vw,56px);line-height:1;color:var(--hero-ink);font-variant-numeric:tabular-nums}
+.scan__mid small{font-size:11px;color:var(--hero-ink-3);font-variant-numeric:tabular-nums}
+.scan__main{display:flex;flex-direction:column;gap:var(--sp-4);min-width:0}
+.scan__now{margin:0;font-family:var(--serif);font-size:clamp(20px,2.2vw,26px);line-height:1.2;color:var(--hero-ink);min-height:1.2em}
+.scan__now.is-swap{animation:nowIn .45s cubic-bezier(.22,1,.36,1)}
+.scan__ads{display:flex;align-items:center;gap:var(--sp-3);font-size:12.5px;color:var(--hero-ink-2)}
+.scan__ads b{font-weight:600;font-variant-numeric:tabular-nums}
+.scan__adg{display:flex;gap:4px}
+.scan__adg i{width:22px;height:30px;border-radius:5px;
+  background:linear-gradient(110deg,rgba(244,243,239,.06) 30%,rgba(127,233,255,.28) 50%,rgba(244,243,239,.06) 70%) 0 0/300% 100%;
+  animation:shimmer 1.6s linear infinite}
+.scan__adg i:nth-child(2){animation-delay:.12s}.scan__adg i:nth-child(3){animation-delay:.24s}
+.scan__adg i:nth-child(4){animation-delay:.36s}.scan__adg i:nth-child(5){animation-delay:.48s}
+.scan.is-found .scan__adg i{animation:none;background:rgba(127,233,255,.35)}
+.scan.is-none .scan__adg i{animation:none;background:rgba(244,243,239,.08)}
+/* checklist: two compact columns, each row reveals its real result */
+.run{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px var(--sp-4)}
+.run li{display:flex;align-items:center;gap:var(--sp-2);min-height:34px;transition:opacity .3s var(--ease)}
+.run li[data-s="idle"]{opacity:.4}
+.run__i{width:18px;height:18px;flex:none;display:grid;place-items:center;border-radius:var(--r-full);border:1.5px solid rgba(244,243,239,.3)}
 .run li[data-s="run"] .run__i{border-color:var(--holo);border-right-color:transparent;animation:spin .8s linear infinite}
-.run li[data-s="done"] .run__i{border-color:var(--good);background:rgba(62,211,122,.16)}
-.run__i svg{width:11px;height:11px;color:var(--good);opacity:0}
+.run li[data-s="done"] .run__i{border-color:var(--good);background:rgba(62,211,122,.16);animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+.run__i svg{width:10px;height:10px;color:var(--good);opacity:0}
 .run li[data-s="done"] .run__i svg{opacity:1}
-.run__t{display:flex;flex-direction:column;min-width:0}
-.run__t b{font-size:12.5px;font-weight:600;color:var(--hero-ink)}
-.run__t small{font-size:11px;color:var(--hero-ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.run__t{display:flex;align-items:baseline;gap:var(--sp-2);min-width:0}
+.run__t b{font-size:12.5px;font-weight:600;color:var(--hero-ink);white-space:nowrap}
+.run__t small{font-size:11.5px;color:var(--hero-ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.run li[data-s="done"] .run__t small{color:var(--holo-hi);animation:nowIn .4s ease-out}
+/* fun facts while waiting */
+.fact{position:relative;padding:var(--sp-3) var(--sp-4);border-radius:var(--r-lg);
+  border:1px solid rgba(127,233,255,.16);background:rgba(127,233,255,.05);min-height:72px}
+.fact__k{display:inline-block;margin-bottom:4px;font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--holo)}
+.fact[data-src="plaith"] .fact__k{color:#AEB9FF}
+.fact__t{margin:0;font-size:13.5px;line-height:1.5;color:var(--hero-ink)}
+.fact.is-swap .fact__k,.fact.is-swap .fact__t{animation:nowIn .5s cubic-bezier(.22,1,.36,1)}
 @keyframes spin{to{transform:rotate(360deg)}}
-.audr.is-done .run{display:none}
+@keyframes blip{0%{opacity:0;transform:scale(.4)}12%{opacity:1;transform:scale(1)}70%{opacity:0;transform:scale(1.6)}100%{opacity:0}}
+@keyframes shimmer{to{background-position:-300% 0}}
+@keyframes pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+@keyframes nowIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(max-width:760px){
+  .scan{grid-template-columns:1fr}
+  .scan__viz{max-width:200px}
+  .run{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .scan__sweep,.scan__dots i,.scan__adg i,.run li[data-s="run"] .run__i{animation:none}
+  .scan__dots{display:none}
+  .scan__now.is-swap,.fact.is-swap .fact__k,.fact.is-swap .fact__t,.run li[data-s="done"] .run__i,.run li[data-s="done"] .run__t small{animation:none}
+}
 
 /* report */
 .rep{display:none}
@@ -1086,52 +1192,63 @@ html[data-theme="dark"] .plate .aud__go{background:#647AFF;color:#080810}
 .rep__again:hover{background:rgba(244,243,239,.08)}
 .rep__again svg{width:14px;height:14px}
 
-.rep__grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:clamp(16px,2vw,28px);align-items:start}
+/* horizontal report: compact score card beside a grid of check tiles */
+.rep__grid{display:grid;grid-template-columns:minmax(220px,.5fr) minmax(0,1.6fr);gap:clamp(16px,2vw,24px);align-items:stretch}
 @media(max-width:860px){ .rep__grid{grid-template-columns:1fr} }
 
 .score{
-  display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--sp-3);
-  padding:var(--sp-6) var(--sp-5);border-radius:var(--r-2xl);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:var(--sp-2);
+  padding:var(--sp-5) var(--sp-4);border-radius:var(--r-2xl);
   background:rgba(244,243,239,.035);border:1px solid rgba(244,243,239,.08);
 }
-.score__ring{position:relative;width:min(200px,60vw);aspect-ratio:1}
+.score__ring{position:relative;width:min(150px,44vw);aspect-ratio:1}
 .score__ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .score__ring circle{fill:none;stroke-width:9}
 .score__track{stroke:rgba(244,243,239,.08)}
 .score__arc{stroke:var(--sc,var(--holo));stroke-linecap:round;transition:stroke-dashoffset 1.4s var(--ease);filter:drop-shadow(0 0 10px var(--sc,var(--holo)))}
 .score__num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.score__num b{font-family:var(--serif);font-weight:400;font-size:clamp(54px,6vw,72px);line-height:1;color:var(--hero-ink);font-variant-numeric:tabular-nums}
-.score__num small{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--hero-ink-3)}
-.score__grade{font-family:var(--serif);font-size:24px;color:var(--sc,var(--hero-ink));margin:0}
-.score__sum{margin:0;font-size:13px;line-height:1.55;max-width:34ch}
+.score__num b{font-family:var(--serif);font-weight:400;font-size:clamp(44px,4.4vw,56px);line-height:1;color:var(--hero-ink);font-variant-numeric:tabular-nums}
+.score__num small{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--hero-ink-3)}
+.score__grade{font-family:var(--serif);font-size:21px;color:var(--sc,var(--hero-ink));margin:0}
+.score__sum{margin:0;font-size:12.5px;line-height:1.5;max-width:30ch}
 .score__mode{
-  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-full);
+  display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:var(--r-full);
   font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
   color:var(--sc);border:1px solid currentColor;
 }
 .score__mode svg{width:12px;height:12px}
 
-.chk{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sp-2)}
-.chk__i{border-radius:var(--r-xl);border:1px solid rgba(244,243,239,.09);background:rgba(244,243,239,.025);overflow:hidden;transition:border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease)}
-.chk__i.is-open{border-color:rgba(127,233,255,.35);background:rgba(127,233,255,.05)}
+.chkw{display:flex;flex-direction:column;gap:var(--sp-3);min-width:0}
+.chk{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-2)}
+@media(max-width:1100px) and (min-width:861px){ .chk{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media(max-width:520px){ .chk{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.chk__i{border-radius:var(--r-xl);border:1px solid rgba(244,243,239,.09);background:rgba(244,243,239,.025);transition:border-color var(--t-micro) var(--ease),background var(--t-micro) var(--ease)}
+.chk__i:hover{border-color:rgba(244,243,239,.2)}
+.chk__i.is-open{border-color:rgba(127,233,255,.55);background:rgba(127,233,255,.07)}
 .chk__b{
-  width:100%;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:var(--sp-3);
-  min-height:56px;padding:var(--sp-3) var(--sp-4);text-align:left;color:inherit;
+  width:100%;height:100%;display:flex;flex-direction:column;align-items:stretch;gap:6px;
+  padding:var(--sp-3);text-align:left;color:inherit;border-radius:inherit;
 }
-.chk__dot{width:10px;height:10px;border-radius:var(--r-full);background:var(--st);box-shadow:0 0 0 4px color-mix(in srgb,var(--st) 18%,transparent)}
-.chk__l{display:flex;flex-direction:column;gap:6px;min-width:0}
-.chk__l b{font-size:13.5px;font-weight:600;color:var(--hero-ink)}
-.chk__bar{height:3px;border-radius:var(--r-full);background:rgba(244,243,239,.08);overflow:hidden;max-width:220px}
+.chk__b:focus-visible{outline:2px solid var(--holo);outline-offset:2px}
+.chk__top{display:flex;align-items:center;gap:8px;min-width:0}
+.chk__top b{font-size:13px;font-weight:600;color:var(--hero-ink);line-height:1.25}
+.chk__dot{flex:none;width:9px;height:9px;border-radius:var(--r-full);background:var(--st);box-shadow:0 0 0 4px color-mix(in srgb,var(--st) 18%,transparent)}
+.chk__m{font-size:12px;color:var(--hero-ink-2);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chk__bar{display:block;height:3px;border-radius:var(--r-full);background:rgba(244,243,239,.08);overflow:hidden;margin-top:auto}
 .chk__bar i{display:block;height:100%;width:0;border-radius:var(--r-full);background:var(--st);transition:width 1s var(--ease)}
-.chk__m{font-size:12px;color:var(--hero-ink-2);text-align:right;font-variant-numeric:tabular-nums}
-.chk__m em{display:block;font-style:normal;font-size:10.5px;color:var(--hero-ink-3)}
-.chk__c{width:16px;height:16px;color:var(--hero-ink-3);transition:transform var(--t-micro) var(--ease)}
-.chk__i.is-open .chk__c{transform:rotate(180deg)}
-.chk__p{padding:0 var(--sp-4) var(--sp-4) calc(var(--sp-4) + 10px + var(--sp-3))}
+.chk__pts{font-style:normal;font-size:10.5px;color:var(--hero-ink-3);font-variant-numeric:tabular-nums}
+/* the selected check's detail */
+.chk__p{padding:var(--sp-4);border-radius:var(--r-xl);border:1px solid rgba(127,233,255,.22);background:rgba(127,233,255,.04);animation:nowIn .35s cubic-bezier(.22,1,.36,1)}
 .chk__p[hidden]{display:none}
+.chk__ph{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 var(--sp-2) !important}
+.chk__ph b{font-size:14px;color:var(--hero-ink)}
+.chk__ph span:last-child{font-size:12px;color:var(--hero-ink-3)}
 .chk__p p{margin:0 0 var(--sp-3);font-size:13px;line-height:1.6}
+.chk__row{display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap}
+.chk__row .chk__fix{flex:1 1 320px;margin:0}
+@media(prefers-reduced-motion:reduce){ .chk__p{animation:none} }
 .chk__fix{
-  display:flex;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);margin-bottom:var(--sp-3);
+  display:flex;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);
   border-radius:var(--r-lg);background:rgba(127,233,255,.07);border:1px solid rgba(127,233,255,.16);
   font-size:12.5px;line-height:1.55;color:var(--hero-ink);
 }
@@ -1175,8 +1292,17 @@ html[data-theme="dark"] .plate .aud__go{background:#647AFF;color:#080810}
 .plan__n span{font-size:13px;font-weight:600;color:var(--hero-ink)}
 .plan p{margin:0;font-size:12.5px;line-height:1.55}
 .plan__fine{font-size:11px !important;color:var(--hero-ink-3)}
-.plan__cta{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2)}
-.plan__cta .btn{flex:1 1 auto;justify-content:center}
+.plan__cta{display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-2)}
+.plan__b{
+  display:grid;grid-template-columns:18px 1fr 18px;align-items:center;gap:var(--sp-3);
+  min-height:52px;padding:0 var(--sp-5);text-align:center;
+}
+.plan__b svg{width:16px;height:16px;transition:transform var(--t-micro) var(--ease)}
+/* same 1px edge as the outlined buttons, so all three icon columns line up */
+.btn--sig.plan__b{border:1px solid transparent}
+.btn.plan__b:hover svg.plan__bi{transform:none}
+.plan__bi.is-wa{color:#25D366}
+.btn.plan__b:hover svg.plan__bo{transform:translate(2px,-2px)}
 
 /* lead capture: sits right under the score, where interest peaks */
 .lead{
@@ -1196,6 +1322,9 @@ html[data-theme="dark"] .plate .aud__go{background:#647AFF;color:#080810}
 .lead__f input[type=email]:focus-visible{outline:2px solid var(--holo);outline-offset:2px}
 .lead__f .btn{min-height:48px;justify-content:center}
 .lead__hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.lead__opt{flex-basis:100%;display:flex;align-items:flex-start;gap:var(--sp-2);cursor:pointer;font-size:12.5px;line-height:1.45;color:var(--hero-ink-2)}
+.lead__opt input{flex:none;width:18px;height:18px;margin:0;accent-color:var(--holo)}
+.lead.is-sent .lead__opt{display:none}
 .lead__msg{flex-basis:100%;margin:0;font-size:12.5px;color:var(--hero-ink-2)}
 .lead__msg[data-s="err"]{color:var(--bad)}
 .lead.is-sent .lead__f input,.lead.is-sent .lead__f .btn{display:none}
@@ -1885,7 +2014,6 @@ html[data-theme="dark"] .plate .aud__go{background:#647AFF;color:#080810}
 
 /* ═══════════ REDUCED MOTION ═══════════ */
 @media(prefers-reduced-motion:reduce){
-  html:focus-within{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   .rv{opacity:1 !important;transform:none !important}
   .clip>span{transform:none !important}
@@ -2004,7 +2132,7 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
   <a href="resources">Resources <b>04</b></a>
   <a href="#contact">Contact <b>05</b></a>
   <div class="sheet__f">
-    <a class="btn btn--sig" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">
+    <a class="btn btn--sig" href="https://plaith.ai/elijahrose/booking" target="_blank" rel="noopener">
       Book a discovery call
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
@@ -2040,7 +2168,7 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
         <li style="--n:3"><i aria-hidden="true">3</i><b>Scored out of 100</b><small>Freshness, mix, testing, placements</small></li>
         <li style="--n:4"><i aria-hidden="true">4</i><b>See where to boost</b><small>Or where Plaith would stop the waste</small></li>
       </ol>
-      <div class="aud__bar">
+      <div class="aud__bar edge">
         <svg class="aud__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
         <span class="aud__pre" aria-hidden="true">facebook.com/</span>
         <label class="sr" for="audIn">Your Facebook page name or link</label>
@@ -2054,12 +2182,12 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
       <p class="aud__err" id="audErr" role="alert" hidden></p>
       <p class="aud__hint">
         <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Public data only, no login</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>About 30 seconds</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>About a minute</span>
         <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Free</span>
       </p>
     </form>
     <div class="plate__cta" id="plateCta">
-      <a class="btn btn--sig" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">
+      <a class="btn btn--sig" href="https://plaith.ai/elijahrose/booking" target="_blank" rel="noopener">
         Boost my Meta Ads Performance Today
       </a>
       <a class="ul" href="#contact">or send a short brief</a>
@@ -2068,7 +2196,27 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
 
   <section class="audr" id="audR" aria-labelledby="audRT" hidden>
     <p class="audr__eyebrow" id="audRT" tabindex="-1">Auditing</p>
-    <ol class="run" id="audRun" aria-live="polite"></ol>
+    <div class="scan" id="audScan">
+      <div class="scan__viz" aria-hidden="true">
+        <svg class="scan__ring" viewBox="0 0 200 200">
+          <defs><linearGradient id="scanG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2CA8D8"/><stop offset="1" stop-color="#7FE9FF"/></linearGradient></defs>
+          <circle class="scan__track" cx="100" cy="100" r="88"/>
+          <circle class="scan__arc" id="scanArc" cx="100" cy="100" r="88" stroke-dasharray="552.9" stroke-dashoffset="552.9"/>
+        </svg>
+        <span class="scan__sweep"></span>
+        <span class="scan__dots"><i></i><i></i><i></i><i></i><i></i></span>
+        <div class="scan__mid"><b id="scanPct">0%</b><small id="scanTime">0:00 · usually under 90s</small></div>
+      </div>
+      <div class="scan__main">
+        <p class="scan__now" id="scanNow" aria-live="polite">Finding the page</p>
+        <div class="scan__ads" aria-hidden="true"><span class="scan__adg"><i></i><i></i><i></i><i></i><i></i></span><b id="scanAds">Looking for active ads</b></div>
+        <ol class="run" id="audRun"></ol>
+        <div class="fact" id="scanFact" aria-live="off">
+          <span class="fact__k" id="factK">Meta ads</span>
+          <p class="fact__t" id="factT"></p>
+        </div>
+      </div>
+    </div>
     <div class="rep" id="audRep"></div>
   </section>
 
@@ -2316,7 +2464,7 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
 
   <p class="eng__note rv">
     <span>Also available for agency white-label and one-off projects.</span>
-    <a class="ul" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">Book a numbers call <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    <a class="ul" href="https://plaith.ai/elijahrose/booking" target="_blank" rel="noopener">Book a numbers call <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
   </p>
 </section>
 
@@ -2378,7 +2526,7 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
         </p>
         <dl class="dl rv" data-d="3">
           <a href="mailto:elijah@kazi-orchestrate.com"><dt>Email</dt><dd>elijah@kazi-orchestrate.com</dd></a>
-          <a href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener"><dt>Schedule</dt><dd>Calendly</dd></a>
+          <a href="https://plaith.ai/elijahrose/booking" target="_blank" rel="noopener"><dt>Schedule</dt><dd>Book a call</dd></a>
           <a href="https://www.linkedin.com/in/elijah-rogito" target="_blank" rel="noopener"><dt>LinkedIn</dt><dd>elijah-rogito</dd></a>
           <a href="https://github.com/erose2502" target="_blank" rel="noopener"><dt>GitHub</dt><dd>erose2502</dd></a>
           <a href="https://plaith.ai/elijahrose" target="_blank" rel="noopener"><dt>Partner</dt><dd>Plaith</dd></a>
@@ -2488,10 +2636,10 @@ html.stack-measure .card{position:relative !important;top:auto !important;transf
 </main>
 
 <div class="dock" id="dock" aria-hidden="true">
-  <span class="dock__s"><i></i>Taking new clients</span>
-  <a class="dock__brief" href="#contact" tabindex="-1">Send a brief</a>
-  <a class="btn btn--sig btn--sm" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener" tabindex="-1">
-    Free numbers call
+  <span class="dock__s" id="dockS"><i></i><span><b>What's your Meta ads score?</b><small>Free, about a minute</small></span></span>
+  <a class="dock__brief" id="dockAlt" href="https://plaith.ai/elijahrose/booking" target="_blank" rel="noopener" tabindex="-1">Book a call</a>
+  <a class="btn btn--sig btn--sm edge" id="dockGo" href="#plate" data-audit tabindex="-1">
+    <span id="dockGoT">Score my ads</span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
   </a>
 </div>
@@ -2527,7 +2675,7 @@ document.addEventListener('click', function(e){
   if(!a) return;
   var h = a.getAttribute('href'), sec = a.closest('section[id], header, footer, .dock, .sheet');
   var from = sec ? (sec.id || sec.className.split(' ')[0]) : 'page';
-  if(/calendly\.com/.test(h)) track('Book call click', { from:from });
+  if(/plaith\.ai\/(en\/)?elijahrose\/booking/.test(h)) track('Book call click', { from:from });
   else if(h === '#contact') track('Brief click', { from:from });
   else if(/wa\.me\//.test(h)) track('WhatsApp click', { from:from });
   else if(/buy\.stripe\.com/.test(h)) track('Checkout click', { from:from });
@@ -2674,18 +2822,30 @@ document.addEventListener('click', function(e){
       { id:'score',      t:'Score out of 100',        st:5 }
     ];
     var P = 'https://plaith.ai/en/elijahrose';
+    /* Icons are the exact SVGs react-icons ships: Phosphor (Bold) for UI,
+       Simple Icons for the WhatsApp mark. [viewBox, inner SVG]. */
     var I = {
-      check:'<path d="M20 6 9 17l-5-5"/>',
-      arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
-      down:'<path d="m6 9 6 6 6-6"/>',
-      spark:'<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>',
-      up:'<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
-      save:'<path d="M22 17 13.5 8.5 8.5 13.5 2 7"/><path d="M16 17h6v-6"/>',
-      again:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
-      chat:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'
+      check:['0 0 256 256','<path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"></path>']  /* PiCheckBold */,
+      arrow:['0 0 256 256','<path d="M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z"></path>']  /* PiArrowRightBold */,
+      down:['0 0 256 256','<path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"></path>']  /* PiCaretDownBold */,
+      spark:['0 0 256 256','<path d="M199,125.31l-49.88-18.39L130.69,57a19.92,19.92,0,0,0-37.38,0L74.92,106.92,25,125.31a19.92,19.92,0,0,0,0,37.38l49.88,18.39L93.31,231a19.92,19.92,0,0,0,37.38,0l18.39-49.88L199,162.69a19.92,19.92,0,0,0,0-37.38Zm-63.38,35.16a12,12,0,0,0-7.11,7.11L112,212.28l-16.47-44.7a12,12,0,0,0-7.11-7.11L43.72,144l44.7-16.47a12,12,0,0,0,7.11-7.11L112,75.72l16.47,44.7a12,12,0,0,0,7.11,7.11L180.28,144ZM140,40a12,12,0,0,1,12-12h12V16a12,12,0,0,1,24,0V28h12a12,12,0,0,1,0,24H188V64a12,12,0,0,1-24,0V52H152A12,12,0,0,1,140,40ZM252,88a12,12,0,0,1-12,12h-4v4a12,12,0,0,1-24,0v-4h-4a12,12,0,0,1,0-24h4V72a12,12,0,0,1,24,0v4h4A12,12,0,0,1,252,88Z"></path>']  /* PiSparkleBold */,
+      up:['0 0 256 256','<path d="M244,56v64a12,12,0,0,1-24,0V85l-75.51,75.52a12,12,0,0,1-17,0L96,129,32.49,192.49a12,12,0,0,1-17-17l72-72a12,12,0,0,1,17,0L136,135l67-67H168a12,12,0,0,1,0-24h64A12,12,0,0,1,244,56Z"></path>']  /* PiTrendUpBold */,
+      save:['0 0 256 256','<path d="M244,128v64a12,12,0,0,1-12,12H168a12,12,0,0,1,0-24h35l-67-67-31.51,31.52a12,12,0,0,1-17,0l-72-72a12,12,0,0,1,17-17L96,119l31.51-31.52a12,12,0,0,1,17,0L220,163V128a12,12,0,0,1,24,0Z"></path>']  /* PiTrendDownBold */,
+      again:['0 0 256 256','<path d="M228,128a100,100,0,0,1-98.66,100H128a99.39,99.39,0,0,1-68.62-27.29,12,12,0,0,1,16.48-17.45,76,76,0,1,0-1.57-109c-.13.13-.25.25-.39.37L54.89,92H72a12,12,0,0,1,0,24H24a12,12,0,0,1-12-12V56a12,12,0,0,1,24,0V76.72L57.48,57.06A100,100,0,0,1,228,128Z"></path>']  /* PiArrowCounterClockwiseBold */,
+      chat:['0 0 24 24','<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path>']  /* SiWhatsapp */,
+      card:['0 0 256 256','<path d="M224,44H32A20,20,0,0,0,12,64V192a20,20,0,0,0,20,20H224a20,20,0,0,0,20-20V64A20,20,0,0,0,224,44Zm-4,24V88H36V68ZM36,188V112H220v76Zm172-24a12,12,0,0,1-12,12H164a12,12,0,0,1,0-24h32A12,12,0,0,1,208,164Zm-68,0a12,12,0,0,1-12,12H116a12,12,0,0,1,0-24h12A12,12,0,0,1,140,164Z"></path>']  /* PiCreditCardBold */,
+      cols:['0 0 256 256','<path d="M243.14,131.54l-32-80h0a12,12,0,0,0-13.73-7.25L140,57V40a12,12,0,0,0-24,0V62.37L53.4,76.29a12,12,0,0,0-8.54,7.25h0l0,0v0l-32,79.92A12,12,0,0,0,12,168c0,12.13,6.2,22.43,17.45,29A55,55,0,0,0,56,204a55,55,0,0,0,26.55-7C93.8,190.43,100,180.13,100,168a12,12,0,0,0-.86-4.46L72.38,96.65,116,87V204H104a12,12,0,0,0,0,24h48a12,12,0,0,0,0-24H140V81.63l40.42-9-23.56,58.9A12,12,0,0,0,156,136c0,12.13,6.2,22.43,17.45,29a53.78,53.78,0,0,0,53.1,0C237.8,158.43,244,148.13,244,136A12,12,0,0,0,243.14,131.54ZM56,180c-3.71,0-18-1.87-19.81-10.18L56,120.31l19.81,49.51C74,178.13,59.71,180,56,180Zm144-32c-3.71,0-18-1.87-19.81-10.18L200,88.31l19.81,49.51C218,146.13,203.71,148,200,148Z"></path>']  /* PiScalesBold */,
+      out:['0 0 256 256','<path d="M204,64V168a12,12,0,0,1-24,0V93L72.49,200.49a12,12,0,0,1-17-17L163,76H88a12,12,0,0,1,0-24H192A12,12,0,0,1,204,64Z"></path>']  /* PiArrowUpRightBold */
     };
+    /* plan card actions: icon | label | arrow on one grid, so all three
+       buttons share the same icon column, label centre and arrow column */
+    function planBtn(href, icon, label, cls){
+      return '<a class="' + cls + ' plan__b" href="' + esc(safe(href)) + '" target="_blank" rel="noopener">' +
+        ic(icon, 'plan__bi' + (icon === 'chat' ? ' is-wa' : '')) + '<span>' + label + '</span>' + ic('out', 'plan__bo') + '</a>';
+    }
     function ic(k, cls){
-      return '<svg' + (cls ? ' class="' + cls + '"' : '') + ' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[k] + '</svg>';
+      var i = I[k];
+      return '<svg' + (cls ? ' class="' + cls + '"' : '') + ' viewBox="' + i[0] + '" fill="currentColor" aria-hidden="true" focusable="false">' + i[1] + '</svg>';
     }
     function esc(v){
       return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){
@@ -2701,24 +2861,120 @@ document.addEventListener('click', function(e){
         label + (icon === false ? '' : ic('arrow')) + '</a>';
     }
 
-    var ctrl = null, busy = false;
+    var ctrl = null, busy = false, lastToken = null;
 
     function showErr(msg){
       err.innerHTML = esc(msg) + ' <a href="https://wa.me/12232401771" target="_blank" rel="noopener">Message Elijah</a>';
       err.hidden = false;
     }
 
+    /* ── live scan console ──
+       Progress is honest about what it knows: the page lookup and each
+       scoring check are real milestones; during the long Ad Library pull
+       (20-60s) it eases toward 70% on a time curve and never passes it
+       until Meta actually answers. */
+    var FACTS = [
+      ['meta', 'Every active ad on Facebook and Instagram is public in Meta\'s Ad Library. That\'s exactly what this audit is reading right now.'],
+      ['plaith', 'Plaith launches new ads every week, keeps the winners running and replaces the rest.'],
+      ['meta', 'Meta\'s auction doesn\'t just pick the highest bid. It also weighs how likely people are to act on the ad and how good it is.'],
+      ['plaith', 'Every Plaith plan includes new AI videos each month: 4, 12 or 40, depending on the plan.'],
+      ['meta', 'Reels and Stories fill the whole phone screen, so vertical 9:16 video gets the most room to work.'],
+      ['plaith', 'With Plaith, the ad account and payment method stay yours. You only grant partner access.'],
+      ['meta', 'Show the same ad to the same people long enough and results slide. Marketers call it creative fatigue.'],
+      ['plaith', 'Every Plaith ad is checked by a person and labelled as made with AI before it goes live.'],
+      ['meta', 'Spend, clicks and return on ad spend aren\'t public. Only your ad account shows those, which is why this audit scores what is.'],
+      ['plaith', 'Your ad budget goes to Meta directly, not to Plaith, and plans cancel monthly.'],
+      ['meta', 'Meta can test several versions of an ad at once and move budget toward whichever one performs.'],
+      ['plaith', 'Plaith\'s Growth Hack: pay $5,000 once and $12,000 goes to your ads over 24 months.']
+    ];
+    var WEIGHT = { resolve:8, library:70, freshness:76, mix:82, testing:87, placements:92, conversion:96, score:100 };
+    var scan = $('#audScan'), scanArc = $('#scanArc'), scanPct = $('#scanPct'), scanTime = $('#scanTime'),
+        scanNow = $('#scanNow'), scanAds = $('#scanAds'), factEl = $('#scanFact');
+    var ARC = 552.9, sc = { pct:0, shown:0, t0:0, libT0:0, raf:0, factI:0, factT:0 };
+
+    var lastSent = '';
+    function tellDock(){
+      var msg = Math.round(sc.shown) + '|' + scanNow.textContent;
+      if(msg === lastSent) return;
+      lastSent = msg;
+      document.dispatchEvent(new CustomEvent('audit:progress', { detail:{ pct:Math.round(sc.shown), note:scanNow.textContent } }));
+    }
+    function setNow(t){
+      if(!t || scanNow.textContent === t) return;
+      scanNow.textContent = t;
+      scanNow.classList.remove('is-swap'); void scanNow.offsetWidth; scanNow.classList.add('is-swap');
+    }
+    function showFact(){
+      var f = FACTS[sc.factI++ % FACTS.length];
+      factEl.setAttribute('data-src', f[0]);
+      $('#factK').textContent = f[0] === 'plaith' ? 'About Plaith' : 'Meta ads fact';
+      $('#factT').textContent = f[1];
+      factEl.classList.remove('is-swap'); void factEl.offsetWidth; factEl.classList.add('is-swap');
+    }
+    function scanTick(now){
+      var secs = Math.floor((now - sc.t0) / 1000);
+      scanTime.textContent = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0') + ' · usually under 90s';
+      /* during the library pull, ease from 8% toward 68% (time constant ~22s) */
+      var target = sc.pct;
+      if(sc.libT0 && sc.pct < WEIGHT.library) target = Math.max(sc.pct, 8 + 60 * (1 - Math.exp(-(now - sc.libT0) / 22000)));
+      sc.shown += (target - sc.shown) * (RM ? 1 : .08);
+      scanArc.style.strokeDashoffset = (ARC * (1 - sc.shown / 100)).toFixed(1);
+      scanPct.textContent = Math.round(sc.shown) + '%';
+      tellDock();
+      sc.raf = requestAnimationFrame(scanTick);
+    }
+    function scanStart(){
+      scanStop();
+      sc.pct = 0; sc.shown = 0; sc.libT0 = 0; sc.t0 = performance.now();
+      sc.factI = Math.floor(Math.random() * FACTS.length);
+      scan.classList.remove('is-found', 'is-none');
+      scanAds.textContent = 'Looking for active ads';
+      setNow('Finding the page');
+      showFact();
+      sc.factT = setInterval(showFact, 6500);
+      sc.raf = requestAnimationFrame(scanTick);
+    }
+    function scanStop(){ cancelAnimationFrame(sc.raf); clearInterval(sc.factT); }
+    function countAds(n){
+      var from = 0, t0 = performance.now(), dur = RM ? 0 : 900;
+      scan.classList.add(n > 0 ? 'is-found' : 'is-none');
+      (function step(now){
+        var k = dur ? Math.min(1, (now - t0) / dur) : 1;
+        scanAds.textContent = Math.round(from + (n - from) * (1 - Math.pow(1 - k, 3))) + (n === 1 ? ' active ad found' : ' active ads found');
+        if(k < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+
     function paintSteps(){
       runList.innerHTML = STEPS.map(function(s){
         return '<li data-step="' + s.id + '" data-s="idle"><span class="run__i">' + ic('check') + '</span>' +
-               '<span class="run__t"><b>' + esc(s.t) + '</b><small>Waiting</small></span></li>';
+               '<span class="run__t"><b>' + esc(s.t) + '</b><small></small></span></li>';
       }).join('');
+      scanStart();
     }
     function setStep(id, state, note){
       var li = runList.querySelector('[data-step="' + id + '"]');
       if(!li) return;
       li.setAttribute('data-s', state);
-      if(note || state === 'run') li.querySelector('small').textContent = note || 'Working';
+      var small = li.querySelector('small');
+      if(state === 'done' && note) small.textContent = note;
+      else if(state === 'run') small.textContent = '';
+
+      if(id === 'library' && state === 'run'){
+        if(!sc.libT0) sc.libT0 = performance.now();
+        setNow(note && note !== 'Working' ? note : 'Reading Meta\'s Ad Library');
+      }
+      if(state === 'done' && WEIGHT[id]) sc.pct = Math.max(sc.pct, WEIGHT[id]);
+      if(id === 'library' && state === 'done'){
+        var m = /(\d+)\+? active ad/.exec(note || '');
+        if(m) countAds(+m[1]);
+        else if(/No active ads/i.test(note || '')) countAds(0);
+      }
+      if(state === 'run' && id !== 'library'){
+        var s = STEPS.filter(function(x){ return x.id === id; })[0];
+        if(s) setNow((id === 'resolve' ? '' : 'Checking ') + s.t.toLowerCase().replace(/^find/, 'Finding'));
+      }
+      if(id === 'score' && state === 'done'){ setNow('Done. Building your report'); }
     }
 
     function scoreBand(n){ return n >= 80 ? '80-100' : n >= 60 ? '60-79' : n >= 40 ? '40-59' : '0-39'; }
@@ -2740,11 +2996,13 @@ document.addEventListener('click', function(e){
     function refreshST(){ if(window.ScrollTrigger) setTimeout(function(){ window.ScrollTrigger.refresh(); }, 60); }
 
     function reset(){
+      scanStop();
       if(ctrl){ ctrl.abort(); ctrl = null; }
       busy = false; go.disabled = false;
       panel.hidden = true; panel.classList.remove('is-done');
       plate.classList.remove('is-audit');
       tlAt(1);
+      document.dispatchEvent(new CustomEvent('audit:reset'));
       refreshST();
       scrollTo(plate);
       input.focus({ preventScroll:true });
@@ -2763,6 +3021,7 @@ document.addEventListener('click', function(e){
     function run(handle){
       busy = true; go.disabled = true;
       tlAt(2);
+      document.dispatchEvent(new CustomEvent('audit:start', { detail:{ name:handle.replace(/^https?:\/\/(www\.)?(facebook|fb)\.com\//i, '').replace(/\/.*$/, '').slice(0, 40) } }));
       track('Audit started');
       paintSteps();
       rep.innerHTML = '';
@@ -2818,12 +3077,14 @@ document.addEventListener('click', function(e){
           if(SCORING.test(ev.id)) tlAt(3);
         }
         else if(ev.type === 'error') fail(ev.message);
-        else if(ev.type === 'result'){ gotResult = true; done(ev.data); }
+        else if(ev.type === 'result'){ gotResult = true; lastToken = ev.token || null; done(ev.data); }
       }
     }
 
     function fail(msg){
       if(!busy) return;
+      scanStop();
+      document.dispatchEvent(new CustomEvent('audit:reset'));
       busy = false; go.disabled = false; ctrl = null;
       tlAt(1);
       track('Audit failed');
@@ -2840,8 +3101,12 @@ document.addEventListener('click', function(e){
     }
 
     function done(d){
+      scanStop();
       busy = false; go.disabled = false; ctrl = null;
       tlAt(4);
+      setTimeout(function(){
+        document.dispatchEvent(new CustomEvent('audit:done', { detail:{ score:d.score, lead:!!document.getElementById('audLead') } }));
+      }, 600);
       track('Audit finished', { score:scoreBand(d.score), ads:d.empty ? 'none' : d.adsFound >= 10 ? '10+' : '1-9' });
       var L = d.links || {};
       var name = d.page.name || input.value.trim();
@@ -2879,37 +3144,46 @@ document.addEventListener('click', function(e){
         '<p class="score__sum">' + summary + '</p>' +
       '</div>';
 
-      h += '<ol class="chk">' + d.checks.map(function(c, i){
+      /* checks: a row of compact tiles (tabs) and one detail panel below
+         them, so the score and all six results fit on one screen */
+      var tiles = '', panels = '';
+      d.checks.forEach(function(c, i){
         var st = c.status === 'good' ? 'var(--good)' : c.status === 'warn' ? 'var(--warn)' : 'var(--bad)';
         var open = c.id === d.weakest;
-        return '<li class="chk__i' + (open ? ' is-open' : '') + '" style="--st:' + st + '">' +
-          '<button class="chk__b" type="button" aria-expanded="' + open + '" aria-controls="chk-' + i + '">' +
-            '<span class="chk__dot" aria-hidden="true"></span>' +
-            '<span class="chk__l"><b>' + esc(c.label) + '</b><span class="chk__bar" aria-hidden="true"><i data-w="' + Math.round(c.pts / c.max * 100) + '"></i></span></span>' +
-            '<span class="chk__m">' + esc(c.metric) + '<em>' + c.pts + ' / ' + c.max + ' points</em></span>' +
-            ic('down', 'chk__c') +
+        tiles += '<li class="chk__i' + (open ? ' is-open' : '') + '" style="--st:' + st + '">' +
+          '<button class="chk__b" type="button" role="tab" id="chk-t-' + i + '" aria-selected="' + open + '" aria-controls="chk-' + i + '"' + (open ? '' : ' tabindex="-1"') + '>' +
+            '<span class="chk__top"><span class="chk__dot" aria-hidden="true"></span><b>' + esc(c.label) + '</b></span>' +
+            '<span class="chk__m">' + esc(c.metric) + '</span>' +
+            '<span class="chk__bar" aria-hidden="true"><i data-w="' + Math.round(c.pts / c.max * 100) + '"></i></span>' +
+            '<em class="chk__pts">' + c.pts + ' / ' + c.max + ' points</em>' +
           '</button>' +
-          '<div class="chk__p" id="chk-' + i + '"' + (open ? '' : ' hidden') + '>' +
-            '<p>' + esc(c.detail) + '</p>' +
+        '</li>';
+        panels += '<div class="chk__p" role="tabpanel" id="chk-' + i + '" aria-labelledby="chk-t-' + i + '" style="--st:' + st + '"' + (open ? '' : ' hidden') + '>' +
+          '<p class="chk__ph"><span class="chk__dot" aria-hidden="true"></span><b>' + esc(c.label) + '</b><span>' + esc(c.metric) + ' &middot; ' + c.pts + ' / ' + c.max + ' points</span></p>' +
+          '<p>' + esc(c.detail) + '</p>' +
+          '<div class="chk__row">' +
             '<div class="chk__fix">' + ic('spark') + '<span><b>How Plaith fixes this.</b> ' + esc(c.fix) + '</span></div>' +
             ext(c.cta && c.cta.href, esc(c.cta ? c.cta.label : 'See how Plaith works'), 'lnk') +
           '</div>' +
-        '</li>';
-      }).join('') + '</ol>';
+        '</div>';
+      });
+      h += '<div class="chkw"><ol class="chk" role="tablist" aria-label="What was checked">' + tiles + '</ol>' +
+           '<div class="chk__panels">' + panels + '</div></div>';
       h += '</div>';
 
       var weakLabel = (weak[0] || byPct[0] || {}).label || '';
       h += '<form class="lead" id="audLead" novalidate' +
           ' data-score="' + d.score + '" data-ads="' + d.adsFound + '" data-grade="' + esc(d.grade || '') + '"' +
           ' data-weakest="' + esc(weakLabel) + '" data-page="' + esc(name) + '">' +
-        '<div><span class="lead__k">Free fix plan</span>' +
-          '<p class="lead__h">Want the plan to fix ' + (d.empty ? 'this' : esc(weakLabel.toLowerCase() || 'this')) + '?</p>' +
-          '<p class="lead__p">I\'ll look at ' + esc(name) + ' myself and send you a short written plan within one business day. No call needed.</p></div>' +
+        '<div><span class="lead__k">Your report as a PDF</span>' +
+          '<p class="lead__h">Get this report in your inbox</p>' +
+          '<p class="lead__p">Every check, what it found' + (d.empty ? '' : ' (starting with ' + esc(weakLabel.toLowerCase()) + ')') + ' and how to fix it. Keep it, or forward it to whoever runs your ads.</p></div>' +
         '<div class="lead__f">' +
           '<label class="sr" for="leadEmail">Your email</label>' +
           '<input id="leadEmail" name="email" type="email" autocomplete="email" placeholder="you@business.com" required maxlength="254">' +
           '<span class="lead__hp" aria-hidden="true"><input name="company_url" tabindex="-1" autocomplete="off"></span>' +
-          '<button class="btn btn--sig" type="submit">Send me the plan</button>' +
+          '<button class="btn btn--sig" type="submit">Email me the PDF</button>' +
+          '<label class="lead__opt"><input type="checkbox" name="optin"><span>Also send me occasional Meta ads tips. Unsubscribe anytime.</span></label>' +
           '<p class="lead__msg" role="status" aria-live="polite"></p>' +
         '</div>' +
       '</form>';
@@ -2934,11 +3208,11 @@ document.addEventListener('click', function(e){
           '<p>' + esc(d.plan.why) + '</p>' +
           '<p class="plan__fine">Plus one-time setup of $1,699. Your ad budget goes to Meta directly, not to Plaith. Cancel monthly. Prices net, plus VAT.</p>' +
           '<div class="plan__cta">' +
-            ext(d.plan.checkout, 'Start with ' + esc(d.plan.name), 'btn btn--sig') +
-            ext(L.plans || P + '/booking#pakete', 'Compare plans', 'btn btn--line') +
+            planBtn(d.plan.checkout, 'card', 'Start with ' + esc(d.plan.name), 'btn btn--sig') +
+            planBtn(L.plans || P + '/booking#pakete', 'cols', 'Compare plans', 'btn btn--line') +
+            planBtn('https://wa.me/12232401771?text=' + encodeURIComponent('Hi Elijah, my Meta ads scored ' + d.score + '/100 on your audit (' + name + '). Can we talk about it?'),
+              'chat', 'Send my score to Elijah', 'btn btn--line') +
           '</div>' +
-          ext('https://wa.me/12232401771?text=' + encodeURIComponent('Hi Elijah, my Meta ads scored ' + d.score + '/100 on your audit (' + name + '). Can we talk about it?'),
-              ic('chat') + 'Send this score to Elijah', 'lnk', false) +
         '</div>';
 
       h += '<div class="bs">' +
@@ -3015,14 +3289,7 @@ document.addEventListener('click', function(e){
     rep.addEventListener('click', function(e){
       if(e.target.closest('[data-again]')){ reset(); return; }
       var b = e.target.closest('.chk__b');
-      if(b){
-        var open = b.getAttribute('aria-expanded') !== 'true';
-        b.setAttribute('aria-expanded', open);
-        b.parentNode.classList.toggle('is-open', open);
-        document.getElementById(b.getAttribute('aria-controls')).hidden = !open;
-        refreshST();
-        return;
-      }
+      if(b){ selectCheck(b); return; }
       var t = e.target.closest('.bs__tab');
       if(t) selectTab(t);
     });
@@ -3041,15 +3308,14 @@ document.addEventListener('click', function(e){
       btn.disabled = true; msg.dataset.s = ''; msg.textContent = 'Sending...';
       fetch('/api/lead', {
         method:'POST', headers:{ 'content-type':'application/json' },
-        body:JSON.stringify({ email:email, handle:raw, page:f.dataset.page, website:site,
-          score:+f.dataset.score, ads:+f.dataset.ads, grade:f.dataset.grade, weakest:f.dataset.weakest,
+        body:JSON.stringify({ email:email, optin:f.optin.checked, token:lastToken, handle:raw, website:site,
           company_url:f.company_url.value })
       }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return { ok:r.ok && j.ok, j:j }; }); })
         .then(function(res){
           if(res.ok){
             f.classList.add('is-sent');
-            msg.textContent = 'Got it. Your plan is on its way within one business day.';
-            track('Lead saved', { score:scoreBand(+f.dataset.score) });
+            msg.textContent = 'Sent. Check your inbox for the PDF (and spam, just in case).';
+            track('Report emailed', { score:scoreBand(+f.dataset.score), optin:f.optin.checked ? 'yes' : 'no' });
           }else{
             btn.disabled = false; msg.dataset.s = 'err';
             msg.textContent = res.j.message || 'Couldn\'t send that. Try again in a minute.';
@@ -3060,7 +3326,23 @@ document.addEventListener('click', function(e){
           msg.textContent = 'Couldn\'t reach the server. Check your connection and try again.';
         });
     });
+    function selectCheck(b){
+      rep.querySelectorAll('.chk__b').forEach(function(x){
+        var on = x === b;
+        x.setAttribute('aria-selected', on);
+        x.tabIndex = on ? 0 : -1;
+        x.parentNode.classList.toggle('is-open', on);
+        document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+      });
+      refreshST();
+    }
     rep.addEventListener('keydown', function(e){
+      var cb = e.target.closest('.chk__b');
+      if(cb && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){
+        var all = [].slice.call(rep.querySelectorAll('.chk__b'));
+        var nx = all[(all.indexOf(cb) + (e.key === 'ArrowRight' ? 1 : -1) + all.length) % all.length];
+        selectCheck(nx); nx.focus(); e.preventDefault(); return;
+      }
       var t = e.target.closest('.bs__tab');
       if(!t || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
       var tabs = [].slice.call(rep.querySelectorAll('.bs__tab'));
@@ -3553,6 +3835,54 @@ document.addEventListener('click', function(e){
   (function dock(){
     var d = $('#dock'), hero = $('#plate'), contact = $('#contact');
     if(!d || !hero || !contact || !('IntersectionObserver' in window)) return;
+
+    /* Copy follows the visitor: before an audit it sells the free score,
+       after one it pitches fixing what the score found. */
+    var CAL = 'https://plaith.ai/elijahrose/booking';
+    var sEl = $('#dockS > span'), alt = $('#dockAlt'), goA = $('#dockGo'), goT = $('#dockGoT');
+    var base = { s:sEl.innerHTML, alt:alt.textContent };
+    function asLink(a, href, ext){
+      a.setAttribute('href', href);
+      if(ext){ a.target = '_blank'; a.rel = 'noopener'; } else { a.removeAttribute('target'); a.removeAttribute('rel'); }
+    }
+    /* while an audit runs, the dock carries its progress, so visitors can
+       browse the rest of the page and still see it working */
+    document.addEventListener('audit:start', function(e){
+      var nm = (e.detail && e.detail.name) || 'your page';
+      d.classList.add('is-run'); d.style.setProperty('--p', '0');
+      sEl.textContent = '';
+      var b = document.createElement('b'); b.textContent = 'Auditing ' + nm;
+      var sm = document.createElement('small'); sm.id = 'dockNote'; sm.textContent = 'Starting \u00b7 0%';
+      sEl.appendChild(b); sEl.appendChild(sm);
+      alt.textContent = base.alt; asLink(alt, CAL, true);
+      goT.textContent = 'View progress'; asLink(goA, '#audR', false); goA.removeAttribute('data-audit');
+    });
+    document.addEventListener('audit:progress', function(e){
+      var x = e.detail || {}, sm = $('#dockNote');
+      if(!d.classList.contains('is-run') || !sm) return;
+      sm.textContent = (x.note || 'Working') + ' \u00b7 ' + x.pct + '%';
+      d.style.setProperty('--p', String(Math.min(1, (x.pct || 0) / 100)));
+    });
+    document.addEventListener('audit:done', function(e){
+      d.classList.remove('is-run');
+      var x = e.detail || {};
+      sEl.innerHTML = '<b>Your ads scored ' + x.score + '/100</b><small>' + (x.score >= 80 ? 'Ready to scale' : 'Room to fix') + '</small>';
+      alt.textContent = x.lead ? 'Email me the report' : 'Send a brief';
+      asLink(alt, x.lead ? '#audLead' : '#contact', false);
+      goT.textContent = x.score >= 80 ? 'Scale it with me' : 'Fix it with me';
+      asLink(goA, CAL, true); goA.removeAttribute('data-audit');
+    });
+    document.addEventListener('audit:reset', function(){
+      d.classList.remove('is-run');
+      sEl.innerHTML = base.s; alt.textContent = base.alt; asLink(alt, CAL, true);
+      goT.textContent = 'Score my ads'; asLink(goA, '#plate', false); goA.setAttribute('data-audit', '');
+    });
+    /* "Score my ads" scrolls to the hero; put the cursor in the input on arrival */
+    goA.addEventListener('click', function(){
+      if(!goA.hasAttribute('data-audit')) return;
+      track('Dock audit click');
+      setTimeout(function(){ var i = $('#audIn'); if(i) i.focus({ preventScroll:true }); }, 900);
+    });
     var pastHero = false, atContact = false;
     function sync(){
       var on = pastHero && !atContact;
@@ -3567,10 +3897,20 @@ document.addEventListener('click', function(e){
     mark.setAttribute('aria-hidden', 'true');
     mark.style.cssText = 'position:absolute;width:1px;height:1px;pointer-events:none';
     hero.parentNode.insertBefore(mark, hero.nextSibling);
-    new IntersectionObserver(function(es){
-      var e = es[0], line = e.rootBounds ? e.rootBounds.bottom : innerHeight * .7;
-      pastHero = e.boundingClientRect.top < line; sync();
-    }, { rootMargin:'0px 0px -30% 0px' }).observe(mark);
+    /* A position check on scroll, not an IntersectionObserver: the marker
+       is 1px, so a jump that skips straight over the 70% line (reload,
+       anchor, restored scroll) never fired the observer and the dock
+       stayed hidden. */
+    var queued = false;
+    function checkHero(){
+      queued = false;
+      var past = mark.getBoundingClientRect().top < innerHeight * .7;
+      if(past !== pastHero){ pastHero = past; sync(); }
+    }
+    function queue(){ if(!queued){ queued = true; requestAnimationFrame(checkHero); } }
+    addEventListener('scroll', queue, { passive:true });
+    addEventListener('resize', queue);
+    checkHero();
     new IntersectionObserver(function(es){
       atContact = es[0].isIntersecting; sync();
     }, { threshold:0.08 }).observe(contact);
@@ -4054,7 +4394,7 @@ document.addEventListener('click', function(e){
         '<div class="form__done">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>' +
           '<h3>Message sent</h3><p>I will get back to you within 24 hours.</p>' +
-          '<a class="btn btn--line" href="https://calendly.com/elijahrose/discovery-call" target="_blank" rel="noopener">Book a call instead</a>' +
+          '<a class="btn btn--line" href="https://plaith.ai/elijahrose/booking" target="_blank" rel="noopener">Book a call instead</a>' +
         '</div>';
     }).catch(function(){
       submit.disabled = false; submit.style.opacity = ''; submit.innerHTML = label;
