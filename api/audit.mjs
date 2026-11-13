@@ -142,7 +142,7 @@ export async function POST(request){
             const msg = tidy(state.statusMessage);
             if(msg && msg !== lastMsg){ lastMsg = msg; step('library', 'run', msg); }
             if(!/SUCCEEDED|FAILED|ABORTED|TIMED-OUT/.test(state.status)
-               && await blockCount(runId, auth) >= BLOCK_LIMIT){
+               && await isBlocked(runId, auth)){
               blocked = true;
               await fetch(`${API}/actor-runs/${runId}/abort`, { method:'POST', headers:auth }).catch(() => {});
               break;
@@ -262,14 +262,17 @@ async function startLookup(url, auth){
   }catch(e){ return { runId:null, done:Promise.resolve(null) }; }
 }
 
-/* how many times Facebook has refused this run so far, from Apify's log */
-async function blockCount(runId, auth){
+/* Is Facebook stonewalling this run? Refusals alone aren't enough: the
+   crawler retries with fresh sessions and often gets through, so a run
+   that has already found ads is never treated as blocked. */
+async function isBlocked(runId, auth){
   try{
     const r = await fetch(`${API}/actor-runs/${runId}/log`, { headers:auth });
-    if(!r.ok) return 0;
+    if(!r.ok) return false;
     const t = await r.text();
-    return (t.match(/BLOCKED|Page access was blocked/g) || []).length;
-  }catch(e){ return 0; }
+    if(/Found \d+ new ads/i.test(t)) return false;
+    return (t.match(/BLOCKED|Page access was blocked/g) || []).length >= BLOCK_LIMIT;
+  }catch(e){ return false; }
 }
 
 /* Apify's status lines are crawler jargon; translate the ones we know
