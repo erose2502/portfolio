@@ -3,7 +3,7 @@
    straight from the ads we pulled, so the copy never claims what the
    data can't show (spend, CTR and ROAS are not public). */
 
-const P = 'https://plaith.ai/en/elijahrose';
+const P = 'https://plaith.ai/elijahrose';
 const STRIPE = 'client_reference_id=elijah-rose&utm_source=elijah-rose';
 
 export const PLAITH = {

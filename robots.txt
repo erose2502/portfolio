@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://portfolio-two-sigma-cs4bvdor14.vercel.app/sitemap.xml
